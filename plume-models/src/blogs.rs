@@ -18,10 +18,13 @@ use openssl::{
     rsa::Rsa,
     sign::{Signer, Verifier},
 };
-use plume_common::activity_pub::{
-    inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source, SourceProperty,
-    ToAsString, ToAsUri,
+use plume_common::{
+    activity_pub::{
+        inbox::{AsActor, FromId},
+        sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source,
+        SourceProperty, ToAsString, ToAsUri,
+    },
+    utils::iri_percent_encode_seg,
 };
 use webfinger::*;
 
@@ -83,9 +86,13 @@ impl Blog {
 
         if inserted.fqn.is_empty() {
             if instance.local {
-                inserted.fqn = inserted.actor_id.clone();
+                inserted.fqn = iri_percent_encode_seg(&inserted.actor_id.clone());
             } else {
-                inserted.fqn = format!("{}@{}", inserted.actor_id, instance.public_domain);
+                inserted.fqn = format!(
+                    "{}@{}",
+                    iri_percent_encode_seg(&inserted.actor_id),
+                    instance.public_domain
+                );
             }
         }
 
@@ -166,7 +173,7 @@ impl Blog {
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
         let mut blog = ApActor::new(self.inbox_url.parse()?, Group::new());
-        blog.set_preferred_username(self.actor_id.clone());
+        blog.set_preferred_username(iri_percent_encode_seg(&self.actor_id));
         blog.set_name(self.title.clone());
         blog.set_outbox(self.outbox_url.parse()?);
         blog.set_summary(self.summary_html.to_string());
@@ -381,6 +388,7 @@ impl FromId<DbConn> for Blog {
                 .ok_or(Error::MissingApProperty)?
                 .to_string();
             if name.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+                tracing::error!("preferredUsername includes invalid character(s): {}", &name);
                 return Err(Error::InvalidValue);
             }
             (

@@ -561,7 +561,7 @@ mod tests {
     use once_cell::sync::Lazy;
     use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
 
-    static MY_SIGNER: Lazy<MySigner> = Lazy::new(|| MySigner::new());
+    static MY_SIGNER: Lazy<MySigner> = Lazy::new(MySigner::new);
 
     struct MySigner {
         public_key: String,
@@ -596,7 +596,7 @@ mod tests {
                 .unwrap();
             let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha256(), &key).unwrap();
             verifier.update(data.as_bytes()).unwrap();
-            verifier.verify(&signature).map_err(|_| SignError())
+            verifier.verify(signature).map_err(|_| SignError())
         }
     }
 
@@ -782,7 +782,7 @@ mod tests {
             .done();
         assert!(res.is_err());
 
-        let res: Result<(), ()> = Inbox::handle(&(), act.clone())
+        let res: Result<(), ()> = Inbox::handle(&(), act)
             .with::<FailingActor, Create, MyObject>(None)
             .with::<MyActor, Create, MyObject>(None)
             .done();

@@ -9,7 +9,7 @@ use crate::{
 use chrono::NaiveDateTime;
 use diesel::{self, result::Error::NotFound, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::OnceCell;
-use plume_common::utils::{md_to_html, iri_percent_encode_seg};
+use plume_common::utils::{iri_percent_encode_seg, md_to_html};
 use std::sync::RwLock;
 
 #[derive(Clone, Identifiable, Queryable)]
