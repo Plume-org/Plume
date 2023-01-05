@@ -4,6 +4,25 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Add 'My feed' to i18n timeline name (#1084)
+- Bidirectional support for user page header (#1092)
+
+### Changed
+
+- Use blog title as slug (#1094, #1126, #1127)
+- Bump Rust to nightly 2022-07-19 (#1119)
+
+### Fixed
+
+- Malfunction while creating a blog post in Persian (#1116)
+- Email block list is ignored when email sign-up (#1122)
+- Bug that some Activity Sytreams properties are not parsed properly (#1129)
+- Allow empty avatar for remote users (#1129)
+- Percent encode blog FQN for federation interoperability (#1129)
+- The same to `preferredUsername` (#1129)
+
 ## [[0.7.2]] - 2022-05-11
 
 ### Added

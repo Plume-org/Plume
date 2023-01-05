@@ -86,7 +86,7 @@ impl Blog {
 
         if inserted.fqn.is_empty() {
             if instance.local {
-                inserted.fqn = iri_percent_encode_seg(&inserted.actor_id.clone());
+                inserted.fqn = iri_percent_encode_seg(&inserted.actor_id);
             } else {
                 inserted.fqn = format!(
                     "{}@{}",
