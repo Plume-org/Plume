@@ -64,7 +64,7 @@ git = "https://git.joinplu.me/plume/rocket_csrf"
 rev = "0.1.2"
 
 [build-dependencies]
-ructe = "0.14.0"
+ructe = "0.15.0"
 rsass = "0.25"
 
 [features]
