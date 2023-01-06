@@ -94,7 +94,7 @@ macro_rules! gen_to_string {
         )*
         $(
         for val in &$self.$date {
-            $result.push_str(&format!("{}:{} ", stringify!($date), NaiveDate::from_num_days_from_ce(*val as i32).format("%Y-%m-%d")));
+            $result.push_str(&format!("{}:{} ", stringify!($date), NaiveDate::from_num_days_from_ce_opt(*val as i32).unwrap().format("%Y-%m-%d")));
         }
         )*
     }
@@ -182,10 +182,10 @@ impl PlumeQuery {
             // if at least one range bound is provided
             let after = self
                 .after
-                .unwrap_or_else(|| i64::from(NaiveDate::from_ymd(2000, 1, 1).num_days_from_ce()));
+                .unwrap_or_else(|| i64::from(NaiveDate::from_ymd_opt(2000, 1, 1).unwrap().num_days_from_ce()));
             let before = self
                 .before
-                .unwrap_or_else(|| i64::from(Utc::today().num_days_from_ce()));
+                .unwrap_or_else(|| i64::from(Utc::now().date_naive().num_days_from_ce()));
             let field = Searcher::schema().get_field("creation_date").unwrap();
             let range =
                 RangeQuery::new_i64_bounds(field, Bound::Included(after), Bound::Included(before));
@@ -202,7 +202,7 @@ impl PlumeQuery {
     pub fn before<D: Datelike>(&mut self, date: &D) -> &mut Self {
         let before = self
             .before
-            .unwrap_or_else(|| i64::from(Utc::today().num_days_from_ce()));
+            .unwrap_or_else(|| i64::from(Utc::now().date_naive().num_days_from_ce()));
         self.before = Some(cmp::min(before, i64::from(date.num_days_from_ce())));
         self
     }
@@ -211,7 +211,7 @@ impl PlumeQuery {
     pub fn after<D: Datelike>(&mut self, date: &D) -> &mut Self {
         let after = self
             .after
-            .unwrap_or_else(|| i64::from(NaiveDate::from_ymd(2000, 1, 1).num_days_from_ce()));
+            .unwrap_or_else(|| i64::from(NaiveDate::from_ymd_opt(2000, 1, 1).unwrap().num_days_from_ce()));
         self.after = Some(cmp::max(after, i64::from(date.num_days_from_ce())));
         self
     }
