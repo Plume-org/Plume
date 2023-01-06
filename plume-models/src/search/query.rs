@@ -180,9 +180,13 @@ impl PlumeQuery {
 
         if self.before.is_some() || self.after.is_some() {
             // if at least one range bound is provided
-            let after = self
-                .after
-                .unwrap_or_else(|| i64::from(NaiveDate::from_ymd_opt(2000, 1, 1).unwrap().num_days_from_ce()));
+            let after = self.after.unwrap_or_else(|| {
+                i64::from(
+                    NaiveDate::from_ymd_opt(2000, 1, 1)
+                        .unwrap()
+                        .num_days_from_ce(),
+                )
+            });
             let before = self
                 .before
                 .unwrap_or_else(|| i64::from(Utc::now().date_naive().num_days_from_ce()));
@@ -209,9 +213,13 @@ impl PlumeQuery {
 
     // documents older than the provided date will be ignored
     pub fn after<D: Datelike>(&mut self, date: &D) -> &mut Self {
-        let after = self
-            .after
-            .unwrap_or_else(|| i64::from(NaiveDate::from_ymd_opt(2000, 1, 1).unwrap().num_days_from_ce()));
+        let after = self.after.unwrap_or_else(|| {
+            i64::from(
+                NaiveDate::from_ymd_opt(2000, 1, 1)
+                    .unwrap()
+                    .num_days_from_ce(),
+            )
+        });
         self.after = Some(cmp::max(after, i64::from(date.num_days_from_ce())));
         self
     }
