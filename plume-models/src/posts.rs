@@ -756,7 +756,11 @@ impl FromId<DbConn> for Post {
                             let timestamp_secs = published.unix_timestamp();
                             let timestamp_nanos = published.unix_timestamp_nanos()
                                 - (timestamp_secs as i128) * 1000i128 * 1000i128 * 1000i128;
-                            NaiveDateTime::from_timestamp(timestamp_secs, timestamp_nanos as u32)
+                            NaiveDateTime::from_timestamp_opt(
+                                timestamp_secs,
+                                timestamp_nanos as u32,
+                            )
+                            .unwrap()
                         }),
                         subtitle: article
                             .summary()

@@ -65,7 +65,7 @@ pub fn search(query: Option<Form<SearchQuery>>, conn: DbConn, rockets: PlumeRock
     if str_query.is_empty() {
         render!(search::index(
             &(&conn, &rockets).to_context(),
-            &format!("{}", Utc::today().format("%Y-%m-d"))
+            &format!("{}", Utc::now().date_naive().format("%Y-%m-d"))
         ))
     } else {
         let res = rockets
