@@ -4124,10 +4124,11 @@ dependencies = [
 
 [[package]]
 name = "rsass"
-version = "0.25.2"
+version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ab003a9ff922b4d7b1f5f383bc54645887ad278f534dfc65e071096fcb30023"
+checksum = "665387d3be91521de331a04cc7118c8c129ffe43c5f4e8a61e78990850046b5a"
 dependencies = [
+ "arc-swap",
  "fastrand",
  "lazy_static",
  "nom 7.1.2",
