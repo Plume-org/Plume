@@ -1,7 +1,7 @@
+use activitystreams::iri_string::percent_encode::PercentEncodedForIri;
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{html, CodeBlockKind, CowStr, Event, LinkType, Options, Parser, Tag};
 use regex_syntax::is_word_character;
-use rocket::http::uri::Uri;
 use std::collections::HashSet;
 use syntect::html::{ClassStyle, ClassedHTMLGenerator};
 use syntect::parsing::SyntaxSet;
@@ -21,51 +21,7 @@ pub fn random_hex() -> String {
  * Intended to be used for generating Post ap_url.
  */
 pub fn iri_percent_encode_seg(segment: &str) -> String {
-    segment.chars().map(iri_percent_encode_seg_char).collect()
-}
-
-pub fn iri_percent_encode_seg_char(c: char) -> String {
-    if c.is_alphanumeric() {
-        c.to_string()
-    } else {
-        match c {
-            '-'
-            | '.'
-            | '_'
-            | '~'
-            | '\u{A0}'..='\u{D7FF}'
-            | '\u{20000}'..='\u{2FFFD}'
-            | '\u{30000}'..='\u{3FFFD}'
-            | '\u{40000}'..='\u{4FFFD}'
-            | '\u{50000}'..='\u{5FFFD}'
-            | '\u{60000}'..='\u{6FFFD}'
-            | '\u{70000}'..='\u{7FFFD}'
-            | '\u{80000}'..='\u{8FFFD}'
-            | '\u{90000}'..='\u{9FFFD}'
-            | '\u{A0000}'..='\u{AFFFD}'
-            | '\u{B0000}'..='\u{BFFFD}'
-            | '\u{C0000}'..='\u{CFFFD}'
-            | '\u{D0000}'..='\u{DFFFD}'
-            | '\u{E0000}'..='\u{EFFFD}'
-            | '!'
-            | '$'
-            | '&'
-            | '\''
-            | '('
-            | ')'
-            | '*'
-            | '+'
-            | ','
-            | ';'
-            | '='
-            | ':'
-            | '@' => c.to_string(),
-            _ => {
-                let s = c.to_string();
-                Uri::percent_encode(&s).to_string()
-            }
-        }
-    }
+    PercentEncodedForIri::from_path_segment(segment).to_string()
 }
 
 #[derive(Debug)]
