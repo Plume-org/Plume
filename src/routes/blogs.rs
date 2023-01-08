@@ -1,4 +1,7 @@
-use activitystreams::collection::{OrderedCollection, OrderedCollectionPage};
+use activitystreams::{
+    collection::{OrderedCollection, OrderedCollectionPage},
+    iri_string::{spec::IriSpec, validate::iri_reference},
+};
 use diesel::SaveChangesDsl;
 use rocket::{
     http::ContentType,
@@ -80,7 +83,7 @@ pub struct NewBlogForm {
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
     let slug = Blog::slug(title);
-    if slug.is_empty() {
+    if slug.is_empty() || iri_reference::<IriSpec>(slug).is_err() {
         Err(ValidationError::new("empty_slug"))
     } else {
         Ok(())
