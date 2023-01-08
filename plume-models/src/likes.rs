@@ -205,8 +205,8 @@ mod tests {
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",
                 "cc": ["https://plu.me/@/admin/followers"],
-                "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing",
-                "object": "https://plu.me/~/BlogName/testing",
+                "id": "https://plu.me/@/admin/like/https://plu.me/~/Blog%20Name/testing",
+                "object": "https://plu.me/~/Blog%20Name/testing",
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
                 "type": "Like",
             });
@@ -229,12 +229,12 @@ mod tests {
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",
                 "cc": ["https://plu.me/@/admin/followers"],
-                "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing#delete",
+                "id": "https://plu.me/@/admin/like/https://plu.me/~/Blog%20Name/testing#delete",
                 "object": {
                     "actor": "https://plu.me/@/admin/",
                     "cc": ["https://plu.me/@/admin/followers"],
-                    "id": "https://plu.me/@/admin/like/https://plu.me/~/BlogName/testing",
-                    "object": "https://plu.me/~/BlogName/testing",
+                    "id": "https://plu.me/@/admin/like/https://plu.me/~/Blog%20Name/testing",
+                    "object": "https://plu.me/~/Blog%20Name/testing",
                     "to": ["https://www.w3.org/ns/activitystreams#Public"],
                     "type": "Like",
                 },

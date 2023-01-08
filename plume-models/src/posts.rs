@@ -1109,10 +1109,10 @@ mod tests {
             let act = post.to_activity(&conn)?;
 
             let expected = json!({
-                "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/Blog%20Name/"],
                 "cc": [],
                 "content": "Hello",
-                "id": "https://plu.me/~/BlogName/testing",
+                "id": "https://plu.me/~/Blog%20Name/testing",
                 "license": "WTFPL",
                 "name": "Testing",
                 "published": format_datetime(&post.creation_date),
@@ -1130,7 +1130,7 @@ mod tests {
                 ],
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
                 "type": "Article",
-                "url": "https://plu.me/~/BlogName/testing"
+                "url": "https://plu.me/~/Blog%20Name/testing"
             });
 
             assert_json_eq!(to_value(act)?, expected);
@@ -1149,12 +1149,12 @@ mod tests {
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",
                 "cc": [],
-                "id": "https://plu.me/~/BlogName/testing/activity",
+                "id": "https://plu.me/~/Blog%20Name/testing/activity",
                 "object": {
-                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/Blog%20Name/"],
                     "cc": [],
                     "content": "Hello",
-                    "id": "https://plu.me/~/BlogName/testing",
+                    "id": "https://plu.me/~/Blog%20Name/testing",
                     "license": "WTFPL",
                     "name": "Testing",
                     "published": format_datetime(&post.creation_date),
@@ -1172,7 +1172,7 @@ mod tests {
                     ],
                     "to": ["https://www.w3.org/ns/activitystreams#Public"],
                     "type": "Article",
-                    "url": "https://plu.me/~/BlogName/testing"
+                    "url": "https://plu.me/~/Blog%20Name/testing"
                 },
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
                 "type": "Create"
@@ -1194,12 +1194,12 @@ mod tests {
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",
                 "cc": [],
-                "id": "https://plu.me/~/BlogName/testing/update-",
+                "id": "https://plu.me/~/Blog%20Name/testing/update-",
                 "object": {
-                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"],
+                    "attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/Blog%20Name/"],
                     "cc": [],
                     "content": "Hello",
-                    "id": "https://plu.me/~/BlogName/testing",
+                    "id": "https://plu.me/~/Blog%20Name/testing",
                     "license": "WTFPL",
                     "name": "Testing",
                     "published": format_datetime(&post.creation_date),
@@ -1217,7 +1217,7 @@ mod tests {
                     ],
                     "to": ["https://www.w3.org/ns/activitystreams#Public"],
                     "type": "Article",
-                    "url": "https://plu.me/~/BlogName/testing"
+                    "url": "https://plu.me/~/Blog%20Name/testing"
                 },
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
                 "type": "Update"
@@ -1226,10 +1226,10 @@ mod tests {
 
             let id = actual["id"].to_string();
             let (id_pre, id_post) = id.rsplit_once('-').unwrap();
-            assert_eq!(post.ap_url, "https://plu.me/~/BlogName/testing");
+            assert_eq!(post.ap_url, "https://plu.me/~/Blog%20Name/testing");
             assert_eq!(
                 id_pre,
-                to_value("\"https://plu.me/~/BlogName/testing/update")
+                to_value("\"https://plu.me/~/Blog%20Name/testing/update")
                     .unwrap()
                     .as_str()
                     .unwrap()
@@ -1259,9 +1259,9 @@ mod tests {
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",
-                "id": "https://plu.me/~/BlogName/testing#delete",
+                "id": "https://plu.me/~/Blog%20Name/testing#delete",
                 "object": {
-                    "id": "https://plu.me/~/BlogName/testing",
+                    "id": "https://plu.me/~/Blog%20Name/testing",
                     "type": "Tombstone"
                 },
                 "to": [

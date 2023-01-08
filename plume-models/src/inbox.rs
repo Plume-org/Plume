@@ -268,7 +268,7 @@ pub(crate) mod tests {
                 "actor": users[0].ap_url,
                 "object": {
                     "type": "Article",
-                    "id": "https://plu.me/~/BlogName/testing",
+                    "id": "https://plu.me/~/Blog%20Name/testing",
                     "attributedTo": [users[0].ap_url, blogs[0].ap_url],
                     "content": "Hello.",
                     "name": "My Article",

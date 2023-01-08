@@ -463,13 +463,13 @@ mod tests {
             assert_json_eq!(to_value(&act).unwrap(), json!({
                 "actor": "https://plu.me/@/admin/",
                 "cc": ["https://plu.me/@/admin/followers"],
-                "id": format!("https://plu.me/~/BlogName/testing/comment/{}/activity", original_comm.id),
+                "id": format!("https://plu.me/~/Blog%20Name/testing/comment/{}/activity", original_comm.id),
                 "object": {
                     "attributedTo": "https://plu.me/@/admin/",
                     "content": r###"<p dir="auto">My comment, mentioning to <a href="https://plu.me/@/user/" title="user">@user</a></p>
 "###,
-                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", original_comm.id),
-                    "inReplyTo": "https://plu.me/~/BlogName/testing",
+                    "id": format!("https://plu.me/~/Blog%20Name/testing/comment/{}", original_comm.id),
+                    "inReplyTo": "https://plu.me/~/Blog%20Name/testing",
                     "published": format_datetime(&original_comm.creation_date),
                     "summary": "My CW",
                     "tag": [
@@ -505,12 +505,12 @@ mod tests {
             assert_json_eq!(to_value(&reply_act).unwrap(), json!({
                 "actor": "https://plu.me/@/user/",
                 "cc": ["https://plu.me/@/user/followers"],
-                "id": format!("https://plu.me/~/BlogName/testing/comment/{}/activity", reply.id),
+                "id": format!("https://plu.me/~/Blog%20Name/testing/comment/{}/activity", reply.id),
                 "object": {
                     "attributedTo": "https://plu.me/@/user/",
                     "content": "",
-                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", reply.id),
-                    "inReplyTo": format!("https://plu.me/~/BlogName/testing/comment/{}", original_comm.id),
+                    "id": format!("https://plu.me/~/Blog%20Name/testing/comment/{}", reply.id),
+                    "inReplyTo": format!("https://plu.me/~/Blog%20Name/testing/comment/{}", original_comm.id),
                     "published": format_datetime(&reply.creation_date),
                     "summary": "",
                     "tag": [],
@@ -554,8 +554,8 @@ mod tests {
                 "attributedTo": "https://plu.me/@/admin/",
                 "content": r###"<p dir="auto">My comment, mentioning to <a href="https://plu.me/@/user/" title="user">@user</a></p>
 "###,
-                "id": format!("https://plu.me/~/BlogName/testing/comment/{}", comment.id),
-                "inReplyTo": "https://plu.me/~/BlogName/testing",
+                "id": format!("https://plu.me/~/Blog%20Name/testing/comment/{}", comment.id),
+                "inReplyTo": "https://plu.me/~/Blog%20Name/testing",
                 "published": format_datetime(&comment.creation_date),
                 "summary": "My CW",
                 "tag": [
@@ -584,9 +584,9 @@ mod tests {
 
             let expected = json!({
                 "actor": "https://plu.me/@/admin/",
-                "id": format!("https://plu.me/~/BlogName/testing/comment/{}#delete", comment.id),
+                "id": format!("https://plu.me/~/Blog%20Name/testing/comment/{}#delete", comment.id),
                 "object": {
-                    "id": format!("https://plu.me/~/BlogName/testing/comment/{}", comment.id),
+                    "id": format!("https://plu.me/~/Blog%20Name/testing/comment/{}", comment.id),
                     "type": "Tombstone"
                 },
                 "to": ["https://www.w3.org/ns/activitystreams#Public"],
