@@ -102,8 +102,8 @@ impl Blog {
     find_by!(blogs, find_by_ap_url, ap_url as &str);
     find_by!(blogs, find_by_name, actor_id as &str, instance_id as i32);
 
-    pub fn slug(title: &str) -> &str {
-        title
+    pub fn slug(title: &str) -> String {
+        iri_percent_encode_seg(title)
     }
 
     pub fn get_instance(&self, conn: &Connection) -> Result<Instance> {

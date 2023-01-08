@@ -83,7 +83,7 @@ pub struct NewBlogForm {
 
 fn valid_slug(title: &str) -> Result<(), ValidationError> {
     let slug = Blog::slug(title);
-    if slug.is_empty() || iri_reference::<IriSpec>(slug).is_err() {
+    if slug.is_empty() || iri_reference::<IriSpec>(&slug).is_err() {
         Err(ValidationError::new("empty_slug"))
     } else {
         Ok(())
@@ -104,7 +104,7 @@ pub fn create(
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,
     };
-    if Blog::find_by_fqn(&conn, slug).is_ok() {
+    if Blog::find_by_fqn(&conn, &slug).is_ok() {
         errors.add(
             "title",
             ValidationError {
@@ -125,7 +125,7 @@ pub fn create(
     let blog = Blog::insert(
         &conn,
         NewBlog::new_local(
-            slug.into(),
+            slug.clone(),
             form.title.to_string(),
             String::from(""),
             Instance::get_local()
@@ -147,7 +147,7 @@ pub fn create(
     .expect("blog::create: author error");
 
     Flash::success(
-        Redirect::to(uri!(details: name = slug, page = _)),
+        Redirect::to(uri!(details: name = &slug, page = _)),
         &i18n!(intl, "Your blog was successfully created!"),
     )
     .into()
