@@ -565,7 +565,7 @@ pub(crate) mod tests {
         let mut blog1 = Blog::insert(
             conn,
             NewBlog::new_local(
-                "BlogName".to_owned(),
+                "Blog%20Name".to_owned(),
                 "Blog name".to_owned(),
                 "This is a small blog".to_owned(),
                 Instance::get_local().unwrap().id,
@@ -576,7 +576,7 @@ pub(crate) mod tests {
         let blog2 = Blog::insert(
             conn,
             NewBlog::new_local(
-                "MyBlog".to_owned(),
+                "My%20Blog".to_owned(),
                 "My blog".to_owned(),
                 "Welcome to my blog".to_owned(),
                 Instance::get_local().unwrap().id,
@@ -587,7 +587,7 @@ pub(crate) mod tests {
         let blog3 = Blog::insert(
             conn,
             NewBlog::new_local(
-                "WhyILikePlume".to_owned(),
+                "Why%20I%20Like%20Plume".to_owned(),
                 "Why I like Plume".to_owned(),
                 "In this blog I will explay you why I like Plume so much".to_owned(),
                 Instance::get_local().unwrap().id,
@@ -682,7 +682,7 @@ pub(crate) mod tests {
             let blog = Blog::insert(
                 conn,
                 NewBlog::new_local(
-                    "SomeName".to_owned(),
+                    "Some%20Name".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
@@ -709,7 +709,7 @@ pub(crate) mod tests {
             let b1 = Blog::insert(
                 conn,
                 NewBlog::new_local(
-                    "SomeName".to_owned(),
+                    "Some%20Name".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
@@ -810,7 +810,7 @@ pub(crate) mod tests {
             let blog = Blog::insert(
                 conn,
                 NewBlog::new_local(
-                    "SomeName".to_owned(),
+                    "Some%20Name".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
@@ -819,7 +819,7 @@ pub(crate) mod tests {
             )
             .unwrap();
 
-            assert_eq!(Blog::find_by_fqn(conn, "SomeName").unwrap().id, blog.id);
+            assert_eq!(Blog::find_by_fqn(conn, "Some%20Name").unwrap().id, blog.id);
             Ok(())
         })
     }
@@ -833,7 +833,7 @@ pub(crate) mod tests {
             let blog = Blog::insert(
                 conn,
                 NewBlog::new_local(
-                    "SomeName".to_owned(),
+                    "Some%20Name".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
@@ -842,7 +842,7 @@ pub(crate) mod tests {
             )
             .unwrap();
 
-            assert_eq!(blog.fqn, "SomeName");
+            assert_eq!(blog.fqn, "Some%20Name");
             Ok(())
         })
     }
@@ -868,7 +868,7 @@ pub(crate) mod tests {
             let b1 = Blog::insert(
                 conn,
                 NewBlog::new_local(
-                    "SomeName".to_owned(),
+                    "Some%20Name".to_owned(),
                     "Some name".to_owned(),
                     "This is some blog".to_owned(),
                     Instance::get_local().unwrap().id,
@@ -1001,19 +1001,19 @@ pub(crate) mod tests {
                     "type": "Image",
                     "url": "https://plu.me/aaa.png"
                 },
-                "id": "https://plu.me/~/BlogName/",
+                "id": "https://plu.me/~/Blog%20Name/",
                 "image": {
                     "attributedTo": "https://plu.me/@/admin/",
                     "type": "Image",
                     "url": "https://plu.me/bbb.png"
                 },
-                "inbox": "https://plu.me/~/BlogName/inbox",
+                "inbox": "https://plu.me/~/Blog%20Name/inbox",
                 "name": "Blog name",
-                "outbox": "https://plu.me/~/BlogName/outbox",
-                "preferredUsername": "BlogName",
+                "outbox": "https://plu.me/~/Blog%20Name/outbox",
+                "preferredUsername": "Blog%20Name",
                 "publicKey": {
-                    "id": "https://plu.me/~/BlogName/#main-key",
-                    "owner": "https://plu.me/~/BlogName/",
+                    "id": "https://plu.me/~/Blog%20Name/#main-key",
+                    "owner": "https://plu.me/~/Blog%20Name/",
                     "publicKeyPem": blog.public_key
                 },
                 "source": {
@@ -1041,8 +1041,8 @@ pub(crate) mod tests {
             let expected = json!({
                 "items": [],
                 "totalItems": 0,
-                "first": "https://plu.me/~/BlogName/outbox?page=1",
-                "last": "https://plu.me/~/BlogName/outbox?page=0",
+                "first": "https://plu.me/~/Blog%20Name/outbox?page=1",
+                "last": "https://plu.me/~/Blog%20Name/outbox?page=0",
                 "type": "OrderedCollection"
             });
 
@@ -1061,8 +1061,8 @@ pub(crate) mod tests {
             let act = blog.outbox_collection_page(conn, (33, 36))?;
 
             let expected = json!({
-                "next": "https://plu.me/~/BlogName/outbox?page=3",
-                "prev": "https://plu.me/~/BlogName/outbox?page=1",
+                "next": "https://plu.me/~/Blog%20Name/outbox?page=3",
+                "prev": "https://plu.me/~/Blog%20Name/outbox?page=1",
                 "items": [],
                 "type": "OrderedCollectionPage"
             });
