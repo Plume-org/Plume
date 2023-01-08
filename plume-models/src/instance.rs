@@ -9,7 +9,7 @@ use crate::{
 use chrono::NaiveDateTime;
 use diesel::{self, result::Error::NotFound, ExpressionMethods, QueryDsl, RunQueryDsl};
 use once_cell::sync::OnceCell;
-use plume_common::utils::{iri_percent_encode_seg, md_to_html};
+use plume_common::utils::md_to_html;
 use std::sync::RwLock;
 
 #[derive(Clone, Identifiable, Queryable)]
@@ -173,8 +173,8 @@ impl Instance {
             "{instance}/{prefix}/{name}/{box_name}",
             instance = self.public_domain,
             prefix = prefix,
-            name = iri_percent_encode_seg(name),
-            box_name = iri_percent_encode_seg(box_name)
+            name = name,
+            box_name = box_name
         ))
     }
 

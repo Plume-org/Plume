@@ -24,7 +24,7 @@ use plume_common::{
         sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source,
         SourceProperty, ToAsString, ToAsUri,
     },
-    utils::iri_percent_encode_seg,
+    utils::{iri_percent_encode_seg, make_fqn},
 };
 use webfinger::*;
 
@@ -85,14 +85,13 @@ impl Blog {
         }
 
         if inserted.fqn.is_empty() {
+            // This might not enough for some titles such as all-Japanese title,
+            // but better than doing nothing.
+            let fqn = make_fqn(&inserted.title);
             if instance.local {
-                inserted.fqn = iri_percent_encode_seg(&inserted.actor_id);
+                inserted.fqn = fqn;
             } else {
-                inserted.fqn = format!(
-                    "{}@{}",
-                    iri_percent_encode_seg(&inserted.actor_id),
-                    instance.public_domain
-                );
+                inserted.fqn = format!("{}@{}", &fqn, instance.public_domain);
             }
         }
 
@@ -173,7 +172,7 @@ impl Blog {
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
         let mut blog = ApActor::new(self.inbox_url.parse()?, Group::new());
-        blog.set_preferred_username(iri_percent_encode_seg(&self.actor_id));
+        blog.set_preferred_username(&self.fqn);
         blog.set_name(self.title.clone());
         blog.set_outbox(self.outbox_url.parse()?);
         blog.set_summary(self.summary_html.to_string());
@@ -399,7 +398,12 @@ impl FromId<DbConn> for Blog {
         };
 
         let mut new_blog = NewBlog {
-            actor_id: name.to_string(),
+            actor_id: iri_percent_encode_seg(
+                &acct
+                    .name()
+                    .and_then(|name| name.to_as_string())
+                    .ok_or(Error::MissingApProperty)?,
+            ),
             outbox_url,
             inbox_url,
             public_key: acct.ext_one.public_key.public_key_pem.to_string(),
@@ -566,7 +570,7 @@ pub(crate) mod tests {
             conn,
             NewBlog::new_local(
                 "Blog%20Name".to_owned(),
-                "Blog name".to_owned(),
+                "Blog Name".to_owned(),
                 "This is a small blog".to_owned(),
                 Instance::get_local().unwrap().id,
             )
@@ -819,7 +823,7 @@ pub(crate) mod tests {
             )
             .unwrap();
 
-            assert_eq!(Blog::find_by_fqn(conn, "Some%20Name").unwrap().id, blog.id);
+            assert_eq!(Blog::find_by_fqn(conn, "SomeName").unwrap().id, blog.id);
             Ok(())
         })
     }
@@ -842,7 +846,7 @@ pub(crate) mod tests {
             )
             .unwrap();
 
-            assert_eq!(blog.fqn, "Some%20Name");
+            assert_eq!(blog.fqn, "SomeName");
             Ok(())
         })
     }
@@ -968,6 +972,7 @@ pub(crate) mod tests {
             let _: Blog = blogs[0].save_changes(&**conn).unwrap();
             let ap_repr = blogs[0].to_activity(conn).unwrap();
             blogs[0].delete(conn).unwrap();
+            eprintln!("{:#?}", &ap_repr);
             let blog = Blog::from_activity(conn, ap_repr).unwrap();
 
             assert_eq!(blog.actor_id, blogs[0].actor_id);
@@ -1008,9 +1013,9 @@ pub(crate) mod tests {
                     "url": "https://plu.me/bbb.png"
                 },
                 "inbox": "https://plu.me/~/Blog%20Name/inbox",
-                "name": "Blog name",
+                "name": "Blog Name",
                 "outbox": "https://plu.me/~/Blog%20Name/outbox",
-                "preferredUsername": "Blog%20Name",
+                "preferredUsername": "BlogName",
                 "publicKey": {
                     "id": "https://plu.me/~/Blog%20Name/#main-key",
                     "owner": "https://plu.me/~/Blog%20Name/",
