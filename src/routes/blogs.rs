@@ -395,7 +395,6 @@ mod tests {
         posts::{NewPost, Post},
         safe_string::SafeString,
         users::{NewUser, User, AUTH_COOKIE},
-        Connection as Conn, CONFIG,
     };
     use rocket::{
         http::{Cookie, Cookies, SameSite},
@@ -404,22 +403,6 @@ mod tests {
 
     #[test]
     fn edit_link_within_post_card() {
-        let conn = Conn::establish(CONFIG.database_url.as_str()).unwrap();
-        Instance::insert(
-            &conn,
-            NewInstance {
-                public_domain: "example.org".to_string(),
-                name: "Plume".to_string(),
-                local: true,
-                long_description: SafeString::new(""),
-                short_description: SafeString::new(""),
-                default_license: "CC-BY-SA".to_string(),
-                open_registrations: true,
-                short_description_html: String::new(),
-                long_description_html: String::new(),
-            },
-        )
-        .unwrap();
         let rocket = init_rocket();
         let client = Client::new(rocket).expect("valid rocket instance");
         let dbpool = client.rocket().state::<DbPool>().unwrap();
@@ -446,6 +429,24 @@ mod tests {
     }
 
     fn create_models(conn: &DbConn) -> (Instance, User, Blog, Post) {
+        Instance::find_by_domain(conn, "example.org").unwrap_or_else(|_| {
+            Instance::insert(
+                &conn,
+                NewInstance {
+                    public_domain: "example.org".to_string(),
+                    name: "Plume".to_string(),
+                    local: true,
+                    long_description: SafeString::new(""),
+                    short_description: SafeString::new(""),
+                    default_license: "CC-BY-SA".to_string(),
+                    open_registrations: true,
+                    short_description_html: String::new(),
+                    long_description_html: String::new(),
+                },
+            )
+            .unwrap()
+        });
+
         conn.transaction::<(Instance, User, Blog, Post), diesel::result::Error, _>(|| {
             let instance = Instance::get_local().unwrap_or_else(|_| {
                 let instance = Instance::insert(
