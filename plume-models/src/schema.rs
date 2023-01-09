@@ -52,6 +52,14 @@ table! {
 }
 
 table! {
+    comment_seers (id) {
+        id -> Int4,
+        comment_id -> Int4,
+        user_id -> Int4,
+    }
+}
+
+table! {
     comments (id) {
         id -> Int4,
         content -> Text,
@@ -63,14 +71,6 @@ table! {
         sensitive -> Bool,
         spoiler_text -> Text,
         public_visibility -> Bool,
-    }
-}
-
-table! {
-    comment_seers (id) {
-        id -> Int4,
-        comment_id -> Int4,
-        user_id -> Int4,
     }
 }
 
@@ -314,8 +314,8 @@ allow_tables_to_appear_in_same_query!(
     apps,
     blog_authors,
     blogs,
-    comments,
     comment_seers,
+    comments,
     email_blocklist,
     email_signups,
     follows,
