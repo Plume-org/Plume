@@ -1,3 +1,4 @@
+use ::anyhow::{self, anyhow};
 use activitystreams::{
     actor::{ApActor, Group, Person},
     base::{AnyBase, Base, Extends},
@@ -17,6 +18,10 @@ use rocket::{
     request::{FromRequest, Request},
     response::{Responder, Response},
     Outcome,
+};
+use std::{
+    convert::{TryFrom, TryInto},
+    str::FromStr, fmt,
 };
 use tokio::{
     runtime,
@@ -239,6 +244,86 @@ impl AsRef<str> for Id {
 
 pub trait IntoId {
     fn into_id(self) -> Id;
+}
+
+#[repr(transparent)]
+#[derive(Shrinkwrap, PartialEq, Eq, Clone, Serialize, Deserialize, Debug)]
+pub struct PreferredUsername(String);
+
+// Mastodon allows only /[a-z0-9_]+([a-z0-9_\.-]+[a-z0-9_]+)?/i for `preferredUsername`
+impl PreferredUsername {
+    fn validate(name: &str) -> anyhow::Result<()> {
+        let len = name.len();
+        if len < 3 {
+            return Err(anyhow!("FQN must be longer than 2 characters"));
+        }
+        match name.chars().enumerate().find(|(pos, c)| {
+            if pos == &0 || pos == &(len - 1) {
+                c != &'_' && !c.is_ascii_alphanumeric()
+            } else {
+                match c {
+                    '_' | '\\' | '.' | '-' => false,
+                    _ => !c.is_ascii_alphanumeric(),
+                }
+            }
+        }) {
+            Some((pos, c)) => Err(anyhow!("Invaliad character at {}: {}", pos, c)),
+            None => Ok(()),
+        }
+    }
+
+    /// # Safety
+    ///
+    /// The given string must be match against /\A[a-z0-9_]+([a-z0-9_\.-]+[a-z0-9_]+)?\z/i in Ruby's RegExp which is required by Mastodon.
+    pub unsafe fn new_unchecked(name: String) -> Self {
+        Self(name)
+    }
+
+    pub fn new(name: String) -> anyhow::Result<Self> {
+        Self::validate(&name).map(|_| unsafe { Self::new_unchecked(name) })
+    }
+}
+
+impl fmt::Display for PreferredUsername {
+    fn fmt(&self, f:&mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+impl TryFrom<String> for PreferredUsername {
+    type Error = anyhow::Error;
+
+    fn try_from(name: String) -> std::result::Result<Self, Self::Error> {
+        Self::new(name)
+    }
+}
+
+impl TryFrom<&str> for PreferredUsername {
+    type Error = anyhow::Error;
+
+    fn try_from(name: &str) -> std::result::Result<Self, Self::Error> {
+        Self::new(name.to_owned())
+    }
+}
+
+impl From<PreferredUsername> for String {
+    fn from(preferred_username: PreferredUsername) -> Self {
+        preferred_username.0
+    }
+}
+
+impl AsRef<str> for PreferredUsername {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl FromStr for PreferredUsername {
+    type Err = anyhow::Error;
+
+    fn from_str(name: &str) -> std::result::Result<Self, Self::Err> {
+        name.try_into()
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
@@ -523,6 +608,35 @@ mod tests {
     };
     use assert_json_diff::assert_json_eq;
     use serde_json::{from_str, json, to_value};
+
+    #[test]
+    fn preferred_username() {
+        assert!(PreferredUsername::new("".into()).is_err());
+        assert!(PreferredUsername::new("a".into()).is_err());
+        assert!(PreferredUsername::new("ab".into()).is_err());
+        assert_eq!(
+            "abc",
+            PreferredUsername::new("abc".into()).unwrap().as_str()
+        );
+        assert_eq!(
+            "abcd",
+            PreferredUsername::new("abcd".into()).unwrap().as_str()
+        );
+        assert!(PreferredUsername::new("abc-".into()).is_err());
+        assert!(PreferredUsername::new("日本語".into()).is_err());
+        assert_eq!("abc", "abc".parse::<PreferredUsername>().unwrap().as_str());
+        assert!("abc-".parse::<PreferredUsername>().is_err());
+        assert_eq!(
+            PreferredUsername::new("admin".into()).unwrap(),
+            PreferredUsername("admin".into())
+        );
+    }
+
+    #[test]
+    fn prefferred_username_to_string() {
+        let pu = PreferredUsername::new("admin".into()).unwrap();
+        assert_eq!("admin".to_string(), pu.to_string());
+    }
 
     #[test]
     fn se_ap_signature() {
