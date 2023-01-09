@@ -1,1 +1,3 @@
--- This file should undo anything in `up.sql`
+ALTER TABLE users DROP CONSTRAINT users_fqn;
+ALTER TABLE blogs DROP CONSTRAINT blogs_actor_id;
+ALTER TABLE blogs DROP CONSTRAINT blogs_fqn;
