@@ -439,6 +439,7 @@ mod tests {
         login(&request, &user);
         let mut response = request.dispatch();
         let body = response.body_string().unwrap();
+        eprintln!("{:?}", &blog.fqn);
         let body_contains_edit_lnk = body.contains(&edit_link);
 
         teardown((&client, (instance, user, blog, post)));
@@ -498,6 +499,7 @@ mod tests {
             let user = User::insert(conn, user).unwrap();
             let blog = NewBlog {
                 instance_id: instance.id,
+                title: random_hex(),
                 actor_id: random_hex(),
                 ap_url: random_hex(),
                 inbox_url: random_hex(),
