@@ -401,14 +401,28 @@ mod tests {
         local::{Client, LocalRequest},
     };
 
-    #[test]
-    fn edit_link_within_post_card() {
+    type Models = (Instance, User, Blog, Post);
+
+    fn setup() -> (Client, Models) {
         let rocket = init_rocket();
         let client = Client::new(rocket).expect("valid rocket instance");
         let dbpool = client.rocket().state::<DbPool>().unwrap();
         let conn = &DbConn(dbpool.get().unwrap());
 
-        let (_instance, user, blog, post) = create_models(conn);
+        (client, create_models(conn))
+    }
+
+    fn teardown((client, (instance, user, _blog, _post)): (&Client, Models)) {
+        let dbpool = client.rocket().state::<DbPool>().unwrap();
+        let conn = &DbConn(dbpool.get().unwrap());
+
+        user.delete(conn).unwrap();
+        let _ = diesel::delete(&instance);
+    }
+
+    #[test]
+    fn edit_link_within_post_card() {
+        let (client, (instance, user, blog, post)) = setup();
 
         let blog_path = uri!(super::activity_details: name = &blog.fqn).to_string();
         let edit_link = uri!(
@@ -419,19 +433,24 @@ mod tests {
 
         let mut response = client.get(&blog_path).dispatch();
         let body = response.body_string().unwrap();
-        assert!(!body.contains(&edit_link));
+        let body_not_contain_edit_link = !body.contains(&edit_link);
 
         let request = client.get(&blog_path);
         login(&request, &user);
         let mut response = request.dispatch();
         let body = response.body_string().unwrap();
-        assert!(body.contains(&edit_link));
+        let body_contains_edit_lnk = body.contains(&edit_link);
+
+        teardown((&client, (instance, user, blog, post)));
+
+        assert!(body_not_contain_edit_link);
+        assert!(body_contains_edit_lnk);
     }
 
-    fn create_models(conn: &DbConn) -> (Instance, User, Blog, Post) {
+    fn create_models(conn: &DbConn) -> Models {
         Instance::find_by_domain(conn, "example.org").unwrap_or_else(|_| {
             Instance::insert(
-                &conn,
+                conn,
                 NewInstance {
                     public_domain: "example.org".to_string(),
                     name: "Plume".to_string(),
