@@ -28,7 +28,7 @@ pub fn iri_percent_encode_seg(segment: &str) -> String {
 pub fn make_fqn(name: &str) -> String {
     name.to_upper_camel_case()
         .chars()
-        .filter(|c| c.is_alphanumeric())
+        .filter(|c| c.is_ascii_alphanumeric())
         .collect()
 }
 
