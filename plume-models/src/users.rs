@@ -761,7 +761,7 @@ impl User {
         actor.set_url(ap_url.clone());
         actor.set_inbox(self.inbox_url.parse()?);
         actor.set_outbox(self.outbox_url.parse()?);
-        actor.set_preferred_username(self.username.clone());
+        actor.set_preferred_username(&self.fqn);
         actor.set_followers(self.followers_endpoint.parse()?);
 
         if let Some(shared_inbox_url) = self.shared_inbox_url.clone() {
