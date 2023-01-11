@@ -17,12 +17,16 @@ extern crate serde_json;
 extern crate tantivy;
 
 use activitystreams::iri_string;
+use diesel::backend::Backend;
+use diesel::sql_types::Text;
+use diesel::types::{FromSql, ToSql};
 pub use lettre;
 pub use lettre::smtp;
 use once_cell::sync::Lazy;
-use plume_common::activity_pub::{inbox::InboxError, request, sign};
+use plume_common::activity_pub::{inbox::InboxError, request, sign, PreferredUsername};
 use posts::PostEvent;
 use riker::actors::{channel, ActorSystem, ChannelRef, SystemBuilder};
+use std::{fmt, io::Write, string::ToString};
 use users::UserEvent;
 
 #[cfg(not(any(feature = "sqlite", feature = "postgres")))]
@@ -331,6 +335,78 @@ impl SmtpNewWithAddr for smtp::SmtpClient {
             ClientTlsParameters::new(domain.to_string(), tls_builder.build().unwrap());
 
         SmtpClient::new((domain, port), ClientSecurity::Wrapper(tls_parameters))
+    }
+}
+
+#[derive(AsExpression, PartialEq, Eq, Clone, FromSqlRow, Debug)]
+#[sql_type = "Text"]
+pub enum Fqn {
+    Local(PreferredUsername),
+    Remote(PreferredUsername, String),
+}
+
+impl Fqn {
+    pub fn new_local(username: String) -> Result<Self> {
+        Ok(Self::Local(
+            PreferredUsername::new(username).map_err(|_| Error::InvalidValue)?,
+        ))
+    }
+
+    pub fn new_remote(username: String, domain: String) -> Result<Self> {
+        Ok(Self::Remote(
+            PreferredUsername::new(username).map_err(|_| Error::InvalidValue)?,
+            domain,
+        ))
+    }
+}
+
+impl From<&Fqn> for String {
+    fn from(fqn: &Fqn) -> Self {
+        match fqn {
+            Fqn::Local(username) => username.to_string(),
+            Fqn::Remote(username, domain) => format!("{}@{}", username, domain),
+        }
+    }
+}
+
+impl fmt::Display for Fqn {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        String::from(self).fmt(f)
+    }
+}
+
+impl<DB> ToSql<Text, DB> for Fqn
+where
+    DB: diesel::backend::Backend,
+{
+    fn to_sql<W: Write>(
+        &self,
+        out: &mut diesel::serialize::Output<W, DB>,
+    ) -> diesel::serialize::Result {
+        let fqn = match self {
+            Self::Local(username) => username.to_string(),
+            Self::Remote(username, domain) => format!("{}@{}", username, domain),
+        };
+        ToSql::<Text, DB>::to_sql::<W>(&fqn, out)
+    }
+}
+
+impl<DB> FromSql<Text, DB> for Fqn
+where
+    DB: diesel::backend::Backend,
+    String: FromSql<Text, DB>,
+{
+    /// We use PreferredUsername::new_unchecked() because, even if bytes is invalid as `preferredUsername`,
+    /// we need return some value.
+    fn from_sql(bytes: Option<&<DB as Backend>::RawValue>) -> diesel::deserialize::Result<Self> {
+        let value = <String as FromSql<Text, DB>>::from_sql(bytes)?;
+        Ok(match value.rsplit_once('@') {
+            None => Self::Local(unsafe { PreferredUsername::new_unchecked(value) }),
+            Some((username, domain)) => Self::Remote(
+                unsafe { PreferredUsername::new_unchecked(username.into()) },
+                domain.into(),
+            ),
+        })
     }
 }
 
