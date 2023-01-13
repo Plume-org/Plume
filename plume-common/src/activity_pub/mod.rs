@@ -21,7 +21,8 @@ use rocket::{
 };
 use std::{
     convert::{TryFrom, TryInto},
-    str::FromStr, fmt,
+    fmt,
+    str::FromStr,
 };
 use tokio::{
     runtime,
@@ -285,7 +286,7 @@ impl PreferredUsername {
 }
 
 impl fmt::Display for PreferredUsername {
-    fn fmt(&self, f:&mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)
     }
 }
