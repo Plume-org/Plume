@@ -1,6 +1,7 @@
 use crate::{
     db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
-    schema::blogs, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
+    schema::blogs, users::User, Connection, Error, Fqn, PlumeRocket, Result, CONFIG,
+    ITEMS_PER_PAGE,
 };
 use activitystreams::{
     actor::{ApActor, ApActorExt, AsApActor, Group},
@@ -42,14 +43,14 @@ pub struct Blog {
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String,
-    pub fqn: String,
+    pub fqn: Fqn,
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
     pub theme: Option<String>,
 }
 
-#[derive(Default, Insertable)]
+#[derive(Insertable)]
 #[table_name = "blogs"]
 pub struct NewBlog {
     pub actor_id: String,
@@ -61,6 +62,7 @@ pub struct NewBlog {
     pub ap_url: String,
     pub private_key: Option<String>,
     pub public_key: String,
+    pub fqn: Fqn,
     pub summary_html: SafeString,
     pub icon_id: Option<i32>,
     pub banner_id: Option<i32>,
