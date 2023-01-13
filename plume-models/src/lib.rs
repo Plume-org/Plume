@@ -413,7 +413,7 @@ where
 #[cfg(test)]
 #[macro_use]
 mod tests {
-    use crate::{db_conn, migrations::IMPORTED_MIGRATIONS, Connection as Conn, CONFIG};
+    use crate::{db_conn, migrations::IMPORTED_MIGRATIONS, Connection as Conn, CONFIG, Fqn};
     use chrono::{naive::NaiveDateTime, Datelike, Timelike};
     use diesel::r2d2::ConnectionManager;
     use plume_common::utils::random_hex;
@@ -473,6 +473,20 @@ mod tests {
             dt.minute(),
             dt.second()
         )
+    }
+
+    #[test]
+    fn fqn() {
+        assert_eq!(
+            Fqn::new_local("admin".to_string()).unwrap(),
+            Fqn::new_local("admin".to_string()).unwrap()
+        );
+        assert!(Fqn::new_local("admin".to_string()).is_ok());
+        let fqn = Fqn::new_local("admin".to_string()).unwrap();
+        assert_eq!("admin".to_string(), String::from(&fqn));
+        let fqn = Fqn::new_local("admin".to_string()).unwrap();
+        assert_eq!("admin".to_string(), ToString::to_string(&fqn));
+        assert_eq!("admin".to_string(), fqn.to_string());
     }
 }
 
