@@ -1,7 +1,7 @@
 use crate::{
     ap_url, blogs::Blog, db_conn::DbConn, instance::Instance, medias::Media, mentions::Mention,
     post_authors::*, safe_string::SafeString, schema::posts, tags::*, timeline::*, users::User,
-    Connection, Error, PostEvent::*, Result, CONFIG, POST_CHAN,
+    Connection, Error, Fqn, PostEvent::*, Result, CONFIG, POST_CHAN,
 };
 use activitystreams::{
     activity::{Create, Delete, Update},
@@ -28,7 +28,7 @@ use riker::actors::{Publish, Tell};
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex};
 
-static BLOG_FQN_CACHE: Lazy<Mutex<HashMap<i32, String>>> = Lazy::new(|| Mutex::new(HashMap::new()));
+static BLOG_FQN_CACHE: Lazy<Mutex<HashMap<i32, Fqn>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset, Debug)]
 #[changeset_options(treat_none_as_null = "true")]
@@ -255,7 +255,7 @@ impl Post {
         ap_url(&format!(
             "{}/~/{}/{}/",
             CONFIG.base_url,
-            iri_percent_encode_seg(&blog.fqn),
+            &blog.fqn,
             iri_percent_encode_seg(slug)
         ))
     }
@@ -298,9 +298,9 @@ impl Post {
     /// This caches query result. The best way to cache query result is holding it in `Post`s field
     /// but Diesel doesn't allow it currently.
     /// If sometime Diesel allow it, this method should be removed.
-    pub fn get_blog_fqn(&self, conn: &Connection) -> String {
+    pub fn get_blog_fqn(&self, conn: &Connection) -> Fqn {
         if let Some(blog_fqn) = BLOG_FQN_CACHE.lock().unwrap().get(&self.blog_id) {
-            return blog_fqn.to_string();
+            return blog_fqn.to_owned();
         }
         let blog_fqn = self.get_blog(conn).unwrap().fqn;
         BLOG_FQN_CACHE

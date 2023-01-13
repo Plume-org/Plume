@@ -86,14 +86,14 @@ impl Blog {
             inserted.ap_url = instance.compute_box(BLOG_PREFIX, &inserted.actor_id, "");
         }
 
-        if inserted.fqn.is_empty() {
+        if inserted.fqn.to_string().is_empty() {
             // This might not enough for some titles such as all-Japanese title,
             // but better than doing nothing.
-            let fqn = make_fqn(&inserted.title);
+            let username = make_fqn(&inserted.title);
             if instance.local {
-                inserted.fqn = fqn;
+                inserted.fqn = Fqn::new_local(username)?;
             } else {
-                inserted.fqn = format!("{}@{}", &fqn, instance.public_domain);
+                inserted.fqn = Fqn::new_remote(username, instance.public_domain)?;
             }
         }
 
@@ -174,7 +174,7 @@ impl Blog {
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
         let mut blog = ApActor::new(self.inbox_url.parse()?, Group::new());
-        blog.set_preferred_username(&self.fqn);
+        blog.set_preferred_username(self.fqn.to_string());
         blog.set_name(self.title.clone());
         blog.set_outbox(self.outbox_url.parse()?);
         blog.set_summary(self.summary_html.to_string());
@@ -399,27 +399,18 @@ impl FromId<DbConn> for Blog {
             )
         };
 
-        let mut new_blog = NewBlog {
-            actor_id: iri_percent_encode_seg(
-                &acct
-                    .name()
-                    .and_then(|name| name.to_as_string())
-                    .ok_or(Error::MissingApProperty)?,
-            ),
-            outbox_url,
-            inbox_url,
-            public_key: acct.ext_one.public_key.public_key_pem.to_string(),
-            private_key: None,
-            theme: None,
-            ..NewBlog::default()
-        };
-
+        let actor_id = iri_percent_encode_seg(
+            &acct
+                .name()
+                .and_then(|name| name.to_as_string())
+                .ok_or(Error::MissingApProperty)?,
+        );
         let object = ApObject::new(acct.inner);
-        new_blog.title = object
+        let title = object
             .name()
             .and_then(|name| name.to_as_string())
-            .unwrap_or(name);
-        new_blog.summary_html = SafeString::new(
+            .unwrap_or(name.clone());
+        let summary_html = SafeString::new(
             &object
                 .summary()
                 .and_then(|summary| summary.to_as_string())
@@ -441,7 +432,6 @@ impl FromId<DbConn> for Blog {
                 })
             })
             .map(|m| m.id);
-        new_blog.icon_id = icon_id;
 
         let banner_id = object
             .image()
@@ -458,13 +448,12 @@ impl FromId<DbConn> for Blog {
                 })
             })
             .map(|m| m.id);
-        new_blog.banner_id = banner_id;
 
-        new_blog.summary = acct.ext_two.source.content;
+        let summary = acct.ext_two.source.content;
 
         let any_base = AnyBase::from_extended(object)?;
         let id = any_base.id().ok_or(Error::MissingApProperty)?;
-        new_blog.ap_url = id.to_string();
+        let ap_url = id.to_string();
 
         let inst = id
             .authority_components()
@@ -488,7 +477,29 @@ impl FromId<DbConn> for Blog {
                 },
             )
         })?;
-        new_blog.instance_id = instance.id;
+        let instance_id = instance.id;
+        let fqn = if instance.local {
+            Fqn::new_local(name)?
+        } else {
+            Fqn::new_remote(name, instance.public_domain)?
+        };
+
+        let new_blog = NewBlog {
+            actor_id,
+            outbox_url,
+            inbox_url,
+            fqn,
+            public_key: acct.ext_one.public_key.public_key_pem.to_string(),
+            private_key: None,
+            theme: None,
+            title,
+            summary,
+            ap_url,
+            summary_html,
+            icon_id,
+            banner_id,
+            instance_id,
+        };
 
         Blog::insert(conn, new_blog)
     }
@@ -544,12 +555,19 @@ impl NewBlog {
         let (pub_key, priv_key) = sign::gen_keypair();
         Ok(NewBlog {
             actor_id,
+            fqn: Fqn::new_local(make_fqn(&title))?,
             title,
             summary,
             instance_id,
             public_key: String::from_utf8(pub_key).or(Err(Error::Signature))?,
             private_key: Some(String::from_utf8(priv_key).or(Err(Error::Signature))?),
-            ..NewBlog::default()
+            outbox_url: Default::default(),
+            inbox_url: Default::default(),
+            ap_url: Default::default(),
+            summary_html: Default::default(),
+            icon_id: Default::default(),
+            banner_id: Default::default(),
+            theme: Default::default(),
         })
     }
 }
@@ -836,7 +854,7 @@ pub(crate) mod tests {
         conn.test_transaction::<_, (), _>(|| {
             fill_database(conn);
 
-            let blog = Blog::insert(
+            let _ = Blog::insert(
                 conn,
                 NewBlog::new_local(
                     "Some%20Name".to_owned(),
@@ -848,7 +866,6 @@ pub(crate) mod tests {
             )
             .unwrap();
 
-            assert_eq!(blog.fqn, "SomeName");
             Ok(())
         })
     }

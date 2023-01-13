@@ -22,7 +22,7 @@
 	<meta content="@blog.summary_html" property="og:description" />
 	<meta content="@blog.icon_url(ctx.0)" property="og:image" />
 
-	<link href='@Instance::get_local().unwrap().compute_box("~", &blog.fqn, "atom.xml")' rel='alternate' type='application/atom+xml'>
+	<link href='@Instance::get_local().unwrap().compute_box("~", &blog.fqn.to_string(), "atom.xml")' rel='alternate' type='application/atom+xml'>
 	<link href='@blog.ap_url' rel='alternate' type='application/activity+json'>
 	<link href='@blog.ap_url' rel='canonical'>
     @if !ctx.2.clone().map(|u| u.hide_custom_css).unwrap_or(false) {
@@ -31,7 +31,7 @@
         }
     }
 }, {
-    <a href="@uri!(blogs::details: name = &blog.fqn, page = _)" dir="auto">@blog.title</a>
+    <a href="@uri!(blogs::details: name = &blog.fqn.to_string(), page = _)" dir="auto">@blog.title</a>
 }, {
 <div class="hidden">
     @for author in authors {
@@ -58,8 +58,8 @@
                 </h1>
 
                 @if ctx.2.clone().and_then(|u| u.is_author_in(ctx.0, &blog).ok()).unwrap_or(false) {
-                    <a href="@uri!(posts::new: blog = &blog.fqn)" class="button" dir="auto">@i18n!(ctx.1, "New article")</a>
-                    <a href="@uri!(blogs::edit: name = &blog.fqn)" class="button" dir="auto">@i18n!(ctx.1, "Edit")</a>
+                    <a href="@uri!(posts::new: blog = &blog.fqn.to_string())" class="button" dir="auto">@i18n!(ctx.1, "New article")</a>
+                    <a href="@uri!(blogs::edit: name = &blog.fqn.to_string())" class="button" dir="auto">@i18n!(ctx.1, "Edit")</a>
                 }
             </div>
 
@@ -76,7 +76,7 @@
     <section>
         <h2 dir="auto">
             @i18n!(ctx.1, "Latest articles")
-            <small><a href="@uri!(blogs::atom_feed: name = &blog.fqn)" title="Atom feed">@icon!("rss")</a></small>
+            <small><a href="@uri!(blogs::atom_feed: name = &blog.fqn.to_string())" title="Atom feed">@icon!("rss")</a></small>
         </h2>
         @if posts.is_empty() {
             <p dir="auto">@i18n!(ctx.1, "No posts to see here yet.")</p>

@@ -77,6 +77,7 @@ impl ActorFactoryArgs<(Arc<Searcher>, DbPool)> for SearchActor {
 #[cfg(test)]
 mod tests {
     use crate::diesel::Connection;
+    use crate::Fqn;
     use crate::{
         blog_authors::{BlogAuthor, NewBlogAuthor},
         blogs::{Blog, NewBlog},
@@ -90,7 +91,7 @@ mod tests {
         Connection as Conn, CONFIG,
     };
     use diesel::r2d2::ConnectionManager;
-    use plume_common::utils::random_hex;
+    use plume_common::utils::{make_fqn, random_hex};
     use std::str::FromStr;
     use std::sync::Arc;
     use std::thread::sleep;
@@ -190,13 +191,22 @@ mod tests {
                 },
             )
             .unwrap();
+            let title = random_hex();
             let blog = NewBlog {
                 instance_id: instance.id,
                 actor_id: random_hex(),
                 ap_url: random_hex(),
                 inbox_url: random_hex(),
                 outbox_url: random_hex(),
-                ..Default::default()
+                fqn: Fqn::new_local(make_fqn(&title)).unwrap(),
+                title,
+                summary: Default::default(),
+                summary_html: Default::default(),
+                private_key: Default::default(),
+                public_key: Default::default(),
+                icon_id: Default::default(),
+                banner_id: Default::default(),
+                theme: Default::default(),
             };
             let blog = Blog::insert(conn, blog).unwrap();
             BlogAuthor::insert(

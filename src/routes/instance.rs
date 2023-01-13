@@ -407,7 +407,7 @@ pub fn interact(conn: DbConn, user: Option<User>, target: String) -> Option<Redi
 
     if let Ok(post) = Post::from_id(&conn, &target, None, CONFIG.proxy()) {
         return Some(Redirect::to(uri!(
-            super::posts::details: blog = post.get_blog(&conn).expect("Can't retrieve blog").fqn,
+            super::posts::details: blog = post.get_blog(&conn).expect("Can't retrieve blog").fqn.to_string(),
             slug = &post.slug,
             responding_to = _
         )));
@@ -418,7 +418,7 @@ pub fn interact(conn: DbConn, user: Option<User>, target: String) -> Option<Redi
             let post = comment.get_post(&conn).expect("Can't retrieve post");
             return Some(Redirect::to(uri!(
                 super::posts::details: blog =
-                    post.get_blog(&conn).expect("Can't retrieve blog").fqn,
+                    post.get_blog(&conn).expect("Can't retrieve blog").fqn.to_string(),
                 slug = &post.slug,
                 responding_to = comment.id
             )));

@@ -385,7 +385,7 @@ mod tests {
     use super::valid_slug;
     use crate::init_rocket;
     use diesel::Connection;
-    use plume_common::utils::random_hex;
+    use plume_common::utils::{random_hex, make_fqn};
     use plume_models::{
         blog_authors::{BlogAuthor, NewBlogAuthor},
         blogs::{Blog, NewBlog},
@@ -394,7 +394,7 @@ mod tests {
         post_authors::{NewPostAuthor, PostAuthor},
         posts::{NewPost, Post},
         safe_string::SafeString,
-        users::{NewUser, User, AUTH_COOKIE},
+        users::{NewUser, User, AUTH_COOKIE}, Fqn,
     };
     use rocket::{
         http::{Cookie, Cookies, SameSite},
@@ -424,9 +424,9 @@ mod tests {
     fn edit_link_within_post_card() {
         let (client, (instance, user, blog, post)) = setup();
 
-        let blog_path = uri!(super::activity_details: name = &blog.fqn).to_string();
+        let blog_path = uri!(super::activity_details: name = &blog.fqn.to_string()).to_string();
         let edit_link = uri!(
-            super::super::posts::edit: blog = &blog.fqn,
+            super::super::posts::edit: blog = &blog.fqn.to_string(),
             slug = &post.slug
         )
         .to_string();
@@ -497,14 +497,23 @@ mod tests {
                 ..Default::default()
             };
             let user = User::insert(conn, user).unwrap();
+            let title = random_hex();
             let blog = NewBlog {
                 instance_id: instance.id,
-                title: random_hex(),
+                fqn: Fqn::new_local(make_fqn(&title)).unwrap(),
+                title,
                 actor_id: random_hex(),
                 ap_url: random_hex(),
                 inbox_url: random_hex(),
                 outbox_url: random_hex(),
-                ..Default::default()
+                summary: Default::default(),
+                summary_html: Default::default(),
+                public_key: Default::default(),
+                private_key: Default::default(),
+                icon_id: Default::default(),
+                banner_id: Default::default(),
+                theme: Default::default(),
+                
             };
             let blog = Blog::insert(conn, blog).unwrap();
             BlogAuthor::insert(
