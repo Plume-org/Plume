@@ -397,11 +397,12 @@ mod tests {
         post_authors::{NewPostAuthor, PostAuthor},
         posts::{NewPost, Post},
         safe_string::SafeString,
+        search::Searcher,
         users::{NewUser, User, AUTH_COOKIE},
-        Config, Fqn, SearchTokenizerConfig, search::Searcher,
+        Config, Fqn, SearchTokenizerConfig,
     };
     use rocket::{
-        http::{Cookie, Cookies, SameSite, Status},
+        http::{ContentType, Cookie, Cookies, SameSite, Status},
         local::{Client, LocalRequest},
     };
 
@@ -519,6 +520,7 @@ mod tests {
                 inbox_url: random_hex(),
                 outbox_url: random_hex(),
                 followers_endpoint: random_hex(),
+                fqn: random_hex(),
                 ..Default::default()
             };
             let user = User::insert(conn, user).unwrap();
@@ -592,5 +594,39 @@ mod tests {
     fn test_valid_slug() {
         assert!(valid_slug("Blog Title").is_ok());
         assert!(valid_slug("ブログ タイトル").is_ok());
+    }
+
+    #[test]
+    fn create_blog_with_same_title_twice() {
+        let (client, (instance, user, blog, post)) = setup();
+
+        let new_path = uri!(super::new).to_string();
+        let request = client.get(new_path);
+        login(&request, &user);
+        let mut response = request.dispatch();
+        let body = response.body_string().unwrap();
+        let prefix = r#"<input type="hidden" name="csrf-token" value=""#;
+        let pos = body.find(prefix).unwrap();
+        let token = body[pos + prefix.len()..pos + prefix.len() + 123].to_string();
+
+        let create_path = uri!(super::create).to_string();
+        let response = client
+            .post(&create_path)
+            .body(format!("title=My%20Blog&csrf-token={}", &token))
+            .header(ContentType::Form)
+            .dispatch();
+        let first_attempt = response;
+
+        let response = client
+            .post(&create_path)
+            .body(format!("title=My%20Blog&csrf-token={}", &token))
+            .header(ContentType::Form)
+            .dispatch();
+        let second_attempt = response;
+
+        teardown((&client, (instance, user, blog, post)));
+
+        assert_eq!(first_attempt.status(), Status::SeeOther);
+        assert_eq!(second_attempt.status(), Status::SeeOther);
     }
 }
