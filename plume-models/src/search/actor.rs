@@ -91,7 +91,7 @@ mod tests {
         Connection as Conn, CONFIG,
     };
     use diesel::r2d2::ConnectionManager;
-    use plume_common::utils::{make_fqn, random_hex};
+    use plume_common::utils::random_hex;
     use std::str::FromStr;
     use std::sync::Arc;
     use std::thread::sleep;
@@ -198,7 +198,7 @@ mod tests {
                 ap_url: random_hex(),
                 inbox_url: random_hex(),
                 outbox_url: random_hex(),
-                fqn: Fqn::new_local(make_fqn(&title)).unwrap(),
+                fqn: Fqn::make_local(&title).unwrap(),
                 title,
                 summary: Default::default(),
                 summary_html: Default::default(),

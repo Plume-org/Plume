@@ -25,7 +25,7 @@ use plume_common::{
         sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source,
         SourceProperty, ToAsString, ToAsUri,
     },
-    utils::{iri_percent_encode_seg, make_fqn},
+    utils::iri_percent_encode_seg,
 };
 use webfinger::*;
 
@@ -89,11 +89,10 @@ impl Blog {
         if inserted.fqn.to_string().is_empty() {
             // This might not enough for some titles such as all-Japanese title,
             // but better than doing nothing.
-            let username = make_fqn(&inserted.title);
             if instance.local {
-                inserted.fqn = Fqn::new_local(username)?;
+                inserted.fqn = Fqn::make_local(&inserted.title)?;
             } else {
-                inserted.fqn = Fqn::new_remote(username, instance.public_domain)?;
+                inserted.fqn = Fqn::make_remote(&inserted.title, instance.public_domain)?;
             }
         }
 
@@ -555,7 +554,7 @@ impl NewBlog {
         let (pub_key, priv_key) = sign::gen_keypair();
         Ok(NewBlog {
             actor_id,
-            fqn: Fqn::new_local(make_fqn(&title))?,
+            fqn: Fqn::make_local(&title)?,
             title,
             summary,
             instance_id,

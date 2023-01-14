@@ -387,7 +387,7 @@ mod tests {
     use super::valid_slug;
     use crate::init_rocket;
     use diesel::Connection;
-    use plume_common::utils::{make_fqn, random_hex};
+    use plume_common::utils::random_hex;
     use plume_models::{
         blog_authors::{BlogAuthor, NewBlogAuthor},
         blogs::{Blog, NewBlog},
@@ -527,7 +527,7 @@ mod tests {
             let title = random_hex();
             let blog = NewBlog {
                 instance_id: instance.id,
-                fqn: Fqn::new_local(make_fqn(&title)).unwrap(),
+                fqn: Fqn::make_local(&title).unwrap(),
                 title,
                 actor_id: random_hex(),
                 ap_url: random_hex(),
