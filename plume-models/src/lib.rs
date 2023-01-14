@@ -20,6 +20,7 @@ use activitystreams::iri_string;
 use diesel::backend::Backend;
 use diesel::sql_types::Text;
 use diesel::types::{FromSql, ToSql};
+use heck::ToUpperCamelCase;
 pub use lettre;
 pub use lettre::smtp;
 use once_cell::sync::Lazy;
@@ -357,6 +358,21 @@ impl Fqn {
             PreferredUsername::new(username).map_err(|_| Error::InvalidValue)?,
             domain,
         ))
+    }
+
+    pub fn make_local_string(base: &str) -> String {
+        base.to_upper_camel_case()
+            .chars()
+            .filter(|c| c.is_ascii_alphanumeric())
+            .collect()
+    }
+
+    pub fn make_local(base: &str) -> Result<Self> {
+        Self::new_local(Self::make_local_string(base))
+    }
+
+    pub fn make_remote(base: &str, domain: String) -> Result<Self> {
+        Self::new_remote(Self::make_local_string(base), domain)
     }
 }
 
