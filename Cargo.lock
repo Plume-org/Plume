@@ -3349,7 +3349,6 @@ dependencies = [
  "chrono",
  "flume",
  "futures 0.3.25",
- "heck",
  "hex",
  "once_cell",
  "openssl",
