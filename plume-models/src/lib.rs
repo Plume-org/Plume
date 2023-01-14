@@ -305,7 +305,7 @@ macro_rules! last {
 }
 
 mod config;
-pub use config::{Config, CONFIG};
+pub use config::{get_rocket_config, Config, SearchTokenizerConfig, CONFIG};
 
 pub fn ap_url(url: &str) -> String {
     format!("https://{}", url)

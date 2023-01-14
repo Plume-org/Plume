@@ -382,29 +382,52 @@ pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
 
 #[cfg(test)]
 mod tests {
+    use std::env::var;
+
     use super::valid_slug;
     use crate::init_rocket;
     use diesel::Connection;
-    use plume_common::utils::{random_hex, make_fqn};
+    use plume_common::utils::{make_fqn, random_hex};
     use plume_models::{
         blog_authors::{BlogAuthor, NewBlogAuthor},
         blogs::{Blog, NewBlog},
         db_conn::{DbConn, DbPool},
+        get_rocket_config,
         instance::{Instance, NewInstance},
         post_authors::{NewPostAuthor, PostAuthor},
         posts::{NewPost, Post},
         safe_string::SafeString,
-        users::{NewUser, User, AUTH_COOKIE}, Fqn,
+        users::{NewUser, User, AUTH_COOKIE},
+        Config, Fqn, SearchTokenizerConfig, search::Searcher,
     };
     use rocket::{
-        http::{Cookie, Cookies, SameSite},
+        http::{Cookie, Cookies, SameSite, Status},
         local::{Client, LocalRequest},
     };
 
     type Models = (Instance, User, Blog, Post);
 
     fn setup() -> (Client, Models) {
-        let rocket = init_rocket();
+        dotenv::from_path(".env.test").unwrap();
+        let config = Config {
+            base_url: var("BASE_URL").unwrap(),
+            db_name: "plume",
+            db_max_size: None,
+            db_min_idle: None,
+            signup: Default::default(),
+            database_url: var("DATABASE_URL").unwrap(),
+            search_index: format!("/tmp/plume_test-{}", random_hex()),
+            search_tokenizers: SearchTokenizerConfig::init(),
+            rocket: get_rocket_config(),
+            logo: Default::default(),
+            default_theme: Default::default(),
+            media_directory: format!("/tmp/plume_test-{}", random_hex()),
+            mail: None,
+            ldap: None,
+            proxy: None,
+        };
+        let _ = Searcher::create(&config.search_index, &config.search_tokenizers).unwrap();
+        let rocket = init_rocket(&config);
         let client = Client::new(rocket).expect("valid rocket instance");
         let dbpool = client.rocket().state::<DbPool>().unwrap();
         let conn = &DbConn(dbpool.get().unwrap());
@@ -413,7 +436,9 @@ mod tests {
     }
 
     fn teardown((client, (instance, user, _blog, _post)): (&Client, Models)) {
-        let dbpool = client.rocket().state::<DbPool>().unwrap();
+        let rocket = client.rocket();
+
+        let dbpool = rocket.state::<DbPool>().unwrap();
         let conn = &DbConn(dbpool.get().unwrap());
 
         user.delete(conn).unwrap();
@@ -513,7 +538,6 @@ mod tests {
                 icon_id: Default::default(),
                 banner_id: Default::default(),
                 theme: Default::default(),
-                
             };
             let blog = Blog::insert(conn, blog).unwrap();
             BlogAuthor::insert(

@@ -41,7 +41,7 @@ pub enum InvalidRocketConfig {
     SecretKey,
 }
 
-fn get_rocket_config() -> Result<RocketConfig, InvalidRocketConfig> {
+pub fn get_rocket_config() -> Result<RocketConfig, InvalidRocketConfig> {
     let mut c = RocketConfig::active().map_err(|_| InvalidRocketConfig::Env)?;
 
     let address = var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned());
