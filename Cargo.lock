@@ -3407,6 +3407,7 @@ dependencies = [
  "diesel_migrations",
  "glob",
  "guid-create",
+ "heck",
  "itertools 0.10.5",
  "lazy_static",
  "ldap3",
