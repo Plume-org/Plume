@@ -1,5 +1,4 @@
 use activitystreams::iri_string::percent_encode::PercentEncodedForIri;
-use heck::ToUpperCamelCase;
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{html, CodeBlockKind, CowStr, Event, LinkType, Options, Parser, Tag};
 use regex_syntax::is_word_character;
@@ -23,13 +22,6 @@ pub fn random_hex() -> String {
  */
 pub fn iri_percent_encode_seg(segment: &str) -> String {
     PercentEncodedForIri::from_path_segment(segment).to_string()
-}
-
-pub fn make_fqn(name: &str) -> String {
-    name.to_upper_camel_case()
-        .chars()
-        .filter(|c| c.is_ascii_alphanumeric())
-        .collect()
 }
 
 #[derive(Debug)]
