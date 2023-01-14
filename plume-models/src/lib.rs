@@ -24,6 +24,7 @@ use heck::ToUpperCamelCase;
 pub use lettre;
 pub use lettre::smtp;
 use once_cell::sync::Lazy;
+use plume_common::activity_pub::PreferredUsernameError;
 use plume_common::activity_pub::{inbox::InboxError, request, sign, PreferredUsername};
 use posts::PostEvent;
 use riker::actors::{channel, ActorSystem, ChannelRef, SystemBuilder};
@@ -172,6 +173,13 @@ impl From<InboxError<Error>> for Error {
 impl From<request::Error> for Error {
     fn from(_err: request::Error) -> Error {
         Error::Request
+    }
+}
+
+impl From<PreferredUsernameError> for Error {
+    fn from(err: PreferredUsernameError) -> Error {
+        tracing::trace!("{:?}", err);
+        Error::InvalidValue
     }
 }
 
@@ -349,13 +357,13 @@ pub enum Fqn {
 impl Fqn {
     pub fn new_local(username: String) -> Result<Self> {
         Ok(Self::Local(
-            PreferredUsername::new(username).map_err(|_| Error::InvalidValue)?,
+            PreferredUsername::new(username)?,
         ))
     }
 
     pub fn new_remote(username: String, domain: String) -> Result<Self> {
         Ok(Self::Remote(
-            PreferredUsername::new(username).map_err(|_| Error::InvalidValue)?,
+            PreferredUsername::new(username)?,
             domain,
         ))
     }
