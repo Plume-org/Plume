@@ -16,7 +16,7 @@ use plume_models::{
     migrations::IMPORTED_MIGRATIONS,
     remote_fetch_actor::RemoteFetchActor,
     search::{actor::SearchActor, Searcher as UnmanagedSearcher},
-    Connection, CONFIG,
+    Config, Connection, CONFIG,
 };
 use rocket_csrf::CsrfFairingBuilder;
 use scheduled_thread_pool::ScheduledThreadPool;
@@ -47,12 +47,12 @@ include!(concat!(env!("OUT_DIR"), "/templates.rs"));
 compile_i18n!();
 
 /// Initializes a database pool.
-fn init_pool() -> Option<DbPool> {
+fn init_pool(config: &Config) -> Option<DbPool> {
     let manager = ConnectionManager::<Connection>::new(CONFIG.database_url.as_str());
     let mut builder = DbPool::builder()
         .connection_customizer(Box::new(PragmaForeignKey))
-        .min_idle(CONFIG.db_min_idle);
-    if let Some(max_size) = CONFIG.db_max_size {
+        .min_idle(config.db_min_idle);
+    if let Some(max_size) = config.db_max_size {
         builder = builder.max_size(max_size);
     };
     let pool = builder.build(manager).ok()?;
@@ -63,8 +63,8 @@ fn init_pool() -> Option<DbPool> {
     Some(pool)
 }
 
-pub(crate) fn init_rocket() -> rocket::Rocket {
-    let dbpool = init_pool().expect("main: database pool initialization error");
+pub(crate) fn init_rocket(config: &Config) -> rocket::Rocket {
+    let dbpool = init_pool(config).expect("main: database pool initialization error");
     if IMPORTED_MIGRATIONS
         .is_pending(&dbpool.get().unwrap())
         .unwrap_or(true)
@@ -84,8 +84,8 @@ Then try to restart Plume.
     let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
     // we want a fast exit here, so
     let searcher = Arc::new(UnmanagedSearcher::open_or_recreate(
-        &CONFIG.search_index,
-        &CONFIG.search_tokenizers,
+        &config.search_index,
+        &config.search_tokenizers,
     ));
     RemoteFetchActor::init(dbpool.clone());
     SearchActor::init(searcher.clone(), dbpool.clone());
@@ -105,12 +105,12 @@ Then try to restart Plume.
     .expect("Error setting Ctrl-c handler");
 
     let mail = mail::init();
-    if mail.is_none() && CONFIG.rocket.as_ref().unwrap().environment.is_prod() {
+    if mail.is_none() && config.rocket.as_ref().unwrap().environment.is_prod() {
         warn!("Warning: the email server is not configured (or not completely).");
         warn!("Please refer to the documentation to see how to configure it.");
     }
 
-    rocket::custom(CONFIG.rocket.clone().unwrap())
+    rocket::custom(config.rocket.clone().unwrap())
         .mount(
             "/",
             routes![
@@ -281,7 +281,7 @@ and https://docs.joinplu.me/installation/init for more info.
         )
         .get_matches();
 
-    let rocket = init_rocket();
+    let rocket = init_rocket(&CONFIG);
 
     #[cfg(feature = "test")]
     let rocket = rocket.mount("/test", routes![test_routes::health,]);
