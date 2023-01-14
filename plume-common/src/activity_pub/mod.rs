@@ -1,4 +1,3 @@
-use ::anyhow::{self, anyhow};
 use activitystreams::{
     actor::{ApActor, Group, Person},
     base::{AnyBase, Base, Extends},
@@ -247,16 +246,24 @@ pub trait IntoId {
     fn into_id(self) -> Id;
 }
 
+#[derive(thiserror::Error, Debug)]
+pub enum PreferredUsernameError {
+    #[error("preferredUsername must be longer than 2 characters")]
+    TooShort,
+    #[error("Invaliad character at {character:?}: {position:?}")]
+    InvalidCharacter { character: char, position: usize },
+}
+
 #[repr(transparent)]
 #[derive(Shrinkwrap, PartialEq, Eq, Clone, Serialize, Deserialize, Debug)]
 pub struct PreferredUsername(String);
 
 // Mastodon allows only /[a-z0-9_]+([a-z0-9_\.-]+[a-z0-9_]+)?/i for `preferredUsername`
 impl PreferredUsername {
-    fn validate(name: &str) -> anyhow::Result<()> {
+    fn validate(name: &str) -> std::result::Result<(), PreferredUsernameError> {
         let len = name.len();
         if len < 3 {
-            return Err(anyhow!("FQN must be longer than 2 characters"));
+            return Err(PreferredUsernameError::TooShort);
         }
         match name.chars().enumerate().find(|(pos, c)| {
             if pos == &0 || pos == &(len - 1) {
@@ -268,7 +275,10 @@ impl PreferredUsername {
                 }
             }
         }) {
-            Some((pos, c)) => Err(anyhow!("Invaliad character at {}: {}", pos, c)),
+            Some((pos, c)) => Err(PreferredUsernameError::InvalidCharacter {
+                character: c,
+                position: pos,
+            }),
             None => Ok(()),
         }
     }
@@ -280,7 +290,7 @@ impl PreferredUsername {
         Self(name)
     }
 
-    pub fn new(name: String) -> anyhow::Result<Self> {
+    pub fn new(name: String) -> std::result::Result<Self, PreferredUsernameError> {
         Self::validate(&name).map(|_| unsafe { Self::new_unchecked(name) })
     }
 }
@@ -292,7 +302,7 @@ impl fmt::Display for PreferredUsername {
 }
 
 impl TryFrom<String> for PreferredUsername {
-    type Error = anyhow::Error;
+    type Error = PreferredUsernameError;
 
     fn try_from(name: String) -> std::result::Result<Self, Self::Error> {
         Self::new(name)
@@ -300,7 +310,7 @@ impl TryFrom<String> for PreferredUsername {
 }
 
 impl TryFrom<&str> for PreferredUsername {
-    type Error = anyhow::Error;
+    type Error = PreferredUsernameError;
 
     fn try_from(name: &str) -> std::result::Result<Self, Self::Error> {
         Self::new(name.to_owned())
@@ -320,7 +330,7 @@ impl AsRef<str> for PreferredUsername {
 }
 
 impl FromStr for PreferredUsername {
-    type Err = anyhow::Error;
+    type Err = PreferredUsernameError;
 
     fn from_str(name: &str) -> std::result::Result<Self, Self::Err> {
         name.try_into()
