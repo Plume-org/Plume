@@ -3361,6 +3361,7 @@ dependencies = [
  "serde_json",
  "shrinkwraprs",
  "syntect",
+ "thiserror",
  "tokio 1.24.1",
  "tracing",
  "url 2.3.1",
