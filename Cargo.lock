@@ -2877,17 +2877,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "nom_locate"
-version = "4.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37794436ca3029a3089e0b95d42da1f0b565ad271e4d3bb4bad0c7bb70b10605"
-dependencies = [
- "bytecount",
- "memchr",
- "nom 7.1.2",
-]
-
-[[package]]
 name = "notify"
 version = "4.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2943,6 +2932,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0638a1c9d0a3c0914158145bc76cff373a75a627e6ecbfb71cbe6f453a5a19b0"
 dependencies = [
  "autocfg 1.1.0",
+ "num-bigint",
  "num-integer",
  "num-traits 0.2.15",
 ]
@@ -4124,15 +4114,14 @@ dependencies = [
 
 [[package]]
 name = "rsass"
-version = "0.26.0"
+version = "0.27.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "665387d3be91521de331a04cc7118c8c129ffe43c5f4e8a61e78990850046b5a"
+checksum = "a43695dd28122f6c684273de89796a56a98e02e9694b8ab57b160fdc6e6d69af"
 dependencies = [
  "arc-swap",
  "fastrand",
  "lazy_static",
  "nom 7.1.2",
- "nom_locate",
  "num-bigint",
  "num-integer",
  "num-rational",
