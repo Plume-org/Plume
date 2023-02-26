@@ -1,6 +1,5 @@
 use crate::{
     comment_seers::{CommentSeers, NewCommentSeers},
-    db_conn::DbConn,
     instance::Instance,
     medias::Media,
     mentions::Mention,
@@ -111,7 +110,7 @@ impl Comment {
                 .unwrap_or(false)
     }
 
-    pub fn to_activity(&self, conn: &DbConn) -> Result<Note> {
+    pub fn to_activity(&self, conn: &Connection) -> Result<Note> {
         let author = User::get(conn, self.author_id)?;
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
@@ -149,7 +148,7 @@ impl Comment {
         Ok(note)
     }
 
-    pub fn create_activity(&self, conn: &DbConn) -> Result<Create> {
+    pub fn create_activity(&self, conn: &Connection) -> Result<Create> {
         let author = User::get(conn, self.author_id)?;
 
         let note = self.to_activity(conn)?;
@@ -217,15 +216,15 @@ impl Comment {
     }
 }
 
-impl FromId<DbConn> for Comment {
+impl FromId<Connection> for Comment {
     type Error = Error;
     type Object = Note;
 
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &DbConn, note: Note) -> Result<Self> {
+    fn from_activity(conn: &Connection, note: Note) -> Result<Self> {
         let comm = {
             let previous_url = note
                 .in_reply_to()
@@ -354,21 +353,21 @@ impl FromId<DbConn> for Comment {
     }
 }
 
-impl AsObject<User, Create, &DbConn> for Comment {
+impl AsObject<User, Create, &Connection> for Comment {
     type Error = Error;
     type Output = Self;
 
-    fn activity(self, _conn: &DbConn, _actor: User, _id: &str) -> Result<Self> {
+    fn activity(self, _conn: &Connection, _actor: User, _id: &str) -> Result<Self> {
         // The actual creation takes place in the FromId impl
         Ok(self)
     }
 }
 
-impl AsObject<User, Delete, &DbConn> for Comment {
+impl AsObject<User, Delete, &Connection> for Comment {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
         if self.author_id != actor.id {
             return Err(Error::Unauthorized);
         }
@@ -387,8 +386,8 @@ impl AsObject<User, Delete, &DbConn> for Comment {
         diesel::update(comments::table)
             .filter(comments::in_response_to_id.eq(self.id))
             .set(comments::in_response_to_id.eq(self.in_response_to_id))
-            .execute(&**conn)?;
-        diesel::delete(&self).execute(&**conn)?;
+            .execute(conn)?;
+        diesel::delete(&self).execute(conn)?;
         Ok(())
     }
 }

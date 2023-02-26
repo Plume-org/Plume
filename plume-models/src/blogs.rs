@@ -1,6 +1,6 @@
 use crate::{
-    db_conn::DbConn, instance::*, medias::Media, posts::Post, safe_string::SafeString,
-    schema::blogs, users::User, Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
+    instance::*, medias::Media, posts::Post, safe_string::SafeString, schema::blogs, users::User,
+    Connection, Error, PlumeRocket, Result, CONFIG, ITEMS_PER_PAGE,
 };
 use activitystreams::{
     actor::{ApActor, ApActorExt, AsApActor, Group},
@@ -142,10 +142,10 @@ impl Blog {
             .map_err(Error::from)
     }
 
-    pub fn find_by_fqn(conn: &DbConn, fqn: &str) -> Result<Blog> {
+    pub fn find_by_fqn(conn: &Connection, fqn: &str) -> Result<Blog> {
         let from_db = blogs::table
             .filter(blogs::fqn.eq(fqn))
-            .first(&**conn)
+            .first(conn)
             .optional()?;
         if let Some(from_db) = from_db {
             Ok(from_db)
@@ -154,7 +154,7 @@ impl Blog {
         }
     }
 
-    fn fetch_from_webfinger(conn: &DbConn, acct: &str) -> Result<Blog> {
+    fn fetch_from_webfinger(conn: &Connection, acct: &str) -> Result<Blog> {
         resolve_with_prefix(Prefix::Group, acct.to_owned(), true)?
             .links
             .into_iter()
@@ -372,15 +372,15 @@ impl IntoId for Blog {
     }
 }
 
-impl FromId<DbConn> for Blog {
+impl FromId<Connection> for Blog {
     type Error = Error;
     type Object = CustomGroup;
 
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &DbConn, acct: CustomGroup) -> Result<Self> {
+    fn from_activity(conn: &Connection, acct: CustomGroup) -> Result<Self> {
         let (name, outbox_url, inbox_url) = {
             let actor = acct.ap_actor_ref();
             let name = actor

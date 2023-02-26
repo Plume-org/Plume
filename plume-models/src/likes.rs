@@ -1,6 +1,6 @@
 use crate::{
-    db_conn::DbConn, instance::Instance, notifications::*, posts::Post, schema::likes, timeline::*,
-    users::User, Connection, Error, Result, CONFIG,
+    instance::Instance, notifications::*, posts::Post, schema::likes, timeline::*, users::User,
+    Connection, Error, Result, CONFIG,
 };
 use activitystreams::{
     activity::{ActorAndObjectRef, Like as LikeAct, Undo},
@@ -85,11 +85,11 @@ impl Like {
     }
 }
 
-impl AsObject<User, LikeAct, &DbConn> for Post {
+impl AsObject<User, LikeAct, &Connection> for Post {
     type Error = Error;
     type Output = Like;
 
-    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Like> {
+    fn activity(self, conn: &Connection, actor: User, id: &str) -> Result<Like> {
         let res = Like::insert(
             conn,
             NewLike {
@@ -105,15 +105,15 @@ impl AsObject<User, LikeAct, &DbConn> for Post {
     }
 }
 
-impl FromId<DbConn> for Like {
+impl FromId<Connection> for Like {
     type Error = Error;
     type Object = LikeAct;
 
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
         Like::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &DbConn, act: LikeAct) -> Result<Self> {
+    fn from_activity(conn: &Connection, act: LikeAct) -> Result<Self> {
         let res = Like::insert(
             conn,
             NewLike {
@@ -154,17 +154,17 @@ impl FromId<DbConn> for Like {
     }
 }
 
-impl AsObject<User, Undo, &DbConn> for Like {
+impl AsObject<User, Undo, &Connection> for Like {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
         if actor.id == self.user_id {
-            diesel::delete(&self).execute(&**conn)?;
+            diesel::delete(&self).execute(conn)?;
 
             // delete associated notification if any
             if let Ok(notif) = Notification::find(conn, notification_kind::LIKE, self.id) {
-                diesel::delete(&notif).execute(&**conn)?;
+                diesel::delete(&notif).execute(conn)?;
             }
             Ok(())
         } else {

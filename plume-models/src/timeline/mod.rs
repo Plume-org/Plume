@@ -1,5 +1,4 @@
 use crate::{
-    db_conn::DbConn,
     lists::List,
     posts::Post,
     schema::{posts, timeline, timeline_definition},
@@ -12,7 +11,7 @@ use std::ops::Deref;
 pub(crate) mod query;
 
 pub use self::query::Kind;
-use self::query::{QueryError, TimelineQuery};
+pub use self::query::{QueryError, TimelineQuery};
 
 #[derive(Clone, Debug, PartialEq, Eq, Queryable, Identifiable, AsChangeset)]
 #[table_name = "timeline_definition"]
@@ -220,7 +219,7 @@ impl Timeline {
             .map_err(Error::from)
     }
 
-    pub fn add_to_all_timelines(conn: &DbConn, post: &Post, kind: Kind<'_>) -> Result<()> {
+    pub fn add_to_all_timelines(conn: &Connection, post: &Post, kind: Kind<'_>) -> Result<()> {
         let timelines = timeline_definition::table
             .load::<Self>(conn.deref())
             .map_err(Error::from)?;
@@ -246,7 +245,26 @@ impl Timeline {
         Ok(())
     }
 
-    pub fn matches(&self, conn: &DbConn, post: &Post, kind: Kind<'_>) -> Result<bool> {
+    pub fn remove_post(&self, conn: &Connection, post: &Post) -> Result<bool> {
+        if self.includes_post(conn, post)? {
+            return Ok(false);
+        }
+        diesel::delete(
+            timeline::table
+                .filter(timeline::timeline_id.eq(self.id))
+                .filter(timeline::post_id.eq(post.id)),
+        )
+        .execute(conn)?;
+        Ok(true)
+    }
+
+    pub fn remove_all_posts(&self, conn: &Connection) -> Result<u64> {
+        let count = diesel::delete(timeline::table.filter(timeline::timeline_id.eq(self.id)))
+            .execute(conn)?;
+        Ok(count as u64)
+    }
+
+    pub fn matches(&self, conn: &Connection, post: &Post, kind: Kind<'_>) -> Result<bool> {
         let query = TimelineQuery::parse(&self.query)?;
         query.matches(conn, self, post, kind)
     }

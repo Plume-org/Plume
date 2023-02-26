@@ -1,6 +1,6 @@
 use crate::{
-    db_conn::DbConn, instance::Instance, notifications::*, posts::Post, schema::reshares,
-    timeline::*, users::User, Connection, Error, Result, CONFIG,
+    instance::Instance, notifications::*, posts::Post, schema::reshares, timeline::*, users::User,
+    Connection, Error, Result, CONFIG,
 };
 use activitystreams::{
     activity::{ActorAndObjectRef, Announce, Undo},
@@ -113,11 +113,11 @@ impl Reshare {
     }
 }
 
-impl AsObject<User, Announce, &DbConn> for Post {
+impl AsObject<User, Announce, &Connection> for Post {
     type Error = Error;
     type Output = Reshare;
 
-    fn activity(self, conn: &DbConn, actor: User, id: &str) -> Result<Reshare> {
+    fn activity(self, conn: &Connection, actor: User, id: &str) -> Result<Reshare> {
         let conn = conn;
         let reshare = Reshare::insert(
             conn,
@@ -134,15 +134,15 @@ impl AsObject<User, Announce, &DbConn> for Post {
     }
 }
 
-impl FromId<DbConn> for Reshare {
+impl FromId<Connection> for Reshare {
     type Error = Error;
     type Object = Announce;
 
-    fn from_db(conn: &DbConn, id: &str) -> Result<Self> {
+    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
         Reshare::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &DbConn, act: Announce) -> Result<Self> {
+    fn from_activity(conn: &Connection, act: Announce) -> Result<Self> {
         let res = Reshare::insert(
             conn,
             NewReshare {
@@ -183,17 +183,17 @@ impl FromId<DbConn> for Reshare {
     }
 }
 
-impl AsObject<User, Undo, &DbConn> for Reshare {
+impl AsObject<User, Undo, &Connection> for Reshare {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &DbConn, actor: User, _id: &str) -> Result<()> {
+    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
         if actor.id == self.user_id {
-            diesel::delete(&self).execute(&**conn)?;
+            diesel::delete(&self).execute(conn)?;
 
             // delete associated notification if any
             if let Ok(notif) = Notification::find(conn, notification_kind::RESHARE, self.id) {
-                diesel::delete(&notif).execute(&**conn)?;
+                diesel::delete(&notif).execute(conn)?;
             }
 
             Ok(())

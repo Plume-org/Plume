@@ -1,12 +1,11 @@
 use crate::{
     blogs::Blog,
-    db_conn::DbConn,
     lists::{self, ListType},
     posts::Post,
     tags::Tag,
     timeline::Timeline,
     users::User,
-    Result,
+    Connection, Result,
 };
 use plume_common::activity_pub::inbox::AsActor;
 use whatlang::{self, Lang};
@@ -155,7 +154,7 @@ enum TQ<'a> {
 impl<'a> TQ<'a> {
     fn matches(
         &self,
-        conn: &DbConn,
+        conn: &Connection,
         timeline: &Timeline,
         post: &Post,
         kind: Kind<'_>,
@@ -200,7 +199,7 @@ enum Arg<'a> {
 impl<'a> Arg<'a> {
     pub fn matches(
         &self,
-        conn: &DbConn,
+        conn: &Connection,
         timeline: &Timeline,
         post: &Post,
         kind: Kind<'_>,
@@ -225,7 +224,7 @@ enum WithList {
 impl WithList {
     pub fn matches(
         &self,
-        conn: &DbConn,
+        conn: &Connection,
         timeline: &Timeline,
         post: &Post,
         list: &List<'_>,
@@ -361,7 +360,7 @@ enum Bool {
 impl Bool {
     pub fn matches(
         &self,
-        conn: &DbConn,
+        conn: &Connection,
         timeline: &Timeline,
         post: &Post,
         kind: Kind<'_>,
@@ -654,7 +653,7 @@ impl<'a> TimelineQuery<'a> {
 
     pub fn matches(
         &self,
-        conn: &DbConn,
+        conn: &Connection,
         timeline: &Timeline,
         post: &Post,
         kind: Kind<'_>,

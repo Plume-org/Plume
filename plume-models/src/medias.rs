@@ -1,6 +1,6 @@
 use crate::{
-    ap_url, db_conn::DbConn, instance::Instance, safe_string::SafeString, schema::medias,
-    users::User, Connection, Error, Result, CONFIG,
+    ap_url, instance::Instance, safe_string::SafeString, schema::medias, users::User, Connection,
+    Error, Result, CONFIG,
 };
 use activitystreams::{object::Image, prelude::*};
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -206,7 +206,7 @@ impl Media {
     }
 
     // TODO: merge with save_remote?
-    pub fn from_activity(conn: &DbConn, image: &Image) -> Result<Media> {
+    pub fn from_activity(conn: &Connection, image: &Image) -> Result<Media> {
         let remote_url = image
             .url()
             .and_then(|url| url.to_as_uri())
@@ -258,7 +258,7 @@ impl Media {
                     updated = true;
                 }
                 if updated {
-                    diesel::update(&media).set(&media).execute(&**conn)?;
+                    diesel::update(&media).set(&media).execute(conn)?;
                 }
                 Ok(media)
             })

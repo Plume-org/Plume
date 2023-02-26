@@ -297,6 +297,28 @@ impl List {
             .map_err(Error::from)
     }
 
+    pub fn delete(&self, conn: &Connection) -> Result<()> {
+        if let Some(user_id) = self.user_id {
+            diesel::delete(
+                lists::table
+                    .filter(lists::user_id.eq(user_id))
+                    .filter(lists::name.eq(&self.name)),
+            )
+            .execute(conn)
+            .map(|_| ())
+            .map_err(Error::from)
+        } else {
+            diesel::delete(
+                lists::table
+                    .filter(lists::user_id.is_null())
+                    .filter(lists::name.eq(&self.name)),
+            )
+            .execute(conn)
+            .map(|_| ())
+            .map_err(Error::from)
+        }
+    }
+
     func! {set: set_users, User, add_users}
     func! {set: set_blogs, Blog, add_blogs}
     func! {set: set_words, Word, add_words}
