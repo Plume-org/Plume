@@ -1,4 +1,4 @@
-FROM rust:1-buster
+FROM rust:1
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 #install native/circleci/build dependancies
@@ -14,6 +14,7 @@ RUN apt update &&\
 
 #stick rust environment
 COPY rust-toolchain ./
+RUN rustup component add rustfmt clippy
 
 #compile some deps
 RUN cargo install wasm-pack &&\

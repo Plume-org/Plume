@@ -3,6 +3,7 @@ use crate::{
     routes::{errors::ErrorPage, RespondOrRedirect},
     template_utils::{IntoContext, Ructe},
 };
+
 use plume_models::{
     db_conn::DbConn, email_signups::EmailSignup, instance::Instance, lettre::Transport, signups,
     Error, PlumeRocket, CONFIG,
@@ -13,7 +14,11 @@ use rocket::{
     response::{Flash, Redirect},
     State,
 };
-use std::sync::{Arc, Mutex};
+use std::{
+    borrow::Cow,
+    collections::HashMap,
+    sync::{Arc, Mutex},
+};
 use tracing::warn;
 use validator::{Validate, ValidationError, ValidationErrors};
 
@@ -105,6 +110,26 @@ pub fn create(
                 render!(email_signups::create(&(&conn, &rockets).to_context())).into()
             }
             Error::NotFound => render!(errors::not_found(&(&conn, &rockets).to_context())).into(),
+            Error::Blocklisted(show, msg) => {
+                let mut errors = ValidationErrors::new();
+                if *show {
+                    errors.add(
+                        "email",
+                        ValidationError {
+                            code: Cow::from("blocklisted"),
+                            message: Some(Cow::from(msg.clone())),
+                            params: HashMap::new(),
+                        },
+                    );
+                }
+                render!(email_signups::new(
+                    &(&conn, &rockets).to_context(),
+                    registration_open,
+                    &form,
+                    errors
+                ))
+                .into()
+            }
             _ => render!(errors::not_found(&(&conn, &rockets).to_context())).into(), // FIXME
         });
     }
@@ -153,6 +178,28 @@ pub fn show(
                 )))
             } // TODO: Flash and redirect
             Error::NotFound => return Err(Error::NotFound.into()),
+            Error::Blocklisted(show, msg) => {
+                let mut errors = ValidationErrors::new();
+                if show {
+                    errors.add(
+                        "email",
+                        ValidationError {
+                            code: Cow::from("blocklisted"),
+                            message: Some(Cow::from(msg)),
+                            params: HashMap::new(),
+                        },
+                    );
+                }
+                return Ok(render!(email_signups::new(
+                    &(&conn, &rockets).to_context(),
+                    Instance::get_local()?.open_registrations,
+                    &EmailSignupForm {
+                        email: signup.email.clone(),
+                        email_confirmation: signup.email
+                    },
+                    errors
+                )));
+            }
             _ => return Err(Error::NotFound.into()), // FIXME
         }
     }
@@ -207,12 +254,38 @@ pub fn signup(
             err
         ))));
     }
-    let _user = signup
-        .complete(&conn, form.username.clone(), form.password.clone())
-        .map_err(|e| {
+    let user = signup.complete(&conn, form.username.clone(), form.password.clone());
+    match user {
+        Err(Error::Blocklisted(show, msg)) => {
+            let instance = Instance::get_local().map_err(|_| Status::UnprocessableEntity)?;
+            let mut errors = ValidationErrors::new();
+            if show {
+                errors.add(
+                    "email",
+                    ValidationError {
+                        code: Cow::from("blocklisted"),
+                        message: Some(Cow::from(msg)),
+                        params: HashMap::new(),
+                    },
+                );
+            }
+            return Ok(render!(email_signups::new(
+                &(&conn, &rockets).to_context(),
+                instance.open_registrations,
+                &EmailSignupForm {
+                    email: signup.email.clone(),
+                    email_confirmation: signup.email
+                },
+                errors
+            ))
+            .into());
+        }
+        Err(e) => {
             warn!("{:?}", e);
-            Status::UnprocessableEntity
-        })?;
+            return Err(Status::UnprocessableEntity);
+        }
+        _ => {}
+    }
     Ok(FlashRedirect(Flash::success(
         Redirect::to(uri!(super::session::new: m = _)),
         i18n!(

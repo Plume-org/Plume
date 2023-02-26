@@ -107,12 +107,7 @@ impl Follow {
         res.notify(conn)?;
 
         let accept = res.build_accept(from, target, follow)?;
-        broadcast(
-            &*target,
-            accept,
-            vec![from.clone()],
-            CONFIG.proxy().cloned(),
-        );
+        broadcast(target, accept, vec![from.clone()], CONFIG.proxy().cloned());
         Ok(res)
     }
 

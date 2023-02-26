@@ -50,10 +50,10 @@ impl Resolver<DbConn> for WebfingerResolver {
     fn find(prefix: Prefix, acct: String, conn: DbConn) -> Result<Webfinger, ResolverError> {
         match prefix {
             Prefix::Acct => User::find_by_fqn(&conn, &acct)
-                .and_then(|usr| usr.webfinger(&*conn))
+                .and_then(|usr| usr.webfinger(&conn))
                 .or(Err(ResolverError::NotFound)),
             Prefix::Group => Blog::find_by_fqn(&conn, &acct)
-                .and_then(|blog| blog.webfinger(&*conn))
+                .and_then(|blog| blog.webfinger(&conn))
                 .or(Err(ResolverError::NotFound)),
             Prefix::Custom(_) => Err(ResolverError::NotFound),
         }

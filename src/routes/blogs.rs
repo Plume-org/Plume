@@ -160,7 +160,7 @@ pub fn delete(name: String, conn: DbConn, rockets: PlumeRocket) -> RespondOrRedi
         .and_then(|u| u.is_author_in(&conn, &blog).ok())
         .unwrap_or(false)
     {
-        blog.delete(&*conn).expect("blog::expect: deletion error");
+        blog.delete(&conn).expect("blog::expect: deletion error");
         Flash::success(
             Redirect::to(uri!(super::instance::index)),
             i18n!(rockets.intl.catalog, "Your blog was deleted."),
@@ -364,7 +364,7 @@ pub fn outbox_page(
 #[get("/~/<name>/atom.xml")]
 pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
     let blog = Blog::find_by_fqn(&conn, &name).ok()?;
-    let entries = Post::get_recents_for_blog(&*conn, &blog, 15).ok()?;
+    let entries = Post::get_recents_for_blog(&conn, &blog, 15).ok()?;
     let uri = Instance::get_local()
         .ok()?
         .compute_box("~", &name, "atom.xml");
@@ -454,29 +454,33 @@ mod tests {
                         long_description_html: "<p>Good morning</p>".to_string(),
                         short_description: SafeString::new("Hello"),
                         short_description_html: "<p>Hello</p>".to_string(),
-                        name: random_hex().to_string(),
+                        name: random_hex(),
                         open_registrations: true,
-                        public_domain: random_hex().to_string(),
+                        public_domain: random_hex(),
                     },
                 )
                 .unwrap();
                 Instance::cache_local(conn);
                 instance
             });
-            let mut user = NewUser::default();
-            user.instance_id = instance.id;
-            user.username = random_hex().to_string();
-            user.ap_url = random_hex().to_string();
-            user.inbox_url = random_hex().to_string();
-            user.outbox_url = random_hex().to_string();
-            user.followers_endpoint = random_hex().to_string();
+            let user = NewUser {
+                instance_id: instance.id,
+                username: random_hex(),
+                ap_url: random_hex(),
+                inbox_url: random_hex(),
+                outbox_url: random_hex(),
+                followers_endpoint: random_hex(),
+                ..Default::default()
+            };
             let user = User::insert(conn, user).unwrap();
-            let mut blog = NewBlog::default();
-            blog.instance_id = instance.id;
-            blog.actor_id = random_hex().to_string();
-            blog.ap_url = random_hex().to_string();
-            blog.inbox_url = random_hex().to_string();
-            blog.outbox_url = random_hex().to_string();
+            let blog = NewBlog {
+                instance_id: instance.id,
+                actor_id: random_hex(),
+                ap_url: random_hex(),
+                inbox_url: random_hex(),
+                outbox_url: random_hex(),
+                ..Default::default()
+            };
             let blog = Blog::insert(conn, blog).unwrap();
             BlogAuthor::insert(
                 conn,

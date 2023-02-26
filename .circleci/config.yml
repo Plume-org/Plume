@@ -10,7 +10,7 @@ executors:
         type: boolean
         default: false
     docker:
-    - image: plumeorg/plume-buildenv:v0.7.0
+    - image: plumeorg/plume-buildenv:v0.8.0
     - image: <<#parameters.postgres>>cimg/postgres:14.2<</parameters.postgres>><<^parameters.postgres>>alpine:latest<</parameters.postgres>>
       environment:
         POSTGRES_USER: postgres
@@ -63,7 +63,7 @@ commands:
         type: boolean
         default: false
     steps:
-    - run: rustup component add clippy --toolchain nightly-2022-01-27-x86_64-unknown-linux-gnu
+    - run: rustup component add clippy --toolchain nightly-2022-07-19-x86_64-unknown-linux-gnu
     - run: cargo clippy <<^parameters.no_feature>>--no-default-features --features="${FEATURES}"<</parameters.no_feature>> --release -p <<parameters.package>> -- -D warnings
 
   run_with_coverage:
@@ -112,7 +112,7 @@ jobs:
       name: default
     steps:
     - restore_env
-    - run: rustup component add rustfmt --toolchain nightly-2022-01-27-x86_64-unknown-linux-gnu
+    - run: rustup component add rustfmt --toolchain nightly-2022-07-19-x86_64-unknown-linux-gnu
     - run: cargo fmt --all -- --check
 
   clippy:

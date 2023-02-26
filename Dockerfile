@@ -1,4 +1,4 @@
-FROM rust:1-buster as builder
+FROM rust:1 as builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -18,17 +18,15 @@ COPY script/wasm-deps.sh .
 RUN chmod a+x ./wasm-deps.sh && sleep 1 && ./wasm-deps.sh
 
 WORKDIR /app
-COPY Cargo.toml Cargo.lock rust-toolchain ./
-RUN cargo install wasm-pack
 
 COPY . .
-
+RUN cargo install wasm-pack
 RUN chmod a+x ./script/plume-front.sh && sleep 1 && ./script/plume-front.sh
 RUN cargo install --path ./ --force --no-default-features --features postgres
 RUN cargo install --path plume-cli --force --no-default-features --features postgres
 RUN cargo clean
 
-FROM debian:buster-slim
+FROM debian:stable-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \

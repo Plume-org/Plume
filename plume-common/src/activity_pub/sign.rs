@@ -119,7 +119,7 @@ impl Signable for serde_json::Value {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum SignatureValidity {
     Invalid,
     ValidNoDigest,

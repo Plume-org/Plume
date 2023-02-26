@@ -518,7 +518,8 @@ mod tests {
     use super::*;
     use activitystreams::{
         activity::{ActorAndObjectRef, Create},
-        object::kind::ArticleType,
+        object::{kind::ArticleType, Image},
+        prelude::{ApActorExt, BaseExt, ExtendsExt, ObjectExt},
     };
     use assert_json_diff::assert_json_eq;
     use serde_json::{from_str, json, to_value};
@@ -592,7 +593,7 @@ mod tests {
     }
 
     #[test]
-    fn de_custom_group() {
+    fn se_custom_group() {
         let group = CustomGroup::new(
             ApActor::new("https://example.com/inbox".parse().unwrap(), Group::new()),
             ApSignature {
@@ -623,6 +624,71 @@ mod tests {
             }
         });
         assert_eq!(to_value(group).unwrap(), expected);
+    }
+
+    #[test]
+    fn de_custom_group() {
+        let value: CustomGroup = from_str(
+            r#"
+              {
+                "icon": {
+                  "type": "Image"
+                },
+                "id": "https://plume01.localhost/~/Plume01%20Blog%202/",
+                "image": {
+                  "type": "Image"
+                },
+                "inbox": "https://plume01.localhost/~/Plume01%20Blog%202/inbox",
+                "name": "Plume01 Blog 2",
+                "outbox": "https://plume01.localhost/~/Plume01%20Blog%202/outbox",
+                "preferredUsername": "Plume01 Blog 2",
+                "publicKey": {
+                  "id": "https://plume01.localhost/~/Plume01%20Blog%202/#main-key",
+                  "owner": "https://plume01.localhost/~/Plume01%20Blog%202/",
+                  "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwPGtKkl/iMsNAyeVaJGz\noEz5PoNkjRnKK7G97MFvb4zw9zs5SpzWW7b/pKHa4dODcGDJXmkCJ1H5JWyguzN8\n2GNoFjtEOJHxEGwBHSYDsTmhuLNB0DKxMU2iu55g8iIiXhZiIW1FBNGs/Geaymvr\nh/TEtzdReN8wzloRR55kOVcU49xBkqx8cfDSk/lrrDLlpveHdqgaFnIvuw2vycK0\nxFzS3xlEUpzJk9kHxoR1uEAfZ+gCv26Sgo/HqOAhqSD5IU3QZC3kdkr/hwVqtr8U\nXGkGG6Mo1rgzhkYiCFkWrV2WoKkcEHD4nEzbgoZZ5MyuSoloxnyF3NiScqmqW+Yx\nkQIDAQAB\n-----END PUBLIC KEY-----\n"
+                },
+                "source": {
+                  "content": "",
+                  "mediaType": "text/markdown"
+                },
+                "summary": "",
+                "type": "Group"
+              }
+            "#
+        ).unwrap();
+        let mut expected = CustomGroup::new(
+            ApActor::new("https://plume01.localhost/~/Plume01%20Blog%202/inbox".parse().unwrap(), Group::new()),
+            ApSignature {
+                public_key: PublicKey {
+                    id: "https://plume01.localhost/~/Plume01%20Blog%202/#main-key".parse().unwrap(),
+                    owner: "https://plume01.localhost/~/Plume01%20Blog%202/".parse().unwrap(),
+                    public_key_pem: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwPGtKkl/iMsNAyeVaJGz\noEz5PoNkjRnKK7G97MFvb4zw9zs5SpzWW7b/pKHa4dODcGDJXmkCJ1H5JWyguzN8\n2GNoFjtEOJHxEGwBHSYDsTmhuLNB0DKxMU2iu55g8iIiXhZiIW1FBNGs/Geaymvr\nh/TEtzdReN8wzloRR55kOVcU49xBkqx8cfDSk/lrrDLlpveHdqgaFnIvuw2vycK0\nxFzS3xlEUpzJk9kHxoR1uEAfZ+gCv26Sgo/HqOAhqSD5IU3QZC3kdkr/hwVqtr8U\nXGkGG6Mo1rgzhkYiCFkWrV2WoKkcEHD4nEzbgoZZ5MyuSoloxnyF3NiScqmqW+Yx\nkQIDAQAB\n-----END PUBLIC KEY-----\n".into(),
+                }
+            },
+            SourceProperty {
+                source: Source {
+                    content: String::from(""),
+                    media_type: String::from("text/markdown")
+                }
+            }
+        );
+        expected.set_icon(Image::new().into_any_base().unwrap());
+        expected.set_id(
+            "https://plume01.localhost/~/Plume01%20Blog%202/"
+                .parse()
+                .unwrap(),
+        );
+        expected.set_image(Image::new().into_any_base().unwrap());
+        expected.set_name("Plume01 Blog 2");
+        expected.set_outbox(
+            "https://plume01.localhost/~/Plume01%20Blog%202/outbox"
+                .parse()
+                .unwrap(),
+        );
+        expected.set_preferred_username("Plume01 Blog 2");
+        expected.set_summary("");
+
+        assert_json_eq!(value, expected);
     }
 
     #[test]

@@ -165,7 +165,7 @@ fn post_to_atom(post: Post, conn: &Connection) -> Entry {
                 .build(),
         )
         .authors(
-            post.get_authors(&*conn)
+            post.get_authors(conn)
                 .expect("Atom feed: author error")
                 .into_iter()
                 .map(|a| {

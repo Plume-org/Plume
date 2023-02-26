@@ -18,10 +18,13 @@ use openssl::{
     rsa::Rsa,
     sign::{Signer, Verifier},
 };
-use plume_common::activity_pub::{
-    inbox::{AsActor, FromId},
-    sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source, SourceProperty,
-    ToAsString, ToAsUri,
+use plume_common::{
+    activity_pub::{
+        inbox::{AsActor, FromId},
+        sign, ActivityStream, ApSignature, CustomGroup, Id, IntoId, PublicKey, Source,
+        SourceProperty, ToAsString, ToAsUri,
+    },
+    utils::iri_percent_encode_seg,
 };
 use webfinger::*;
 
@@ -83,9 +86,13 @@ impl Blog {
 
         if inserted.fqn.is_empty() {
             if instance.local {
-                inserted.fqn = inserted.actor_id.clone();
+                inserted.fqn = iri_percent_encode_seg(&inserted.actor_id);
             } else {
-                inserted.fqn = format!("{}@{}", inserted.actor_id, instance.public_domain);
+                inserted.fqn = format!(
+                    "{}@{}",
+                    iri_percent_encode_seg(&inserted.actor_id),
+                    instance.public_domain
+                );
             }
         }
 
@@ -166,7 +173,7 @@ impl Blog {
 
     pub fn to_activity(&self, conn: &Connection) -> Result<CustomGroup> {
         let mut blog = ApActor::new(self.inbox_url.parse()?, Group::new());
-        blog.set_preferred_username(self.actor_id.clone());
+        blog.set_preferred_username(iri_percent_encode_seg(&self.actor_id));
         blog.set_name(self.title.clone());
         blog.set_outbox(self.outbox_url.parse()?);
         blog.set_summary(self.summary_html.to_string());
@@ -381,6 +388,7 @@ impl FromId<Connection> for Blog {
                 .ok_or(Error::MissingApProperty)?
                 .to_string();
             if name.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+                tracing::error!("preferredUsername includes invalid character(s): {}", &name);
                 return Err(Error::InvalidValue);
             }
             (
@@ -660,7 +668,7 @@ pub(crate) mod tests {
             .unwrap()
             .id,
         );
-        let _: Blog = blog1.save_changes(&*conn).unwrap();
+        let _: Blog = blog1.save_changes(conn).unwrap();
 
         (users, vec![blog1, blog2, blog3])
     }
@@ -669,10 +677,10 @@ pub(crate) mod tests {
     fn get_instance() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(&conn);
+            fill_database(conn);
 
             let blog = Blog::insert(
-                &conn,
+                conn,
                 NewBlog::new_local(
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
@@ -684,7 +692,7 @@ pub(crate) mod tests {
             .unwrap();
 
             assert_eq!(
-                blog.get_instance(&conn).unwrap().id,
+                blog.get_instance(conn).unwrap().id,
                 Instance::get_local().unwrap().id
             );
             // TODO add tests for remote instance
@@ -696,10 +704,10 @@ pub(crate) mod tests {
     fn authors() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let (user, _) = fill_database(&conn);
+            let (user, _) = fill_database(conn);
 
             let b1 = Blog::insert(
-                &conn,
+                conn,
                 NewBlog::new_local(
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
@@ -710,7 +718,7 @@ pub(crate) mod tests {
             )
             .unwrap();
             let b2 = Blog::insert(
-                &conn,
+                conn,
                 NewBlog::new_local(
                     "Blog".to_owned(),
                     "Blog".to_owned(),
@@ -723,7 +731,7 @@ pub(crate) mod tests {
             let blog = vec![b1, b2];
 
             BlogAuthor::insert(
-                &conn,
+                conn,
                 NewBlogAuthor {
                     blog_id: blog[0].id,
                     author_id: user[0].id,
@@ -733,7 +741,7 @@ pub(crate) mod tests {
             .unwrap();
 
             BlogAuthor::insert(
-                &conn,
+                conn,
                 NewBlogAuthor {
                     blog_id: blog[0].id,
                     author_id: user[1].id,
@@ -743,7 +751,7 @@ pub(crate) mod tests {
             .unwrap();
 
             BlogAuthor::insert(
-                &conn,
+                conn,
                 NewBlogAuthor {
                     blog_id: blog[1].id,
                     author_id: user[0].id,
@@ -753,39 +761,39 @@ pub(crate) mod tests {
             .unwrap();
 
             assert!(blog[0]
-                .list_authors(&conn)
+                .list_authors(conn)
                 .unwrap()
                 .iter()
                 .any(|a| a.id == user[0].id));
             assert!(blog[0]
-                .list_authors(&conn)
+                .list_authors(conn)
                 .unwrap()
                 .iter()
                 .any(|a| a.id == user[1].id));
             assert!(blog[1]
-                .list_authors(&conn)
+                .list_authors(conn)
                 .unwrap()
                 .iter()
                 .any(|a| a.id == user[0].id));
             assert!(!blog[1]
-                .list_authors(&conn)
+                .list_authors(conn)
                 .unwrap()
                 .iter()
                 .any(|a| a.id == user[1].id));
 
-            assert!(Blog::find_for_author(&conn, &user[0])
+            assert!(Blog::find_for_author(conn, &user[0])
                 .unwrap()
                 .iter()
                 .any(|b| b.id == blog[0].id));
-            assert!(Blog::find_for_author(&conn, &user[1])
+            assert!(Blog::find_for_author(conn, &user[1])
                 .unwrap()
                 .iter()
                 .any(|b| b.id == blog[0].id));
-            assert!(Blog::find_for_author(&conn, &user[0])
+            assert!(Blog::find_for_author(conn, &user[0])
                 .unwrap()
                 .iter()
                 .any(|b| b.id == blog[1].id));
-            assert!(!Blog::find_for_author(&conn, &user[1])
+            assert!(!Blog::find_for_author(conn, &user[1])
                 .unwrap()
                 .iter()
                 .any(|b| b.id == blog[1].id));
@@ -797,10 +805,10 @@ pub(crate) mod tests {
     fn find_local() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(&conn);
+            fill_database(conn);
 
             let blog = Blog::insert(
-                &conn,
+                conn,
                 NewBlog::new_local(
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
@@ -811,7 +819,7 @@ pub(crate) mod tests {
             )
             .unwrap();
 
-            assert_eq!(Blog::find_by_fqn(&conn, "SomeName").unwrap().id, blog.id);
+            assert_eq!(Blog::find_by_fqn(conn, "SomeName").unwrap().id, blog.id);
             Ok(())
         })
     }
@@ -820,10 +828,10 @@ pub(crate) mod tests {
     fn get_fqn() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(&conn);
+            fill_database(conn);
 
             let blog = Blog::insert(
-                &conn,
+                conn,
                 NewBlog::new_local(
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
@@ -843,10 +851,10 @@ pub(crate) mod tests {
     fn delete() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let (_, blogs) = fill_database(&conn);
+            let (_, blogs) = fill_database(conn);
 
-            blogs[0].delete(&conn).unwrap();
-            assert!(Blog::get(&conn, blogs[0].id).is_err());
+            blogs[0].delete(conn).unwrap();
+            assert!(Blog::get(conn, blogs[0].id).is_err());
             Ok(())
         })
     }
@@ -855,10 +863,10 @@ pub(crate) mod tests {
     fn delete_via_user() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let (user, _) = fill_database(&conn);
+            let (user, _) = fill_database(conn);
 
             let b1 = Blog::insert(
-                &conn,
+                conn,
                 NewBlog::new_local(
                     "SomeName".to_owned(),
                     "Some name".to_owned(),
@@ -869,7 +877,7 @@ pub(crate) mod tests {
             )
             .unwrap();
             let b2 = Blog::insert(
-                &conn,
+                conn,
                 NewBlog::new_local(
                     "Blog".to_owned(),
                     "Blog".to_owned(),
@@ -882,7 +890,7 @@ pub(crate) mod tests {
             let blog = vec![b1, b2];
 
             BlogAuthor::insert(
-                &conn,
+                conn,
                 NewBlogAuthor {
                     blog_id: blog[0].id,
                     author_id: user[0].id,
@@ -892,7 +900,7 @@ pub(crate) mod tests {
             .unwrap();
 
             BlogAuthor::insert(
-                &conn,
+                conn,
                 NewBlogAuthor {
                     blog_id: blog[0].id,
                     author_id: user[1].id,
@@ -902,7 +910,7 @@ pub(crate) mod tests {
             .unwrap();
 
             BlogAuthor::insert(
-                &conn,
+                conn,
                 NewBlogAuthor {
                     blog_id: blog[1].id,
                     author_id: user[0].id,
@@ -911,11 +919,11 @@ pub(crate) mod tests {
             )
             .unwrap();
 
-            user[0].delete(&conn).unwrap();
-            assert!(Blog::get(&conn, blog[0].id).is_ok());
-            assert!(Blog::get(&conn, blog[1].id).is_err());
-            user[1].delete(&conn).unwrap();
-            assert!(Blog::get(&conn, blog[0].id).is_err());
+            user[0].delete(conn).unwrap();
+            assert!(Blog::get(conn, blog[0].id).is_ok());
+            assert!(Blog::get(conn, blog[1].id).is_err());
+            user[1].delete(conn).unwrap();
+            assert!(Blog::get(conn, blog[0].id).is_err());
             Ok(())
         })
     }
@@ -924,10 +932,10 @@ pub(crate) mod tests {
     fn self_federation() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let (users, mut blogs) = fill_database(&conn);
+            let (users, mut blogs) = fill_database(conn);
             blogs[0].icon_id = Some(
                 Media::insert(
-                    &conn,
+                    conn,
                     NewMedia {
                         file_path: "aaa.png".into(),
                         alt_text: String::new(),
@@ -943,7 +951,7 @@ pub(crate) mod tests {
             );
             blogs[0].banner_id = Some(
                 Media::insert(
-                    &conn,
+                    conn,
                     NewMedia {
                         file_path: "bbb.png".into(),
                         alt_text: String::new(),
@@ -958,9 +966,9 @@ pub(crate) mod tests {
                 .id,
             );
             let _: Blog = blogs[0].save_changes(&**conn).unwrap();
-            let ap_repr = blogs[0].to_activity(&conn).unwrap();
-            blogs[0].delete(&conn).unwrap();
-            let blog = Blog::from_activity(&conn, ap_repr).unwrap();
+            let ap_repr = blogs[0].to_activity(conn).unwrap();
+            blogs[0].delete(conn).unwrap();
+            let blog = Blog::from_activity(conn, ap_repr).unwrap();
 
             assert_eq!(blog.actor_id, blogs[0].actor_id);
             assert_eq!(blog.title, blogs[0].title);
@@ -972,8 +980,8 @@ pub(crate) mod tests {
             assert_eq!(blog.public_key, blogs[0].public_key);
             assert_eq!(blog.fqn, blogs[0].fqn);
             assert_eq!(blog.summary_html, blogs[0].summary_html);
-            assert_eq!(blog.icon_url(&conn), blogs[0].icon_url(&conn));
-            assert_eq!(blog.banner_url(&conn), blogs[0].banner_url(&conn));
+            assert_eq!(blog.icon_url(conn), blogs[0].icon_url(conn));
+            assert_eq!(blog.banner_url(conn), blogs[0].banner_url(conn));
 
             Ok(())
         })
@@ -983,7 +991,7 @@ pub(crate) mod tests {
     fn to_activity() {
         let conn = &db();
         conn.test_transaction::<_, Error, _>(|| {
-            let (_users, blogs) = fill_database(&conn);
+            let (_users, blogs) = fill_database(conn);
             let blog = &blogs[0];
             let act = blog.to_activity(conn)?;
 

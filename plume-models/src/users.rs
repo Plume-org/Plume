@@ -187,7 +187,7 @@ impl User {
         users::table
             .filter(users::instance_id.eq(Instance::get_local()?.id))
             .count()
-            .get_result(&*conn)
+            .get_result(conn)
             .map_err(Error::from)
     }
 
@@ -246,20 +246,7 @@ impl User {
     fn fetch(url: &str) -> Result<CustomPerson> {
         let res = get(url, Self::get_sender(), CONFIG.proxy().cloned())?;
         let text = &res.text()?;
-        // without this workaround, publicKey is not correctly deserialized
-        let ap_sign = serde_json::from_str::<ApSignature>(text)?;
-        let person = serde_json::from_str::<Person>(text)?;
-        let json = CustomPerson::new(
-            ApActor::new(
-                person
-                    .clone()
-                    .id_unchecked()
-                    .ok_or(Error::MissingApProperty)?
-                    .to_owned(),
-                person,
-            ),
-            ap_sign,
-        ); // FIXME: Don't clone()
+        let json = serde_json::from_str::<CustomPerson>(text)?;
         Ok(json)
     }
 
@@ -269,23 +256,13 @@ impl User {
 
     pub fn refetch(&self, conn: &Connection) -> Result<()> {
         User::fetch(&self.ap_url.clone()).and_then(|json| {
-            let avatar = Media::save_remote(
-                conn,
-                json.ap_actor_ref()
-                    .icon()
-                    .ok_or(Error::MissingApProperty)? // FIXME: Fails when icon is not set
-                    .iter()
-                    .next()
-                    .and_then(|i| {
-                        i.clone()
-                            .extend::<Image, ImageType>() // FIXME: Don't clone()
-                            .ok()?
-                            .and_then(|url| Some(url.id_unchecked()?.to_string()))
-                    })
-                    .ok_or(Error::MissingApProperty)?,
-                self,
-            )
-            .ok();
+            let avatar = json
+                .icon()
+                .and_then(|icon| icon.iter().next())
+                .and_then(|i| i.clone().extend::<Image, ImageType>().ok())
+                .and_then(|image| image)
+                .and_then(|image| image.id_unchecked().map(|url| url.to_string()))
+                .and_then(|url| Media::save_remote(conn, url, self).ok());
 
             let pub_key = &json.ext_one.public_key.public_key_pem;
             diesel::update(self)
@@ -435,7 +412,7 @@ impl User {
                 }
                 // if no user was found, and we were unable to auto-register from ldap
                 // fake-verify a password, and return an error.
-                let other = User::get(&*conn, 1)
+                let other = User::get(conn, 1)
                     .expect("No user is registered")
                     .hashed_password;
                 other.map(|pass| bcrypt::verify(password, &pass));
@@ -931,7 +908,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
             .cookies()
             .get_private(AUTH_COOKIE)
             .and_then(|cookie| cookie.value().parse().ok())
-            .and_then(|id| User::get(&*conn, id).ok())
+            .and_then(|id| User::get(&conn, id).ok())
             .or_forward(())
     }
 }
@@ -960,6 +937,10 @@ impl FromId<Connection> for User {
             .to_string();
 
         if username.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+            tracing::error!(
+                "preferredUsername includes invalid character(s): {}",
+                &username
+            );
             return Err(Error::InvalidValue);
         }
 
@@ -1232,7 +1213,7 @@ pub(crate) mod tests {
         )
         .unwrap();
         other.avatar_id = Some(avatar.id);
-        let other = other.save_changes::<User>(&*conn).unwrap();
+        let other = other.save_changes::<User>(conn).unwrap();
 
         vec![admin, user, other]
     }
@@ -1335,11 +1316,11 @@ pub(crate) mod tests {
     fn delete() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let inserted = fill_database(&conn);
+            let inserted = fill_database(conn);
 
-            assert!(User::get(&conn, inserted[0].id).is_ok());
-            inserted[0].delete(&conn).unwrap();
-            assert!(User::get(&conn, inserted[0].id).is_err());
+            assert!(User::get(conn, inserted[0].id).is_ok());
+            inserted[0].delete(conn).unwrap();
+            assert!(User::get(conn, inserted[0].id).is_err());
             Ok(())
         });
     }
@@ -1348,20 +1329,20 @@ pub(crate) mod tests {
     fn admin() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            let inserted = fill_database(&conn);
+            let inserted = fill_database(conn);
             let local_inst = Instance::get_local().unwrap();
             let mut i = 0;
-            while local_inst.has_admin(&conn).unwrap() {
+            while local_inst.has_admin(conn).unwrap() {
                 assert!(i < 100); //prevent from looping indefinitelly
                 local_inst
-                    .main_admin(&conn)
+                    .main_admin(conn)
                     .unwrap()
-                    .set_role(&conn, Role::Normal)
+                    .set_role(conn, Role::Normal)
                     .unwrap();
                 i += 1;
             }
-            inserted[0].set_role(&conn, Role::Admin).unwrap();
-            assert_eq!(inserted[0].id, local_inst.main_admin(&conn).unwrap().id);
+            inserted[0].set_role(conn, Role::Admin).unwrap();
+            assert_eq!(inserted[0].id, local_inst.main_admin(conn).unwrap().id);
             Ok(())
         });
     }
@@ -1370,9 +1351,9 @@ pub(crate) mod tests {
     fn auth() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(&conn);
+            fill_database(conn);
             let test_user = NewUser::new_local(
-                &conn,
+                conn,
                 "test".to_owned(),
                 "test user".to_owned(),
                 Role::Normal,
@@ -1383,10 +1364,10 @@ pub(crate) mod tests {
             .unwrap();
 
             assert_eq!(
-                User::login(&conn, "test", "test_password").unwrap().id,
+                User::login(conn, "test", "test_password").unwrap().id,
                 test_user.id
             );
-            assert!(User::login(&conn, "test", "other_password").is_err());
+            assert!(User::login(conn, "test", "other_password").is_err());
             Ok(())
         });
     }
@@ -1395,26 +1376,26 @@ pub(crate) mod tests {
     fn get_local_page() {
         let conn = &db();
         conn.test_transaction::<_, (), _>(|| {
-            fill_database(&conn);
+            fill_database(conn);
 
-            let page = User::get_local_page(&conn, (0, 2)).unwrap();
+            let page = User::get_local_page(conn, (0, 2)).unwrap();
             assert_eq!(page.len(), 2);
             assert!(page[0].username <= page[1].username);
 
-            let mut last_username = User::get_local_page(&conn, (0, 1)).unwrap()[0]
+            let mut last_username = User::get_local_page(conn, (0, 1)).unwrap()[0]
                 .username
                 .clone();
-            for i in 1..User::count_local(&conn).unwrap() as i32 {
-                let page = User::get_local_page(&conn, (i, i + 1)).unwrap();
+            for i in 1..User::count_local(conn).unwrap() as i32 {
+                let page = User::get_local_page(conn, (i, i + 1)).unwrap();
                 assert_eq!(page.len(), 1);
                 assert!(last_username <= page[0].username);
                 last_username = page[0].username.clone();
             }
             assert_eq!(
-                User::get_local_page(&conn, (0, User::count_local(&conn).unwrap() as i32 + 10))
+                User::get_local_page(conn, (0, User::count_local(conn).unwrap() as i32 + 10))
                     .unwrap()
                     .len() as i64,
-                User::count_local(&conn).unwrap()
+                User::count_local(conn).unwrap()
             );
             Ok(())
         });

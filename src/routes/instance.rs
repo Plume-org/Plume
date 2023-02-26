@@ -105,7 +105,7 @@ pub fn update_settings(
             Instance::get_local().expect("instance::update_settings: local instance error");
         instance
             .update(
-                &*conn,
+                &conn,
                 form.name.clone(),
                 form.open_registrations,
                 form.short_description.clone(),
@@ -366,8 +366,8 @@ pub fn edit_users(
 }
 
 fn ban(id: i32, conn: &Connection, worker: &ScheduledThreadPool) -> Result<(), ErrorPage> {
-    let u = User::get(&*conn, id)?;
-    u.delete(&*conn)?;
+    let u = User::get(conn, id)?;
+    u.delete(conn)?;
     if Instance::get_local()
         .map(|i| u.instance_id == i.id)
         .unwrap_or(false)
@@ -382,8 +382,8 @@ fn ban(id: i32, conn: &Connection, worker: &ScheduledThreadPool) -> Result<(), E
             },
         )
         .unwrap();
-        let target = User::one_by_instance(&*conn)?;
-        let delete_act = u.delete_activity(&*conn)?;
+        let target = User::one_by_instance(conn)?;
+        let delete_act = u.delete_activity(conn)?;
         worker.execute(move || broadcast(&u, delete_act, target, CONFIG.proxy().cloned()));
     }
 
