@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 ammonia = "3.2.0"
-bcrypt = "0.12.1"
+bcrypt = "0.14.0"
 guid-create = "0.2"
 itertools = "0.10.3"
 lazy_static = "1.0"
