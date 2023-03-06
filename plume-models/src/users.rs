@@ -431,6 +431,7 @@ impl User {
     pub fn get_local_page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<User>> {
         users::table
             .filter(users::instance_id.eq(Instance::get_local()?.id))
+            .filter(users::role.ne(Role::Instance as i32))
             .order(users::username.asc())
             .offset(min.into())
             .limit((max - min).into())
