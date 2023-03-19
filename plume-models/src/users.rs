@@ -15,7 +15,10 @@ use activitystreams::{
     prelude::*,
 };
 use chrono::{NaiveDateTime, Utc};
-use diesel::{self, BelongingToDsl, ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl};
+use diesel::{
+    self, BelongingToDsl, BoolExpressionMethods, ExpressionMethods, OptionalExtension, QueryDsl,
+    RunQueryDsl, TextExpressionMethods,
+};
 use ldap3::{LdapConn, Scope, SearchEntry};
 use openssl::{
     hash::MessageDigest,
@@ -202,6 +205,27 @@ impl User {
         } else {
             User::fetch_from_webfinger(conn, fqn)
         }
+    }
+
+    pub fn search_local_by_name(
+        conn: &Connection,
+        name: &str,
+        (min, max): (i32, i32),
+    ) -> Result<Vec<User>> {
+        users::table
+            .filter(users::instance_id.eq(Instance::get_local()?.id))
+            .filter(users::role.ne(Role::Instance as i32))
+            // TODO: use `ilike` instead of `like` for PostgreSQL
+            .filter(
+                users::username
+                    .like(format!("%{}%", name))
+                    .or(users::display_name.like(format!("%{}%", name))),
+            )
+            .order(users::username.asc())
+            .offset(min.into())
+            .limit((max - min).into())
+            .load::<User>(conn)
+            .map_err(Error::from)
     }
 
     /**
