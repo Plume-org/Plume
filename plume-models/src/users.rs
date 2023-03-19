@@ -186,6 +186,7 @@ impl User {
     pub fn count_local(conn: &Connection) -> Result<i64> {
         users::table
             .filter(users::instance_id.eq(Instance::get_local()?.id))
+            .filter(users::role.ne(Role::Instance as i32))
             .count()
             .get_result(conn)
             .map_err(Error::from)
