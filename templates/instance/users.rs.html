@@ -16,9 +16,11 @@
     ])
 
     <form method="get" action="@uri!(instance::admin_search_users: page = _, user = user.unwrap_or(""))">
-        <input type="search" name="user" value="@user.unwrap_or("")">
-        <input type="hidden" name="page" value="@page">
-        <input type="submit" value="@i18n!(ctx.1, "Search users")">
+        <header>
+            <input type="search" name="user" value="@user.unwrap_or("")">
+            <input type="hidden" name="page" value="@page">
+            <input type="submit" value="@i18n!(ctx.1, "Search users")">
+        </header>
     </form>
 
     <form method="post" action="@uri!(instance::edit_users)">
