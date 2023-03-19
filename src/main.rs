@@ -157,6 +157,7 @@ Then try to restart Plume.
                 routes::instance::admin_mod,
                 routes::instance::admin_instances,
                 routes::instance::admin_users,
+                routes::instance::admin_search_users,
                 routes::instance::admin_email_blocklist,
                 routes::instance::add_email_blocklist,
                 routes::instance::delete_email_blocklist,
