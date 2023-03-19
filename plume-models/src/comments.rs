@@ -422,6 +422,7 @@ impl CommentTree {
 mod tests {
     use super::*;
     use crate::blogs::Blog;
+    use crate::db_conn::DbConn;
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::safe_string::SafeString;
     use crate::tests::{db, format_datetime};
