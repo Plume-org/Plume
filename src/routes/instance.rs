@@ -185,9 +185,15 @@ pub fn admin_search_users(
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
+    let users = if user.is_empty() {
+        User::get_local_page(&conn, page.limits())?
+    } else {
+        User::search_local_by_name(&conn, &user, page.limits())?
+    };
+
     Ok(render!(instance::users(
         &(&conn, &rockets).to_context(),
-        User::search_local_by_name(&conn, &user, page.limits())?,
+        users,
         Some(user.as_str()),
         page.0,
         Page::total(User::count_local(&conn)? as i32)
