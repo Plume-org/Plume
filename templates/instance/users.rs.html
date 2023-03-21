@@ -15,10 +15,9 @@
         (&uri!(instance::admin_email_blocklist: page=_).to_string(), i18n!(ctx.1, "Email blocklist"), false)
     ])
 
-    <form method="get" action="@uri!(instance::admin_search_users: page = _, user = user.unwrap_or(""))">
+    <form method="get" action="@uri!(instance::admin_search_users: page = _, user = user.unwrap_or_default())">
         <header>
-            <input type="search" name="user" value="@user.unwrap_or("")">
-            <input type="hidden" name="page" value="@page">
+            <input type="search" name="user" value="@user.unwrap_or_default()">
             <input type="submit" value="@i18n!(ctx.1, "Search users")">
         </header>
     </form>
