@@ -3,7 +3,7 @@
 @use crate::template_utils::*;
 @use crate::routes::*;
 
-@(ctx: BaseContext, users: Vec<User>, page: i32, n_pages: i32)
+@(ctx: BaseContext, users: Vec<User>, user: Option<&str>, page: i32, n_pages: i32)
 
 @:base(ctx, i18n!(ctx.1, "Users"), {}, {}, {
     <h1>@i18n!(ctx.1, "Users")</h1>
@@ -14,6 +14,13 @@
         (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), true),
         (&uri!(instance::admin_email_blocklist: page=_).to_string(), i18n!(ctx.1, "Email blocklist"), false)
     ])
+
+    <form method="get" action="@uri!(instance::admin_search_users: page = _, user = user.unwrap_or_default())">
+        <header>
+            <input type="search" name="user" value="@user.unwrap_or_default()">
+            <input type="submit" value="@i18n!(ctx.1, "Search users")">
+        </header>
+    </form>
 
     <form method="post" action="@uri!(instance::edit_users)">
         <header>
@@ -46,5 +53,9 @@
             }
         </div>
     </form>
-    @paginate(ctx.1, page, n_pages)
+    @if user.is_some() {
+      @paginate_param(ctx.1, page, n_pages, Some(format!("user={}", encode_query_param(user.unwrap_or_default()))))
+    } else {
+      @paginate(ctx.1, page, n_pages)
+    }
 })

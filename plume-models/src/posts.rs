@@ -1027,6 +1027,7 @@ impl From<PostEvent> for Arc<Post> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::db_conn::DbConn;
     use crate::inbox::{inbox, tests::fill_database, InboxResult};
     use crate::mentions::{Mention, NewMention};
     use crate::safe_string::SafeString;

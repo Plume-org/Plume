@@ -232,7 +232,9 @@ impl IntoId for Follow {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{tests::db, users::tests as user_tests, users::tests::fill_database};
+    use crate::{
+        db_conn::DbConn, tests::db, users::tests as user_tests, users::tests::fill_database,
+    };
     use assert_json_diff::assert_json_eq;
     use diesel::Connection;
     use serde_json::{json, to_value};

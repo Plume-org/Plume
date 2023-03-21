@@ -160,7 +160,7 @@ pub fn toggle_block(
     ))
 }
 
-#[get("/admin/users?<page>")]
+#[get("/admin/users?<page>", rank = 2)]
 pub fn admin_users(
     _mod: Moderator,
     page: Option<Page>,
@@ -171,6 +171,30 @@ pub fn admin_users(
     Ok(render!(instance::users(
         &(&conn, &rockets).to_context(),
         User::get_local_page(&conn, page.limits())?,
+        None,
+        page.0,
+        Page::total(User::count_local(&conn)? as i32)
+    )))
+}
+#[get("/admin/users?<user>&<page>", rank = 1)]
+pub fn admin_search_users(
+    _mod: Moderator,
+    user: String,
+    page: Option<Page>,
+    conn: DbConn,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
+    let page = page.unwrap_or_default();
+    let users = if user.is_empty() {
+        User::get_local_page(&conn, page.limits())?
+    } else {
+        User::search_local_by_name(&conn, &user, page.limits())?
+    };
+
+    Ok(render!(instance::users(
+        &(&conn, &rockets).to_context(),
+        users,
+        Some(user.as_str()),
         page.0,
         Page::total(User::count_local(&conn)? as i32)
     )))
