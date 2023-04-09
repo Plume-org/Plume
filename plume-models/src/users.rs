@@ -1,8 +1,8 @@
 use crate::{
-    ap_url, blocklisted_emails::BlocklistedEmail, blogs::Blog, db_conn::DbConn, follows::Follow,
-    instance::*, medias::Media, notifications::Notification, post_authors::PostAuthor, posts::Post,
-    safe_string::SafeString, schema::users, timeline::Timeline, Connection, Error, Result,
-    UserEvent::*, CONFIG, ITEMS_PER_PAGE, USER_CHAN,
+    ap_url, blocklisted_emails::BlocklistedEmail, blogs::Blog, comments::Comment, db_conn::DbConn,
+    follows::Follow, instance::*, medias::Media, notifications::Notification,
+    post_authors::PostAuthor, posts::Post, safe_string::SafeString, schema::users,
+    timeline::Timeline, Connection, Error, Result, UserEvent::*, CONFIG, ITEMS_PER_PAGE, USER_CHAN,
 };
 use activitystreams::{
     activity::Delete,
@@ -166,6 +166,14 @@ impl User {
 
         for notif in Notification::find_followed_by(conn, self)? {
             notif.delete(conn)?
+        }
+
+        for comment in Comment::list_by_author(conn, self.id)? {
+            let delete_activity = comment.build_delete(&conn)?;
+            crate::inbox::inbox(
+                conn,
+                serde_json::to_value(&delete_activity).map_err(Error::from)?,
+            )?;
         }
 
         diesel::delete(self)
