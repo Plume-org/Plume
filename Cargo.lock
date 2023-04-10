@@ -3340,7 +3340,7 @@ dependencies = [
  "once_cell",
  "openssl",
  "pulldown-cmark",
- "regex-syntax 0.6.28",
+ "regex-syntax 0.6.29",
  "reqwest 0.11.13",
  "rocket",
  "serde 1.0.152",
@@ -3844,7 +3844,7 @@ checksum = "e076559ef8e241f2ae3479e36f97bd5741c0330689e217ad51ce2c76808b868a"
 dependencies = [
  "aho-corasick",
  "memchr",
- "regex-syntax 0.6.28",
+ "regex-syntax 0.6.29",
 ]
 
 [[package]]
@@ -3855,9 +3855,9 @@ checksum = "8e931c58b93d86f080c734bfd2bce7dd0079ae2331235818133c8be7f422e20e"
 
 [[package]]
 name = "regex-syntax"
-version = "0.6.28"
+version = "0.6.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "456c603be3e8d448b072f410900c09faf164fbce2d480456f50eea6e25f9c848"
+checksum = "f162c6dd7b008981e4d40210aca20b4bd0f9b60ca9271061b07f78537722f2e1"
 
 [[package]]
 name = "remove_dir_all"
@@ -4642,7 +4642,7 @@ dependencies = [
  "lazycell",
  "onig",
  "plist",
- "regex-syntax 0.6.28",
+ "regex-syntax 0.6.29",
  "serde 1.0.152",
  "serde_derive",
  "serde_json",
