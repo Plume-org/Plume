@@ -169,7 +169,7 @@ impl User {
         }
 
         for comment in Comment::list_by_author(conn, self.id)? {
-            let delete_activity = comment.build_delete(&conn)?;
+            let delete_activity = comment.build_delete(conn)?;
             crate::inbox::inbox(
                 conn,
                 serde_json::to_value(&delete_activity).map_err(Error::from)?,

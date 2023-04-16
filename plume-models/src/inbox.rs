@@ -2,7 +2,6 @@ use activitystreams::activity::{Announce, Create, Delete, Follow, Like, Undo, Up
 
 use crate::{
     comments::Comment,
-    db_conn::DbConn,
     follows, likes,
     posts::{Post, PostUpdate},
     reshares::Reshare,
