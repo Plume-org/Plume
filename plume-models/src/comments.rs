@@ -73,6 +73,7 @@ impl Comment {
     });
     get!(comments);
     list_by!(comments, list_by_post, post_id as i32);
+    list_by!(comments, list_by_author, author_id as i32);
     find_by!(comments, find_by_ap_url, ap_url as &str);
 
     pub fn get_author(&self, conn: &Connection) -> Result<User> {
