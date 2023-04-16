@@ -228,7 +228,7 @@ main .article-meta {
       fill: currentColor;
     }
     .action.liked:hover svg.feather {
-      background: transparentize($red, 0.75)
+      background: transparentize($red, 0.75);
       color: $red;
     }
   }
@@ -252,7 +252,7 @@ main .article-meta {
       background: $primary;
     }
     .action.reshared:hover svg.feather {
-      background: transparentize($primary, 0.75)
+      background: transparentize($primary, 0.75);
       color: $primary;
     }
   }
