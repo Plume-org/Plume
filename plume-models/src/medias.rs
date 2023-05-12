@@ -171,11 +171,12 @@ impl Media {
     pub fn delete(&self, conn: &Connection) -> Result<()> {
         if !self.is_remote {
             if CONFIG.s3.is_some() {
+                #[cfg(not(feature="s3"))]
+                unreachable!();
+
                 #[cfg(feature = "s3")]
                 CONFIG.s3.as_ref().unwrap().get_bucket()
                     .delete_object_blocking(&self.file_path)?;
-                #[cfg(not(feature="s3"))]
-                unreachable!();
             } else {
                 fs::remove_file(self.file_path.as_str())?;
             }

@@ -264,6 +264,9 @@ pub fn plume_static_files(file: PathBuf, build_id: &RawStr) -> Option<CachedFile
 #[get("/static/media/<file..>")]
 pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
     if CONFIG.s3.is_some() {
+        #[cfg(not(feature="s3"))]
+        unreachable!();
+
         #[cfg(feature="s3")]
         {
             let ct = file.extension()
@@ -271,15 +274,13 @@ pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
                 .unwrap_or(ContentType::Binary);
 
             let data = CONFIG.s3.as_ref().unwrap().get_bucket()
-                .get_object_blocking(format!("plume-media/{}", file.to_string_lossy())).ok()?;
+                .get_object_blocking(format!("static/media/{}", file.to_string_lossy())).ok()?;
 
             Some(CachedFile {
                 inner: FileKind::S3 ( data.to_vec(), ct),
                 cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
             })
         }
-        #[cfg(not(feature="s3"))]
-        unreachable!();
     } else {
         NamedFile::open(Path::new(&CONFIG.media_directory).join(file))
             .ok()

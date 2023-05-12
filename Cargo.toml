@@ -68,7 +68,7 @@ ructe = "0.15.0"
 rsass = "0.26"
 
 [features]
-default = ["postgres"]
+default = ["postgres", "s3"]
 postgres = ["plume-models/postgres", "diesel/postgres"]
 sqlite = ["plume-models/sqlite", "diesel/sqlite"]
 debug-mailer = []
