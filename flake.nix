@@ -22,6 +22,7 @@
             pkg-config
             gettext
             postgresql
+            sqlite
           ];
       in {
         packages.default = pkgs.rustPlatform.buildRustPackage {
