@@ -269,12 +269,14 @@ pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
 
         #[cfg(feature="s3")]
         {
-            let ct = file.extension()
-                .and_then(|ext| ContentType::from_extension(&ext.to_string_lossy()))
-                .unwrap_or(ContentType::Binary);
-
             let data = CONFIG.s3.as_ref().unwrap().get_bucket()
                 .get_object_blocking(format!("static/media/{}", file.to_string_lossy())).ok()?;
+
+            let ct = data.headers().get("content-type")
+                .and_then(|x| ContentType::parse_flexible(&x))
+                .or_else(|| file.extension()
+                    .and_then(|ext| ContentType::from_extension(&ext.to_string_lossy())))
+                .unwrap_or(ContentType::Binary);
 
             Some(CachedFile {
                 inner: FileKind::S3 ( data.to_vec(), ct),

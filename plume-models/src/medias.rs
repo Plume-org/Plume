@@ -294,6 +294,8 @@ impl Media {
 
             #[cfg(feature = "s3")]
             {
+                use rocket::http::ContentType;
+
                 let dest = determine_mirror_s3_path(&remote_url);
 
                 let media = request::get(
@@ -301,18 +303,22 @@ impl Media {
                     User::get_sender(),
                     CONFIG.proxy().cloned(),
                 )?;
-                let content_type = media.headers().get(reqwest::header::CONTENT_TYPE).cloned();
+
+                let content_type = media
+                    .headers()
+                    .get(reqwest::header::CONTENT_TYPE)
+                    .and_then(|x| x.to_str().ok())
+                    .and_then(ContentType::parse_flexible)
+                    .unwrap_or(ContentType::Binary);
+
                 let bytes = media.bytes()?;
 
                 let bucket = CONFIG.s3.as_ref().unwrap().get_bucket();
-                match content_type.as_ref().and_then(|x| x.to_str().ok()) {
-                    Some(ct) => {
-                        bucket.put_object_with_content_type_blocking(&dest, &bytes, ct)?;
-                    }
-                    None => {
-                        bucket.put_object_blocking(&dest, &bytes)?;
-                    }
-                }
+                bucket.put_object_with_content_type_blocking(
+                    &dest,
+                    &bytes,
+                    &content_type.to_string()
+                )?;
 
                 dest
             }

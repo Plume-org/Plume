@@ -131,14 +131,14 @@ fn save_uploaded_file(file: &SavedField) -> Result<Option<String>, plume_models:
             };
 
             let bucket = CONFIG.s3.as_ref().unwrap().get_bucket();
-            match &file.headers.content_type {
-                Some(ct) => {
-                    bucket.put_object_with_content_type_blocking(&dest, &bytes, &ct.to_string())?;
-                }
-                None => {
-                    bucket.put_object_blocking(&dest, &bytes)?;
-                }
-            }
+            let content_type = match &file.headers.content_type {
+                Some(ct) => ct.to_string(),
+                None => ContentType::from_extension(&ext)
+                    .unwrap_or(ContentType::Binary)
+                    .to_string(),
+            };
+
+            bucket.put_object_with_content_type_blocking(&dest, &bytes, &content_type)?;
 
             Ok(Some(dest))
         }
