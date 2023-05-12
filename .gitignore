@@ -20,3 +20,4 @@ search_index
 __pycache__
 .vscode/
 *-journal
+.direnv/
