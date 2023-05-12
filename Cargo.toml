@@ -19,7 +19,7 @@ rocket = "0.4.11"
 rocket_contrib = { version = "0.4.11", features = ["json"] }
 rocket_i18n = "0.4.1"
 scheduled-thread-pool = "0.2.6"
-rust-s3 = { version = "0.29.0", no-default-features = true, features = ["blocking"], optional = true}
+#aws-creds = { version = "0.34", default-features = false, features = ["native-tls"] }
 serde = "1.0.137"
 serde_json = "1.0.81"
 shrinkwraprs = "0.3.0"
@@ -69,13 +69,13 @@ ructe = "0.15.0"
 rsass = "0.26"
 
 [features]
-default = ["postgres"]
+default = ["postgres", "s3"]
 postgres = ["plume-models/postgres", "diesel/postgres"]
 sqlite = ["plume-models/sqlite", "diesel/sqlite"]
 debug-mailer = []
 test = []
 search-lindera = ["plume-models/search-lindera"]
-s3 = ["rust-s3"]
+s3 = ["plume-models/s3"]
 
 [workspace]
 members = ["plume-api", "plume-cli", "plume-models", "plume-common", "plume-front", "plume-macro"]

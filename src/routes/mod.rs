@@ -264,14 +264,11 @@ pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
             .and_then(|ext| ContentType::from_extension(&ext.to_string_lossy()))
             .unwrap_or(ContentType::Binary);
 
-        let (data, code) = config.get_bucket()
+        let data = config.get_bucket()
             .get_object_blocking(format!("plume-media/{}", file.to_string_lossy())).ok()?;
-        if code != 200 {
-            return None;
-        }
 
         Some(CachedFile {
-            inner: FileKind::S3 ( data, ct),
+            inner: FileKind::S3 ( data.to_vec(), ct),
             cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
         })
     } else {

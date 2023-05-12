@@ -392,13 +392,15 @@ impl S3Config {
             secret_key: Some(self.access_key_secret.clone()),
             security_token: None,
             session_token: None,
+            expiration: None,
         };
 
+        let bucket = Bucket::new(&self.bucket, region, credentials).unwrap();
         if self.path_style {
-            Bucket::new_with_path_style(&self.bucket, region, credentials)
+            bucket.with_path_style()
         } else {
-            Bucket::new(&self.bucket, region, credentials)
-        }.unwrap()
+            bucket
+        }
     }
 }
 
