@@ -16,6 +16,9 @@ use std::{
 use tracing::warn;
 use url::Url;
 
+#[cfg(feature = "s3")]
+use crate::config::S3Config;
+
 const REMOTE_MEDIA_DIRECTORY: &str = "remote";
 
 #[derive(Clone, Identifiable, Queryable, AsChangeset)]
@@ -105,7 +108,7 @@ impl Media {
             .file_path
             .rsplit_once('.')
             .map(|x| x.1)
-            .expect("Media::category: extension error")
+            .unwrap_or("")
             .to_lowercase()
         {
             "png" | "jpg" | "jpeg" | "gif" | "svg" => MediaCategory::Image,
@@ -151,19 +154,83 @@ impl Media {
         })
     }
 
+    /// Returns full file path for medias stored in the local media directory.
+    pub fn local_path(&self) -> Option<PathBuf> {
+        if self.file_path.is_empty() {
+            return None;
+        }
+
+        if CONFIG.s3.is_some() {
+            #[cfg(feature="s3")]
+            unreachable!("Called Media::local_path() but media are stored on S3");
+            #[cfg(not(feature="s3"))]
+            unreachable!();
+        }
+
+        let relative_path = self
+            .file_path
+            .trim_start_matches(&CONFIG.media_directory)
+            .trim_start_matches(path::MAIN_SEPARATOR)
+            .trim_start_matches("static/media/");
+
+        Some(Path::new(&CONFIG.media_directory).join(relative_path))
+    }
+
+    /// Returns the relative URL to access this file, which is also the key at which
+    /// it is stored in the S3 bucket if we are using S3 storage.
+    /// Does not start with a '/', it is of the form "static/media/<...>"
+    pub fn relative_url(&self) -> Option<String> {
+        if self.file_path.is_empty() {
+            return None;
+        }
+
+        let relative_path = self
+            .file_path
+            .trim_start_matches(&CONFIG.media_directory)
+            .replace(path::MAIN_SEPARATOR, "/");
+
+        let relative_path = relative_path
+            .trim_start_matches('/')
+            .trim_start_matches("static/media/");
+
+        Some(format!("static/media/{}", relative_path))
+    }
+
+    /// Returns a public URL through which this media file can be accessed
     pub fn url(&self) -> Result<String> {
         if self.is_remote {
             Ok(self.remote_url.clone().unwrap_or_default())
         } else {
-            let file_path = self.file_path.replace(path::MAIN_SEPARATOR, "/").replacen(
-                &CONFIG.media_directory,
-                "static/media",
-                1,
-            ); // "static/media" from plume::routs::plume_media_files()
+            let relative_url = self.relative_url().unwrap_or_default();
+
+            #[cfg(feature="s3")]
+            if CONFIG.s3.as_ref().map(|x| x.direct_download).unwrap_or(false) {
+                let s3_url = match CONFIG.s3.as_ref().unwrap() {
+                    S3Config { alias: Some(alias), .. } => {
+                        format!("https://{}/{}", alias, relative_url)
+                    }
+                    S3Config { path_style: true, hostname, bucket, .. } => {
+                        format!("https://{}/{}/{}",
+                            hostname,
+                            bucket,
+                            relative_url
+                        )
+                    }
+                    S3Config { path_style: false, hostname, bucket, .. } => {
+                        format!("https://{}.{}/{}",
+                            bucket,
+                            hostname,
+                            relative_url
+                        )
+                    }
+                };
+                return Ok(s3_url);
+            }
+
             Ok(ap_url(&format!(
                 "{}/{}",
                 Instance::get_local()?.public_domain,
-                &file_path
+                relative_url
             )))
         }
     }
@@ -176,9 +243,9 @@ impl Media {
 
                 #[cfg(feature = "s3")]
                 CONFIG.s3.as_ref().unwrap().get_bucket()
-                    .delete_object_blocking(&self.file_path)?;
+                    .delete_object_blocking(&self.relative_url().ok_or(Error::NotFound)?)?;
             } else {
-                fs::remove_file(self.file_path.as_str())?;
+                fs::remove_file(self.local_path().ok_or(Error::NotFound)?)?;
             }
         }
         diesel::delete(self)
@@ -316,12 +383,9 @@ impl Media {
 }
 
 fn determine_mirror_file_path(url: &str) -> PathBuf {
-    let mut file_path = Path::new(&super::CONFIG.media_directory).join(REMOTE_MEDIA_DIRECTORY);
-    Url::parse(url)
-        .map(|url| {
-            if !url.has_host() {
-                return;
-            }
+    let mut file_path = Path::new(&CONFIG.media_directory).join(REMOTE_MEDIA_DIRECTORY);
+    match Url::parse(url) {
+        Ok(url) if url.has_host() => {
             file_path.push(url.host_str().unwrap());
             for segment in url.path_segments().expect("FIXME") {
                 file_path.push(segment);
@@ -329,16 +393,21 @@ fn determine_mirror_file_path(url: &str) -> PathBuf {
             // TODO: handle query
             // HINT: Use characters which must be percent-encoded in path as separator between path and query
             // HINT: handle extension
-        })
-        .unwrap_or_else(|err| {
-            warn!("Failed to parse url: {} {}", &url, err);
+        }
+        other => {
+            if let Err(err) = other {
+                warn!("Failed to parse url: {} {}", &url, err);
+            } else {
+                warn!("Error without a host: {}", &url);
+            }
             let ext = url
                 .rsplit('.')
                 .next()
                 .map(ToOwned::to_owned)
                 .unwrap_or_else(|| String::from("png"));
             file_path.push(format!("{}.{}", GUID::rand(), ext));
-        });
+        }
+    }
     file_path
 }
 

@@ -371,12 +371,10 @@ pub struct S3Config {
     pub path_style: bool,
     pub protocol: String,
 
-    // options below this comment are not used yet
-    // upload directly from user to S3, without going through Plume. Uses PostObject endpoint
-    pub direct_upload: bool,
     // download directly from s3 to user, wihout going through Plume. Require public read on bucket
     pub direct_download: bool,
-    // use this hostname for downloads, can be used with caching proxy in front of s3
+    // use this hostname for downloads, can be used with caching proxy in front of s3 (expected to
+    // be reachable through https)
     pub alias: Option<String>,
 }
 
@@ -434,12 +432,14 @@ fn get_s3_config() -> Option<S3Config> {
 
         let path_style = var("S3_PATH_STYLE").unwrap_or_else(|_| "false".to_owned());
         let path_style = string_to_bool(&path_style, "S3_PATH_STYLE");
-        let direct_upload = var("S3_DIRECT_UPLOAD").unwrap_or_else(|_| "false".to_owned());
-        let direct_upload = string_to_bool(&direct_upload, "S3_DIRECT_UPLOAD");
         let direct_download = var("S3_DIRECT_DOWNLOAD").unwrap_or_else(|_| "false".to_owned());
         let direct_download = string_to_bool(&direct_download, "S3_DIRECT_DOWNLOAD");
 
         let alias = var("S3_ALIAS_HOST").ok();
+
+        if direct_download && protocol == "http" && alias.is_none() {
+            panic!("S3 direct download is disabled because bucket is accessed through plain HTTP. Use HTTPS or set an alias hostname (S3_ALIAS_HOST).");
+        }
 
         Some(S3Config {
             bucket,
@@ -449,7 +449,6 @@ fn get_s3_config() -> Option<S3Config> {
             hostname,
             protocol,
             path_style,
-            direct_upload,
             direct_download,
             alias,
         })
