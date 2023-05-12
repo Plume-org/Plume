@@ -287,22 +287,54 @@ impl Media {
             .url()
             .and_then(|url| url.to_as_uri())
             .ok_or(Error::MissingApProperty)?;
-        let path = determine_mirror_file_path(&remote_url);
-        let parent = path.parent().ok_or(Error::InvalidValue)?;
-        if !parent.is_dir() {
-            DirBuilder::new().recursive(true).create(parent)?;
-        }
 
-        let mut dest = fs::File::create(path.clone())?;
-        // TODO: conditional GET
-        request::get(
-            remote_url.as_str(),
-            User::get_sender(),
-            CONFIG.proxy().cloned(),
-        )?
-        .copy_to(&mut dest)?;
+        let file_path = if CONFIG.s3.is_some() {
+            #[cfg(not(feature="s3"))]
+            unreachable!();
 
-        Media::find_by_file_path(conn, path.to_str().ok_or(Error::InvalidValue)?)
+            #[cfg(feature = "s3")]
+            {
+                let dest = determine_mirror_s3_path(&remote_url);
+
+                let media = request::get(
+                    remote_url.as_str(),
+                    User::get_sender(),
+                    CONFIG.proxy().cloned(),
+                )?;
+                let content_type = media.headers().get(reqwest::header::CONTENT_TYPE).cloned();
+                let bytes = media.bytes()?;
+
+                let bucket = CONFIG.s3.as_ref().unwrap().get_bucket();
+                match content_type.as_ref().and_then(|x| x.to_str().ok()) {
+                    Some(ct) => {
+                        bucket.put_object_with_content_type_blocking(&dest, &bytes, ct)?;
+                    }
+                    None => {
+                        bucket.put_object_blocking(&dest, &bytes)?;
+                    }
+                }
+
+                dest
+            }
+        } else {
+            let path = determine_mirror_file_path(&remote_url);
+            let parent = path.parent().ok_or(Error::InvalidValue)?;
+            if !parent.is_dir() {
+                DirBuilder::new().recursive(true).create(parent)?;
+            }
+
+            let mut dest = fs::File::create(path.clone())?;
+            // TODO: conditional GET
+            request::get(
+                remote_url.as_str(),
+                User::get_sender(),
+                CONFIG.proxy().cloned(),
+            )?
+            .copy_to(&mut dest)?;
+            path.to_str().ok_or(Error::InvalidValue)?.to_string()
+        };
+
+        Media::find_by_file_path(conn, &file_path)
             .and_then(|mut media| {
                 let mut updated = false;
 
@@ -343,7 +375,7 @@ impl Media {
                 Media::insert(
                     conn,
                     NewMedia {
-                        file_path: path.to_str().ok_or(Error::InvalidValue)?.to_string(),
+                        file_path,
                         alt_text: image
                             .content()
                             .and_then(|content| content.to_as_string())
@@ -384,6 +416,7 @@ impl Media {
 
 fn determine_mirror_file_path(url: &str) -> PathBuf {
     let mut file_path = Path::new(&CONFIG.media_directory).join(REMOTE_MEDIA_DIRECTORY);
+
     match Url::parse(url) {
         Ok(url) if url.has_host() => {
             file_path.push(url.host_str().unwrap());
@@ -409,6 +442,36 @@ fn determine_mirror_file_path(url: &str) -> PathBuf {
         }
     }
     file_path
+}
+
+#[cfg(feature="s3")]
+fn determine_mirror_s3_path(url: &str) -> String {
+    match Url::parse(url) {
+        Ok(url) if url.has_host() => {
+            format!("static/media/{}/{}/{}",
+                REMOTE_MEDIA_DIRECTORY,
+                url.host_str().unwrap(),
+                url.path().trim_start_matches('/'),
+            )
+        }
+        other => {
+            if let Err(err) = other {
+                warn!("Failed to parse url: {} {}", &url, err);
+            } else {
+                warn!("Error without a host: {}", &url);
+            }
+            let ext = url
+                .rsplit('.')
+                .next()
+                .map(ToOwned::to_owned)
+                .unwrap_or_else(|| String::from("png"));
+            format!("static/media/{}/{}.{}",
+                REMOTE_MEDIA_DIRECTORY,
+                GUID::rand(),
+                ext,
+            )
+        }
+    }
 }
 
 #[cfg(test)]
