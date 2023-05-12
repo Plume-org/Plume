@@ -6,9 +6,8 @@ use rocket::Config as RocketConfig;
 use std::collections::HashSet;
 use std::env::{self, var};
 
-use s3::{Bucket, Region};
-use s3::creds::Credentials;
-
+#[cfg(feature = "s3")]
+use s3::{Bucket, Region, creds::Credentials};
 
 #[cfg(not(test))]
 const DB_NAME: &str = "plume";
@@ -382,6 +381,7 @@ pub struct S3Config {
 }
 
 impl S3Config {
+    #[cfg(feature = "s3")]
     pub fn get_bucket(&self) -> Bucket {
         let region = Region::Custom {
             region: self.region.clone(),
@@ -411,41 +411,49 @@ fn get_s3_config() -> Option<S3Config> {
     if bucket.is_none() && access_key_id.is_none() && access_key_secret.is_none() {
         return None;
     }
-    if bucket.is_none() || access_key_id.is_none() || access_key_secret.is_none() {
-        panic!("Invalid S3 configuration: some required values are set, but not others");
+
+    #[cfg(not(feature = "s3"))]
+    panic!("S3 support is not enabled in this build");
+
+    #[cfg(feature = "s3")]
+    {
+        if bucket.is_none() || access_key_id.is_none() || access_key_secret.is_none() {
+            panic!("Invalid S3 configuration: some required values are set, but not others");
+        }
+        let bucket = bucket.unwrap();
+        let access_key_id = access_key_id.unwrap();
+        let access_key_secret = access_key_secret.unwrap();
+
+        let region = var("S3_REGION").unwrap_or_else(|_| "us-east-1".to_owned());
+        let hostname = var("S3_HOSTNAME").unwrap_or_else(|_| format!("{}.amazonaws.com", region));
+
+        let protocol = var("S3_PROTOCOL").unwrap_or_else(|_| "https".to_owned());
+        if protocol != "http" && protocol != "https" {
+            panic!("Invalid S3 configuration: invalid protocol {}", protocol);
+        }
+
+        let path_style = var("S3_PATH_STYLE").unwrap_or_else(|_| "false".to_owned());
+        let path_style = string_to_bool(&path_style, "S3_PATH_STYLE");
+        let direct_upload = var("S3_DIRECT_UPLOAD").unwrap_or_else(|_| "false".to_owned());
+        let direct_upload = string_to_bool(&direct_upload, "S3_DIRECT_UPLOAD");
+        let direct_download = var("S3_DIRECT_DOWNLOAD").unwrap_or_else(|_| "false".to_owned());
+        let direct_download = string_to_bool(&direct_download, "S3_DIRECT_DOWNLOAD");
+
+        let alias = var("S3_ALIAS_HOST").ok();
+
+        Some(S3Config {
+            bucket,
+            access_key_id,
+            access_key_secret,
+            region,
+            hostname,
+            protocol,
+            path_style,
+            direct_upload,
+            direct_download,
+            alias,
+        })
     }
-    let bucket = bucket.unwrap();
-    let access_key_id = access_key_id.unwrap();
-    let access_key_secret = access_key_secret.unwrap();
-
-    let region = var("S3_REGION").unwrap_or_else(|_| "us-east-1".to_owned());
-    let hostname = var("S3_HOSTNAME").unwrap_or_else(|_| format!("{}.amazonaws.com", region));
-
-    let protocol = var("S3_PROTOCOL").unwrap_or_else(|_| "https".to_owned());
-    if protocol != "http" && protocol != "https" {
-        panic!("Invalid S3 configuration: invalid protocol {}", protocol);
-    }
-
-    let path_style = var("S3_PATH_STYLE").unwrap_or_else(|_| "false".to_owned());
-    let path_style = string_to_bool(&path_style, "S3_PATH_STYLE");
-    let direct_upload = var("S3_DIRECT_UPLOAD").unwrap_or_else(|_| "false".to_owned());
-    let direct_upload = string_to_bool(&direct_upload, "S3_DIRECT_UPLOAD");
-    let direct_download = var("S3_DIRECT_DOWNLOAD").unwrap_or_else(|_| "false".to_owned());
-    let direct_download = string_to_bool(&direct_download, "S3_DIRECT_DOWNLOAD");
-
-    let alias = var("S3_ALIAS_HOST").ok();
-    Some(S3Config {
-        bucket,
-        access_key_id,
-        access_key_secret,
-        region,
-        hostname,
-        protocol,
-        path_style,
-        direct_upload,
-        direct_download,
-        alias,
-    })
 }
 
 lazy_static! {

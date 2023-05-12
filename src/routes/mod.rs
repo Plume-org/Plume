@@ -9,7 +9,7 @@ use rocket::{
     http::{
         hyper::header::{CacheControl, CacheDirective, ETag, EntityTag},
         uri::{FromUriParam, Query},
-        ContentType, RawStr, Status,
+        RawStr, Status,
     },
     request::{self, FromFormValue, FromRequest, Request},
     response::{self, Flash, NamedFile, Redirect, Responder, Response},
@@ -20,6 +20,9 @@ use std::{
     hash::Hasher,
     path::{Path, PathBuf},
 };
+
+#[cfg(feature = "s3")]
+use rocket::http::ContentType;
 
 /// Special return type used for routes that "cannot fail", and instead
 /// `Redirect`, or `Flash<Redirect>`, when we cannot deliver a `Ructe` Response
@@ -207,6 +210,7 @@ pub mod well_known;
 #[derive(Responder)]
 enum FileKind {
     Local(NamedFile),
+    #[cfg(feature = "s3")]
     S3(Vec<u8>, ContentType),
 }
 
@@ -259,18 +263,23 @@ pub fn plume_static_files(file: PathBuf, build_id: &RawStr) -> Option<CachedFile
 }
 #[get("/static/media/<file..>")]
 pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
-    if let Some(config) = &CONFIG.s3 {
-        let ct = file.extension()
-            .and_then(|ext| ContentType::from_extension(&ext.to_string_lossy()))
-            .unwrap_or(ContentType::Binary);
+    if CONFIG.s3.is_some() {
+        #[cfg(feature="s3")]
+        {
+            let ct = file.extension()
+                .and_then(|ext| ContentType::from_extension(&ext.to_string_lossy()))
+                .unwrap_or(ContentType::Binary);
 
-        let data = config.get_bucket()
-            .get_object_blocking(format!("plume-media/{}", file.to_string_lossy())).ok()?;
+            let data = CONFIG.s3.as_ref().unwrap().get_bucket()
+                .get_object_blocking(format!("plume-media/{}", file.to_string_lossy())).ok()?;
 
-        Some(CachedFile {
-            inner: FileKind::S3 ( data.to_vec(), ct),
-            cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
-        })
+            Some(CachedFile {
+                inner: FileKind::S3 ( data.to_vec(), ct),
+                cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+            })
+        }
+        #[cfg(not(feature="s3"))]
+        unreachable!();
     } else {
         NamedFile::open(Path::new(&CONFIG.media_directory).join(file))
             .ok()
