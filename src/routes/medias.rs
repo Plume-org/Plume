@@ -108,7 +108,6 @@ fn save_uploaded_file(file: &SavedField) -> Result<Option<String>, plume_models:
                         Some(ext.to_lowercase())
                     }
                 })
-                .map(|ext| format!(".{}", ext))
         })
         .unwrap_or_default();
 
@@ -120,7 +119,7 @@ fn save_uploaded_file(file: &SavedField) -> Result<Option<String>, plume_models:
         {
             use std::borrow::Cow;
 
-            let dest = format!("static/media/{}{}", GUID::rand(), ext);
+            let dest = format!("static/media/{}.{}", GUID::rand(), ext);
 
             let bytes = match file.data {
                 SavedData::Bytes(ref bytes) => Cow::from(bytes),
@@ -143,7 +142,7 @@ fn save_uploaded_file(file: &SavedField) -> Result<Option<String>, plume_models:
             Ok(Some(dest))
         }
     } else {
-        let dest = format!("{}/{}{}", CONFIG.media_directory, GUID::rand(), ext);
+        let dest = format!("{}/{}.{}", CONFIG.media_directory, GUID::rand(), ext);
 
         match file.data {
             SavedData::Bytes(ref bytes) => {

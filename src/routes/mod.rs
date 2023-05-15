@@ -279,7 +279,7 @@ pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
                 .unwrap_or(ContentType::Binary);
 
             Some(CachedFile {
-                inner: FileKind::S3 ( data.to_vec(), ct),
+                inner: FileKind::S3(data.to_vec(), ct),
                 cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
             })
         }

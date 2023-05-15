@@ -369,6 +369,7 @@ pub struct S3Config {
     pub hostname: String,
     // may be useful when using self hosted s3. Won't work with recent AWS buckets
     pub path_style: bool,
+    // http or https
     pub protocol: String,
 
     // download directly from s3 to user, wihout going through Plume. Require public read on bucket
