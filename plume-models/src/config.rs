@@ -6,6 +6,9 @@ use rocket::Config as RocketConfig;
 use std::collections::HashSet;
 use std::env::{self, var};
 
+#[cfg(feature = "s3")]
+use s3::{Bucket, Region, creds::Credentials};
+
 #[cfg(not(test))]
 const DB_NAME: &str = "plume";
 #[cfg(test)]
@@ -27,10 +30,20 @@ pub struct Config {
     pub mail: Option<MailConfig>,
     pub ldap: Option<LdapConfig>,
     pub proxy: Option<ProxyConfig>,
+    pub s3: Option<S3Config>,
 }
+
 impl Config {
     pub fn proxy(&self) -> Option<&reqwest::Proxy> {
         self.proxy.as_ref().map(|p| &p.proxy)
+    }
+}
+
+fn string_to_bool(val: &str, name: &str) -> bool {
+    match val {
+        "1" | "true" | "TRUE" => true,
+        "0" | "false" | "FALSE" => false,
+        _ => panic!("Invalid configuration: {} is not boolean", name),
     }
 }
 
@@ -288,11 +301,7 @@ fn get_ldap_config() -> Option<LdapConfig> {
     match (addr, base_dn) {
         (Some(addr), Some(base_dn)) => {
             let tls = var("LDAP_TLS").unwrap_or_else(|_| "false".to_owned());
-            let tls = match tls.as_ref() {
-                "1" | "true" | "TRUE" => true,
-                "0" | "false" | "FALSE" => false,
-                _ => panic!("Invalid LDAP configuration : tls"),
-            };
+            let tls = string_to_bool(&tls, "LDAP_TLS");
             let user_name_attr = var("LDAP_USER_NAME_ATTR").unwrap_or_else(|_| "cn".to_owned());
             let mail_attr = var("LDAP_USER_MAIL_ATTR").unwrap_or_else(|_| "mail".to_owned());
             Some(LdapConfig {
@@ -349,6 +358,104 @@ fn get_proxy_config() -> Option<ProxyConfig> {
     })
 }
 
+pub struct S3Config {
+    pub bucket: String,
+    pub access_key_id: String,
+    pub access_key_secret: String,
+
+    // region? If not set, default to us-east-1
+    pub region: String,
+    // hostname for s3. If not set, default to $region.amazonaws.com
+    pub hostname: String,
+    // may be useful when using self hosted s3. Won't work with recent AWS buckets
+    pub path_style: bool,
+    // http or https
+    pub protocol: String,
+
+    // download directly from s3 to user, wihout going through Plume. Require public read on bucket
+    pub direct_download: bool,
+    // use this hostname for downloads, can be used with caching proxy in front of s3 (expected to
+    // be reachable through https)
+    pub alias: Option<String>,
+}
+
+impl S3Config {
+    #[cfg(feature = "s3")]
+    pub fn get_bucket(&self) -> Bucket {
+        let region = Region::Custom {
+            region: self.region.clone(),
+            endpoint: format!("{}://{}", self.protocol, self.hostname),
+        };
+        let credentials = Credentials {
+            access_key: Some(self.access_key_id.clone()),
+            secret_key: Some(self.access_key_secret.clone()),
+            security_token: None,
+            session_token: None,
+            expiration: None,
+        };
+
+        let bucket = Bucket::new(&self.bucket, region, credentials).unwrap();
+        if self.path_style {
+            bucket.with_path_style()
+        } else {
+            bucket
+        }
+    }
+}
+
+fn get_s3_config() -> Option<S3Config> {
+    let bucket = var("S3_BUCKET").ok();
+    let access_key_id = var("AWS_ACCESS_KEY_ID").ok();
+    let access_key_secret = var("AWS_SECRET_ACCESS_KEY").ok();
+    if bucket.is_none() && access_key_id.is_none() && access_key_secret.is_none() {
+        return None;
+    }
+
+    #[cfg(not(feature = "s3"))]
+    panic!("S3 support is not enabled in this build");
+
+    #[cfg(feature = "s3")]
+    {
+        if bucket.is_none() || access_key_id.is_none() || access_key_secret.is_none() {
+            panic!("Invalid S3 configuration: some required values are set, but not others");
+        }
+        let bucket = bucket.unwrap();
+        let access_key_id = access_key_id.unwrap();
+        let access_key_secret = access_key_secret.unwrap();
+
+        let region = var("S3_REGION").unwrap_or_else(|_| "us-east-1".to_owned());
+        let hostname = var("S3_HOSTNAME").unwrap_or_else(|_| format!("{}.amazonaws.com", region));
+
+        let protocol = var("S3_PROTOCOL").unwrap_or_else(|_| "https".to_owned());
+        if protocol != "http" && protocol != "https" {
+            panic!("Invalid S3 configuration: invalid protocol {}", protocol);
+        }
+
+        let path_style = var("S3_PATH_STYLE").unwrap_or_else(|_| "false".to_owned());
+        let path_style = string_to_bool(&path_style, "S3_PATH_STYLE");
+        let direct_download = var("S3_DIRECT_DOWNLOAD").unwrap_or_else(|_| "false".to_owned());
+        let direct_download = string_to_bool(&direct_download, "S3_DIRECT_DOWNLOAD");
+
+        let alias = var("S3_ALIAS_HOST").ok();
+
+        if direct_download && protocol == "http" && alias.is_none() {
+            panic!("S3 direct download is disabled because bucket is accessed through plain HTTP. Use HTTPS or set an alias hostname (S3_ALIAS_HOST).");
+        }
+
+        Some(S3Config {
+            bucket,
+            access_key_id,
+            access_key_secret,
+            region,
+            hostname,
+            protocol,
+            path_style,
+            direct_download,
+            alias,
+        })
+    }
+}
+
 lazy_static! {
     pub static ref CONFIG: Config = Config {
         base_url: var("BASE_URL").unwrap_or_else(|_| format!(
@@ -380,5 +487,6 @@ lazy_static! {
         mail: get_mail_config(),
         ldap: get_ldap_config(),
         proxy: get_proxy_config(),
+        s3: get_s3_config(),
     };
 }

@@ -68,12 +68,13 @@ ructe = "0.15.0"
 rsass = "0.26"
 
 [features]
-default = ["postgres"]
+default = ["postgres", "s3"]
 postgres = ["plume-models/postgres", "diesel/postgres"]
 sqlite = ["plume-models/sqlite", "diesel/sqlite"]
 debug-mailer = []
 test = []
 search-lindera = ["plume-models/search-lindera"]
+s3 = ["plume-models/s3"]
 
 [workspace]
 members = ["plume-api", "plume-cli", "plume-models", "plume-common", "plume-front", "plume-macro"]

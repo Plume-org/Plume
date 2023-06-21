@@ -21,6 +21,9 @@ use std::{
     path::{Path, PathBuf},
 };
 
+#[cfg(feature = "s3")]
+use rocket::http::ContentType;
+
 /// Special return type used for routes that "cannot fail", and instead
 /// `Redirect`, or `Flash<Redirect>`, when we cannot deliver a `Ructe` Response
 #[allow(clippy::large_enum_variant)]
@@ -205,9 +208,16 @@ pub mod user;
 pub mod well_known;
 
 #[derive(Responder)]
+enum FileKind {
+    Local(NamedFile),
+    #[cfg(feature = "s3")]
+    S3(Vec<u8>, ContentType),
+}
+
+#[derive(Responder)]
 #[response()]
 pub struct CachedFile {
-    inner: NamedFile,
+    inner: FileKind,
     cache_control: CacheControl,
 }
 
@@ -253,19 +263,41 @@ pub fn plume_static_files(file: PathBuf, build_id: &RawStr) -> Option<CachedFile
 }
 #[get("/static/media/<file..>")]
 pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
-    NamedFile::open(Path::new(&CONFIG.media_directory).join(file))
-        .ok()
-        .map(|f| CachedFile {
-            inner: f,
-            cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
-        })
+    if CONFIG.s3.is_some() {
+        #[cfg(not(feature="s3"))]
+        unreachable!();
+
+        #[cfg(feature="s3")]
+        {
+            let data = CONFIG.s3.as_ref().unwrap().get_bucket()
+                .get_object_blocking(format!("static/media/{}", file.to_string_lossy())).ok()?;
+
+            let ct = data.headers().get("content-type")
+                .and_then(|x| ContentType::parse_flexible(&x))
+                .or_else(|| file.extension()
+                    .and_then(|ext| ContentType::from_extension(&ext.to_string_lossy())))
+                .unwrap_or(ContentType::Binary);
+
+            Some(CachedFile {
+                inner: FileKind::S3(data.to_vec(), ct),
+                cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+            })
+        }
+    } else {
+        NamedFile::open(Path::new(&CONFIG.media_directory).join(file))
+            .ok()
+            .map(|f| CachedFile {
+                inner: FileKind::Local(f),
+                cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+            })
+    }
 }
 #[get("/static/<file..>", rank = 3)]
 pub fn static_files(file: PathBuf) -> Option<CachedFile> {
     NamedFile::open(Path::new("static/").join(file))
         .ok()
         .map(|f| CachedFile {
-            inner: f,
+            inner: FileKind::Local(f),
             cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
         })
 }

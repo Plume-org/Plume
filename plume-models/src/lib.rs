@@ -69,6 +69,8 @@ pub enum Error {
     Webfinger,
     Expired,
     UserAlreadyExists,
+    #[cfg(feature = "s3")]
+    S3(s3::error::S3Error),
 }
 
 impl From<bcrypt::BcryptError> for Error {
@@ -167,6 +169,13 @@ impl From<InboxError<Error>> for Error {
 impl From<request::Error> for Error {
     fn from(_err: request::Error) -> Error {
         Error::Request
+    }
+}
+
+#[cfg(feature = "s3")]
+impl From<s3::error::S3Error> for Error {
+    fn from(err: s3::error::S3Error) -> Error {
+        Error::S3(err)
     }
 }
 

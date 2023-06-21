@@ -2,7 +2,7 @@ use crate::routes::{errors::ErrorPage, Page};
 use crate::template_utils::{IntoContext, Ructe};
 use guid_create::GUID;
 use multipart::server::{
-    save::{SaveResult, SavedData},
+    save::{SaveResult, SavedField, SavedData},
     Multipart,
 };
 use plume_models::{db_conn::DbConn, medias::*, users::User, Error, PlumeRocket, CONFIG};
@@ -55,41 +55,16 @@ pub fn upload(
     if let SaveResult::Full(entries) = Multipart::with_body(data.open(), boundary).save().temp() {
         let fields = entries.fields;
 
-        let filename = fields
+        let file = fields
             .get("file")
             .and_then(|v| v.iter().next())
-            .ok_or(status::BadRequest(Some("No file uploaded")))?
-            .headers
-            .filename
-            .clone();
-        // Remove extension if it contains something else than just letters and numbers
-        let ext = filename
-            .and_then(|f| {
-                f.rsplit('.')
-                    .next()
-                    .and_then(|ext| {
-                        if ext.chars().any(|c| !c.is_alphanumeric()) {
-                            None
-                        } else {
-                            Some(ext.to_lowercase())
-                        }
-                    })
-                    .map(|ext| format!(".{}", ext))
-            })
-            .unwrap_or_default();
-        let dest = format!("{}/{}{}", CONFIG.media_directory, GUID::rand(), ext);
+            .ok_or(status::BadRequest(Some("No file uploaded")))?;
 
-        match fields["file"][0].data {
-            SavedData::Bytes(ref bytes) => fs::write(&dest, bytes)
-                .map_err(|_| status::BadRequest(Some("Couldn't save upload")))?,
-            SavedData::File(ref path, _) => {
-                fs::copy(path, &dest)
-                    .map_err(|_| status::BadRequest(Some("Couldn't copy upload")))?;
-            }
-            _ => {
-                return Ok(Redirect::to(uri!(new)));
-            }
-        }
+        let file_path = match save_uploaded_file(file) {
+            Ok(Some(file_path)) => file_path,
+            Ok(None) => return Ok(Redirect::to(uri!(new))),
+            Err(_) => return Err(status::BadRequest(Some("Couldn't save uploaded media: {}"))),
+        };
 
         let has_cw = !read(&fields["cw"][0].data)
             .map(|cw| cw.is_empty())
@@ -97,7 +72,7 @@ pub fn upload(
         let media = Media::insert(
             &conn,
             NewMedia {
-                file_path: dest,
+                file_path,
                 alt_text: read(&fields["alt"][0].data)?,
                 is_remote: false,
                 remote_url: None,
@@ -114,6 +89,74 @@ pub fn upload(
         Ok(Redirect::to(uri!(details: id = media.id)))
     } else {
         Ok(Redirect::to(uri!(new)))
+    }
+}
+
+fn save_uploaded_file(file: &SavedField) -> Result<Option<String>, plume_models::Error> {
+    // Remove extension if it contains something else than just letters and numbers
+    let ext = file
+        .headers
+        .filename
+        .as_ref()
+        .and_then(|f| {
+            f.rsplit('.')
+                .next()
+                .and_then(|ext| {
+                    if ext.chars().any(|c| !c.is_alphanumeric()) {
+                        None
+                    } else {
+                        Some(ext.to_lowercase())
+                    }
+                })
+        })
+        .unwrap_or_default();
+
+    if CONFIG.s3.is_some() {
+        #[cfg(not(feature="s3"))]
+        unreachable!();
+
+        #[cfg(feature="s3")]
+        {
+            use std::borrow::Cow;
+
+            let dest = format!("static/media/{}.{}", GUID::rand(), ext);
+
+            let bytes = match file.data {
+                SavedData::Bytes(ref bytes) => Cow::from(bytes),
+                SavedData::File(ref path, _) => Cow::from(fs::read(path)?),
+                _ => {
+                    return Ok(None);
+                }
+            };
+
+            let bucket = CONFIG.s3.as_ref().unwrap().get_bucket();
+            let content_type = match &file.headers.content_type {
+                Some(ct) => ct.to_string(),
+                None => ContentType::from_extension(&ext)
+                    .unwrap_or(ContentType::Binary)
+                    .to_string(),
+            };
+
+            bucket.put_object_with_content_type_blocking(&dest, &bytes, &content_type)?;
+
+            Ok(Some(dest))
+        }
+    } else {
+        let dest = format!("{}/{}.{}", CONFIG.media_directory, GUID::rand(), ext);
+
+        match file.data {
+            SavedData::Bytes(ref bytes) => {
+                fs::write(&dest, bytes)?;
+            }
+            SavedData::File(ref path, _) => {
+                fs::copy(path, &dest)?;
+            }
+            _ => {
+                return Ok(None);
+            }
+        }
+
+        Ok(Some(dest))
     }
 }
 
