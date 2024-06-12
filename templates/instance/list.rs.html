@@ -1,19 +1,12 @@
 @use plume_models::instance::Instance;
-@use crate::templates::base;
+@use crate::templates::{base, instance::admin_header};
 @use crate::template_utils::*;
 @use crate::routes::*;
 
 @(ctx: BaseContext, instance: Instance, instances: Vec<Instance>, page: i32, n_pages: i32)
 
 @:base(ctx, i18n!(ctx.1, "Administration of {0}"; instance.name), {}, {}, {
-    <h1>@i18n!(ctx.1, "Instances")</h1>
-
-    @tabs(&[
-    (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), false),
-    (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), true),
-    (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), false),
-    (&uri!(instance::admin_email_blocklist:page=_).to_string(), i18n!(ctx.1, "Email blocklist"), false),
-    ])
+    @:admin_header(ctx, "Instances", (if ctx.2.clone().map(|u| u.is_admin()).unwrap() {2} else {1}))
 
     <div class="list">
         @for instance in instances {
