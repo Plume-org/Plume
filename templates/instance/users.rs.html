@@ -6,7 +6,7 @@
 @(ctx: BaseContext, users: Vec<User>, user: Option<&str>, page: i32, n_pages: i32)
 
 @:base(ctx, i18n!(ctx.1, "Users"), {}, {}, {
-    @:admin_header(ctx, "Users", (if ctx.2.clone().map(|u| u.is_admin()).unwrap() {3} else {2}))
+    @:admin_header(ctx, "Users", 3))
 
     <form method="get" action="@uri!(instance::admin_search_users: page = _, user = user.unwrap_or_default())">
         <header>

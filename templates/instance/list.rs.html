@@ -6,7 +6,7 @@
 @(ctx: BaseContext, instance: Instance, instances: Vec<Instance>, page: i32, n_pages: i32)
 
 @:base(ctx, i18n!(ctx.1, "Administration of {0}"; instance.name), {}, {}, {
-    @:admin_header(ctx, "Instances", (if ctx.2.clone().map(|u| u.is_admin()).unwrap() {2} else {1}))
+    @:admin_header(ctx, "Instances", 2))
 
     <div class="list">
         @for instance in instances {

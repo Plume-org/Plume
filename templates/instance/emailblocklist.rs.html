@@ -5,7 +5,7 @@
 
 @(ctx:BaseContext, emails: Vec<BlocklistedEmail>, page:i32, n_pages:i32)
 @:base(ctx, i18n!(ctx.1, "Blocklisted Emails"), {}, {}, {
-    @:admin_header(ctx, "Blocklisted Emails", (if ctx.2.clone().map(|u| u.is_admin()).unwrap() {4} else {3}))
+    @:admin_header(ctx, "Blocklisted Emails", 4)
     <form method="post" action="@uri!(instance::add_email_blocklist)">
         @(Input::new("email_address", i18n!(ctx.1, "Email address"))
         .details(i18n!(ctx.1, "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"))
