@@ -51,7 +51,7 @@ pub fn index(conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
 }
 
 #[get("/admin")]
-pub fn admin(_admin: Admin, conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub fn admin(_admin: InclusiveAdmin, conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let local_inst = Instance::get_local()?;
     Ok(render!(instance::admin(
         &(&conn, &rockets).to_context(),

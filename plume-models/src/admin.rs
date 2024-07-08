@@ -5,7 +5,7 @@ use rocket::{
     Outcome,
 };
 
-/// Wrapper around User to use as a request guard on pages reserved to admins.
+/// Wrapper around User to use as a request guard on pages exclusively reserved to admins.
 pub struct Admin(pub User);
 
 impl<'a, 'r> FromRequest<'a, 'r> for Admin {
@@ -17,6 +17,23 @@ impl<'a, 'r> FromRequest<'a, 'r> for Admin {
             Outcome::Success(Admin(user))
         } else {
             Outcome::Failure((Status::Unauthorized, ()))
+        }
+    }
+}
+
+/// Same as `Admin` but it forwards to next guard if the user is not an admin.
+/// It's useful when there are multiple implementations of routes for admin and moderator.
+pub struct InclusiveAdmin(pub User);
+
+impl<'a, 'r> FromRequest<'a, 'r> for InclusiveAdmin {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<InclusiveAdmin, ()> {
+        let user = request.guard::<User>()?;
+        if user.is_admin() {
+            Outcome::Success(InclusiveAdmin(user))
+        } else {
+            Outcome::Forward(())
         }
     }
 }
