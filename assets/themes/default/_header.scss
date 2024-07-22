@@ -37,6 +37,10 @@ body > header {
     flex-direction: row;
     align-items: center;
 
+    &.right-nav {
+      overflow-x: hidden;
+    }
+
     hr {
       height: 100%;
       width: 0.2em;
