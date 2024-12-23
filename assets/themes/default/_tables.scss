@@ -1,0 +1,10 @@
+/* tables */
+table, td, th, tr {
+  border: 1px dotted $lightpurple;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+tr:nth-child(even){background-color: $gray;}
