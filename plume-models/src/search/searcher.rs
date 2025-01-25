@@ -293,7 +293,7 @@ Then try to restart Plume
         let writer = writer.as_mut().unwrap();
         writer.delete_all_documents().unwrap();
 
-        const PAGE_SIZE: i64 = 16384;
+        const PAGE_SIZE: i64 = 8192;
         let mut cursor = -1;
         loop {
             let posts = posts::table
