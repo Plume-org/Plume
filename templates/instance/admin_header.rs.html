@@ -1,0 +1,21 @@
+@use crate::template_utils::*;
+@use crate::routes::*;
+
+@(ctx: BaseContext, title: &str, selected_tab: u8)
+
+<h1>@i18n!(ctx.1, title)</h1>
+
+@if ctx.2.clone().map(|u| u.is_admin()).unwrap_or(false) {
+    @tabs(&[
+        (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), selected_tab == 1),
+        (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), selected_tab == 2),
+        (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), selected_tab == 3),
+        (&uri!(instance::admin_email_blocklist: page=_).to_string(), i18n!(ctx.1, "Email blocklist"), selected_tab == 4)
+    ])
+} else {
+    @tabs(&[
+        (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), selected_tab == 2),
+        (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), selected_tab == 3),
+        (&uri!(instance::admin_email_blocklist: page=_).to_string(), i18n!(ctx.1, "Email blocklist"), selected_tab == 4)
+    ])
+}

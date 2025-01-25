@@ -1,17 +1,11 @@
 @use plume_models::blocklisted_emails::BlocklistedEmail;
-@use crate::templates::base;
+@use crate::templates::{base, instance::admin_header};
 @use crate::template_utils::*;
 @use crate::routes::*;
 
 @(ctx:BaseContext, emails: Vec<BlocklistedEmail>, page:i32, n_pages:i32)
-    @:base(ctx, i18n!(ctx.1, "Blocklisted Emails"), {}, {}, {
-    <h1>@i18n!(ctx.1,"Blocklisted Emails")</h1>
-    @tabs(&[
-        (&uri!(instance::admin).to_string(), i18n!(ctx.1, "Configuration"), false),
-        (&uri!(instance::admin_instances: page = _).to_string(), i18n!(ctx.1, "Instances"), false),
-        (&uri!(instance::admin_users: page = _).to_string(), i18n!(ctx.1, "Users"), false),
-        (&uri!(instance::admin_email_blocklist:page=_).to_string(), i18n!(ctx.1, "Email blocklist"), true),
-    ])
+@:base(ctx, i18n!(ctx.1, "Blocklisted Emails"), {}, {}, {
+    @:admin_header(ctx, "Blocklisted Emails", 4)
     <form method="post" action="@uri!(instance::add_email_blocklist)">
         @(Input::new("email_address", i18n!(ctx.1, "Email address"))
         .details(i18n!(ctx.1, "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"))

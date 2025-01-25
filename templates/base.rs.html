@@ -32,7 +32,7 @@
                     <hr/>
                     @:header()
                 </nav>
-                <nav>
+                <nav class="right-nav">
                     @if ctx.2.is_some() {
                         <a href="@uri!(search::search: _)">
                             <i class="icon icon-search"></i>
@@ -87,6 +87,8 @@
                 <a href="@uri!(instance::privacy)">@i18n!(ctx.1, "Privacy policy")</a>
                 @if ctx.2.clone().map(|u| u.is_admin()).unwrap_or(false) {
                     <a href="@uri!(instance::admin)">@i18n!(ctx.1, "Administration")</a>
+                } else if ctx.2.clone().map(|u| u.is_moderator()).unwrap_or(false) {
+                    <a href="@uri!(instance::admin_mod)">@i18n!(ctx.1, "Moderation")</a>
                 }
             </div>
             <div>
