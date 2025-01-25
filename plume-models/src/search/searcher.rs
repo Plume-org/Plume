@@ -289,13 +289,27 @@ Then try to restart Plume
     }
 
     pub fn fill(&self, conn: &Connection) -> Result<()> {
-        for post in posts::table
-            .filter(posts::published.eq(true))
-            .load::<Post>(conn)?
-        {
-            self.update_document(conn, &post)?
+        let mut writer = self.writer.lock().unwrap();
+        let writer = writer.as_mut().unwrap();
+        writer.delete_all_documents().unwrap();
+
+        const PAGE_SIZE: i64 = 8192;
+        let mut cursor = -1;
+        loop {
+            let posts = posts::table
+                .filter(posts::published.eq(true))
+                .filter(posts::id.gt(cursor))
+                .order(posts::id.asc())
+                .limit(PAGE_SIZE)
+                .load::<Post>(conn)?;
+            for post in posts.iter() {
+                self.add_document(conn, post)?;
+                cursor = post.id;
+            }
+            if posts.len() < PAGE_SIZE as usize {
+                break Ok(())
+            }
         }
-        Ok(())
     }
 
     pub fn commit(&self) {
