@@ -289,9 +289,11 @@ Then try to restart Plume
     }
 
     pub fn fill(&self, conn: &Connection) -> Result<()> {
-        let mut writer = self.writer.lock().unwrap();
-        let writer = writer.as_mut().unwrap();
-        writer.delete_all_documents().unwrap();
+        {
+            let mut writer = self.writer.lock().unwrap();
+            let writer = writer.as_mut().unwrap();
+            writer.delete_all_documents().unwrap();
+        }
 
         const PAGE_SIZE: i64 = 8192;
         let mut cursor = -1;
