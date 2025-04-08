@@ -7,6 +7,7 @@ use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use itertools::Itertools;
 use std::fs;
 use std::{cmp, fs::create_dir_all, io, path::Path, sync::Mutex};
+use std::collections::HashMap;
 use tantivy::{
     collector::TopDocs, directory::MmapDirectory, schema::*, Index, IndexReader, IndexWriter,
     ReloadPolicy, TantivyError, Term,
@@ -293,6 +294,21 @@ Then try to restart Plume
         let writer = writer.as_mut().unwrap();
         writer.delete_all_documents().unwrap();
 
+        let schema = self.index.schema();
+        let post_id = schema.get_field("post_id").unwrap();
+        let creation_date = schema.get_field("creation_date").unwrap();
+        let instance = schema.get_field("instance").unwrap();
+        let author = schema.get_field("author").unwrap();
+        let tag = schema.get_field("tag").unwrap();
+        let blog_name = schema.get_field("blog").unwrap();
+        let content = schema.get_field("content").unwrap();
+        let subtitle = schema.get_field("subtitle").unwrap();
+        let title = schema.get_field("title").unwrap();
+        let lang = schema.get_field("lang").unwrap();
+        let license = schema.get_field("license").unwrap();
+
+        let mut instance_cache = HashMap::new();
+
         const PAGE_SIZE: i64 = 8192;
         let mut cursor = -1;
         loop {
@@ -303,7 +319,24 @@ Then try to restart Plume
                 .limit(PAGE_SIZE)
                 .load::<Post>(conn)?;
             for post in posts.iter() {
-                self.add_document(conn, post)?;
+                // TODO we could joins to reduce per-post sql calls even more
+                let blog = post.get_blog(conn)?;
+                if !instance_cache.contains_key(&blog.instance_id) {
+                    instance_cache.insert(blog.instance_id, Instance::get(conn, blog.instance_id)?.public_domain);
+                }
+                writer.add_document(doc!(
+                    post_id => i64::from(post.id),
+                    author => post.get_authors(conn)?.into_iter().map(|u| u.fqn).join(" "),
+                    creation_date => i64::from(post.creation_date.num_days_from_ce()),
+                    instance => instance_cache[&blog.instance_id].clone(),
+                    tag => Tag::for_post(conn, post.id)?.into_iter().map(|t| t.tag).join(" "),
+                    blog_name => blog.title,
+                    content => post.content.get().clone(),
+                    subtitle => post.subtitle.clone(),
+                    title => post.title.clone(),
+                    lang => detect_lang(post.content.get()).and_then(|i| if i.is_reliable() { Some(i.lang()) } else {None} ).unwrap_or(Lang::Eng).name(),
+                    license => post.license.clone(),
+                ));
                 cursor = post.id;
             }
             if posts.len() < PAGE_SIZE as usize {
