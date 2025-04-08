@@ -26,8 +26,16 @@ pub fn handle_incoming(
         .or_else(|| activity["actor"]["id"].as_str())
         .ok_or(status::BadRequest(Some("Missing actor id for activity")))?;
 
-    let actor = User::from_id(&conn, actor_id, None, CONFIG.proxy())
-        .expect("instance::shared_inbox: user error");
+    let actor = match User::from_id(&conn, actor_id, None, CONFIG.proxy()) {
+        Ok(actor) => actor,
+        // ignore activity from deleted actor
+        Err((Some(json), _)) if json.get("error").map(|v| v == "Gone").unwrap_or(false) => return Ok(String::new()),
+        Err(e) => {
+            warn!("failed to resolve user from id: {e:?}");
+            return Err(status::BadRequest(Some("unresolvable actor")));
+        }
+    };
+
     if !verify_http_headers(&actor, &headers.0, &sig).is_secure() && !act.clone().verify(&actor) {
         // maybe we just know an old key?
         actor
