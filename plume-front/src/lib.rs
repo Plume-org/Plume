@@ -1,5 +1,4 @@
 #![recursion_limit = "128"]
-#![feature(decl_macro, proc_macro_hygiene)]
 
 #[macro_use]
 extern crate gettext_macros;

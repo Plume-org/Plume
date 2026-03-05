@@ -1,11 +1,11 @@
 @use plume_models::{instance::Instance, users::User};
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 @use crate::routes::*;
 
-@(ctx: BaseContext, instance: Instance, admin: User, n_users: i64, n_articles: i64, n_instances: i64)
+@(ctx: BaseContext, instance: Instance, admin: User, admin_avatar_url: Option<String>, n_users: i64, n_articles: i64, n_instances: i64)
 
-@:base(ctx, i18n!(ctx.1, "About {0}"; instance.name.clone()), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "About {0}"; instance.name.clone()), {}, {}, {
     <h1>@i18n!(ctx.1, "About {0}"; instance.name)</h1>
     <section>
     @Html(instance.short_description_html)
@@ -25,8 +25,8 @@
         </div>
         <div>
             <p>@i18n!(ctx.1, "Administred by")</p>
-            @avatar(ctx.0, &admin, Size::Small, false, ctx.1)
-            <p><a href="@uri!(user::details: name = &admin.fqn)">@admin.name()</a><small>@@@admin.fqn</small></p>
+            @avatar(&admin, &admin_avatar_url, Size::Small, false, ctx.1)
+            <p><a href="@uri!(user::details(name = &admin.fqn))">@admin.name()</a><small>@@@admin.fqn</small></p>
         </div>
         </section>
     </div>

@@ -3,6 +3,7 @@
 @use std::path::Path;
 @use crate::template_utils::*;
 @use crate::routes::*;
+@use crate::routes::search::SearchQuery;
 
 @(ctx: BaseContext, title: String, head: Content, header: Content, content: Content)
 
@@ -12,9 +13,9 @@
         <meta charset="utf-8" />
         <title>@title ⋅ @i18n!(ctx.1, "Plume")</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="@uri!(plume_static_files: file = Path::new("css").join(ctx.2.clone().and_then(|u| u.preferred_theme).unwrap_or_else(|| CONFIG.default_theme.clone())).join("theme.css"), build_id = CACHE_NAME)" />
+        <link rel="stylesheet" href="@uri!(plume_static_files(file = Path::new("css").join(ctx.2.clone().and_then(|u| u.preferred_theme).unwrap_or_else(|| CONFIG.default_theme.clone())).join("theme.css"), _build_id = CACHE_NAME))" />
         <link rel="manifest" href="@uri!(instance::web_manifest)" />
-        <link rel="icon" type="image/png" href="@uri!(plume_static_files: file = CONFIG.logo.favicon.as_str(), build_id = CACHE_NAME)">
+        <link rel="icon" type="image/png" href="@uri!(plume_static_files(file = CONFIG.logo.favicon.as_str(), _build_id = CACHE_NAME))">
         <meta content='#282c37' name='theme-color'/>
         @:head()
     </head>
@@ -26,7 +27,7 @@
             <div id="content" role="menu" aria-labelled-by="menu">
                 <nav>
                     <a href="@uri!(instance::index)" class="title">
-                        <img src="@uri!(plume_static_files: file = CONFIG.logo.main.as_str(), build_id = CACHE_NAME)">
+                        <img src="@uri!(plume_static_files(file = CONFIG.logo.main.as_str(), _build_id = CACHE_NAME))">
                         <p>@i18n!(ctx.1, "Plume")</p>
                     </a>
                     <hr/>
@@ -34,7 +35,7 @@
                 </nav>
                 <nav class="right-nav">
                     @if ctx.2.is_some() {
-                        <a href="@uri!(search::search: _)">
+                        <a href="@uri!(search::search(_))">
                             <i class="icon icon-search"></i>
                             <span class="mobile-label">@i18n!(ctx.1, "Search")</span>
                         </a>
@@ -42,7 +43,7 @@
                             <i class="icon icon-home" aria-label="@i18n!(ctx.1, "Dashboard")"></i>
                             <span class="mobile-label">@i18n!(ctx.1, "Dashboard")</span>
                         </a>
-                        <a href="@uri!(notifications::notifications: page = _)">
+                        <a href="@uri!(notifications::notifications(page = _))">
                             <i class="icon icon-bell" aria-label="@i18n!(ctx.1, "Notifications")"></i>
                             <span class="mobile-label">@i18n!(ctx.1, "Notifications")</span>
                         </a>
@@ -51,15 +52,15 @@
                             <span class="mobile-label">@i18n!(ctx.1, "Log Out")</span>
                         </a>
                         <a href="@uri!(user::me)" title="@i18n!(ctx.1, "My account")">
-                            @avatar(ctx.0, &ctx.2.clone().unwrap(), Size::Small, false, ctx.1)
+                            @avatar(&ctx.2.as_ref().unwrap(), &ctx.0, Size::Small, false, ctx.1)
                             <span class="mobile-label">@i18n!(ctx.1, "My account")</span>
                         </a>
                     } else {
-                        <a href="@uri!(search::search: _)">
+                        <a href="@uri!(search::search(_))">
                             <i class="icon icon-search"></i>
                             <span class="mobile-label">@i18n!(ctx.1, "Search")</span>
                         </a>
-                        <a href="@uri!(session::new: m = _)">
+                        <a href="@uri!(session::new(m = _))">
                             <i class="icon icon-log-in"></i>
                             <span class="mobile-label">@i18n!(ctx.1, "Log In")</span>
                         </a>
@@ -99,7 +100,7 @@
             </div>
         </footer>
         <script type="module">
-          import init from '@uri!(plume_static_files: file = "plume_front.js", build_id = CACHE_NAME)';
+          import init from '@uri!(plume_static_files(file = "plume_front.js", _build_id = CACHE_NAME))';
           (async () => await init())();
         </script>
     </body>

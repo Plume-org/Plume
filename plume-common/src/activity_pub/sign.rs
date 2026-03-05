@@ -1,4 +1,5 @@
 use super::request;
+use base64::prelude::{Engine as _, BASE64_STANDARD};
 use chrono::{naive::NaiveDateTime, DateTime, Duration, Utc};
 use openssl::{pkey::PKey, rsa::Rsa, sha::sha256};
 use rocket::http::HeaderMap;
@@ -69,7 +70,7 @@ impl Signable for serde_json::Value {
         let document_hash = Self::hash(&self.to_string());
         let to_be_signed = options_hash + &document_hash;
 
-        let signature = base64::encode(&creator.sign(&to_be_signed).map_err(|_| Error())?);
+        let signature = BASE64_STANDARD.encode(&creator.sign(&to_be_signed).map_err(|_| Error())?);
 
         options["signatureValue"] = serde_json::Value::String(signature);
         self["signature"] = options;
@@ -85,7 +86,7 @@ impl Signable for serde_json::Value {
                 return false;
             };
         let signature = if let Ok(sig) =
-            base64::decode(&signature_obj["signatureValue"].as_str().unwrap_or(""))
+            BASE64_STANDARD.decode(&signature_obj["signatureValue"].as_str().unwrap_or(""))
         {
             sig
         } else {
@@ -176,7 +177,7 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
         .join("\n");
 
     if !sender
-        .verify(&h, &base64::decode(signature).unwrap_or_default())
+        .verify(&h, &BASE64_STANDARD.decode(signature).unwrap_or_default())
         .unwrap_or(false)
     {
         return SignatureValidity::Invalid;

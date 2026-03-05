@@ -1,14 +1,14 @@
 @use plume_models::users::User;
-@use crate::templates::{base, instance::admin_header};
+@use crate::templates::{base_html, instance::admin_header_html};
 @use crate::template_utils::*;
 @use crate::routes::*;
 
-@(ctx: BaseContext, users: Vec<User>, user: Option<&str>, page: i32, n_pages: i32)
+@(ctx: BaseContext, users: Vec<(User, Option<String>)>, user: Option<&str>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "Users"), {}, {}, {
-    @:admin_header(ctx, "Users", 3))
+@:base_html(ctx, i18n!(ctx.1, "Users"), {}, {}, {
+    @:admin_header_html(ctx, "Users", 3))
 
-    <form method="get" action="@uri!(instance::admin_search_users: page = _, user = user.unwrap_or_default())">
+    <form method="get" action="@uri!(instance::admin_search_users(page = _, user = user.unwrap_or_default()))">
         <header>
             <input type="search" name="user" value="@user.unwrap_or_default()">
             <input type="submit" value="@i18n!(ctx.1, "Search users")">
@@ -27,12 +27,12 @@
             <input type="submit" value="@i18n!(ctx.1, "Run on selected users")">
         </header>
         <div class="list">
-            @for user in users {
+            @for (user, u_avatar) in users {
                 <div class="card flex compact">
                     <input type="checkbox" name="@user.id">
-                    @avatar(ctx.0, &user, Size::Small, false, ctx.1)
+                    @avatar(&user, &u_avatar, Size::Small, false, ctx.1)
                     <p class="grow">
-                        <a href="@uri!(user::details: name = &user.fqn)">@user.name()</a>
+                        <a href="@uri!(user::details(name = &user.fqn))">@user.name()</a>
                         <small>@format!("@{}", user.username)</small>
                     </p>
                     @if user.is_admin() {

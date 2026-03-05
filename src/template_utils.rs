@@ -1,11 +1,10 @@
-use plume_models::{db_conn::DbConn, notifications::*, users::User, Connection, PlumeRocket};
+use plume_models::{db_conn::DbConn, comments::CommentTree, notifications::*, users::User, PlumeRocket};
 
 use crate::templates::Html;
 use gettext::Catalog;
-use rocket::http::hyper::header::{ETag, EntityTag};
-use rocket::http::{Method, Status};
+use rocket::http::{hyper::header::ETAG, Method, Status};
 use rocket::request::Request;
-use rocket::response::{self, content::Html as HtmlCt, Responder, Response};
+use rocket::response::{self, content::RawHtml as HtmlCt, Responder, Response};
 use std::collections::{btree_map::BTreeMap, hash_map::DefaultHasher};
 use std::hash::Hasher;
 
@@ -14,7 +13,7 @@ pub use plume_common::utils::escape;
 pub static CACHE_NAME: &str = env!("CACHE_ID");
 
 pub type BaseContext<'a> = &'a (
-    &'a Connection,
+    Option<String>,
     &'a Catalog,
     Option<User>,
     Option<(String, String)>,
@@ -22,26 +21,28 @@ pub type BaseContext<'a> = &'a (
 
 pub trait IntoContext {
     fn to_context(
-        &self,
+        &mut self,
     ) -> (
-        &Connection,
+        Option<String>,
         &Catalog,
         Option<User>,
         Option<(String, String)>,
     );
 }
 
-impl IntoContext for (&DbConn, &PlumeRocket) {
+impl IntoContext for (&mut DbConn, &PlumeRocket) {
     fn to_context(
-        &self,
+        &mut self,
     ) -> (
-        &Connection,
+        Option<String>,
         &Catalog,
         Option<User>,
         Option<(String, String)>,
     ) {
+
+        let avatar_url = self.1.user.as_ref().and_then(|u| u.avatar_url(self.0));
         (
-            self.0,
+            avatar_url,
             &self.1.intl.catalog,
             self.1.user.clone(),
             self.1.flash_msg.clone(),
@@ -52,8 +53,8 @@ impl IntoContext for (&DbConn, &PlumeRocket) {
 #[derive(Debug)]
 pub struct Ructe(pub Vec<u8>);
 
-impl<'r> Responder<'r> for Ructe {
-    fn respond_to(self, r: &Request<'_>) -> response::Result<'r> {
+impl<'r> Responder<'r, 'static> for Ructe {
+    fn respond_to(self, r: &Request<'_>) -> response::Result<'static> {
         //if method is not Get or page contain a form, no caching
         if r.method() != Method::Get || self.0.windows(6).any(|w| w == b"<form ") {
             return HtmlCt(self.0).respond_to(r);
@@ -70,12 +71,12 @@ impl<'r> Responder<'r> for Ructe {
         {
             Response::build()
                 .status(Status::NotModified)
-                .header(ETag(EntityTag::strong(etag)))
+                .raw_header(ETAG.as_str(), etag)
                 .ok()
         } else {
             Response::build()
                 .merge(HtmlCt(self.0).respond_to(r)?)
-                .header(ETag(EntityTag::strong(etag)))
+                .raw_header(ETAG.as_str(), etag)
                 .ok()
         }
     }
@@ -99,16 +100,14 @@ macro_rules! render {
     }
 }
 
-pub fn translate_notification(ctx: BaseContext<'_>, notif: Notification) -> String {
-    let name = notif
-        .get_actor(ctx.0)
-        .map_or_else(|_| i18n!(ctx.1, "Someone"), |user| user.name());
+pub fn translate_notification(cat: &Catalog, notif: &Notification, actor: &Option<User>) -> String {
+    let name = actor.as_ref().map_or_else(|| i18n!(cat, "Someone"), |user| user.name());
     match notif.kind.as_ref() {
-        notification_kind::COMMENT => i18n!(ctx.1, "{0} commented on your article."; &name),
-        notification_kind::FOLLOW => i18n!(ctx.1, "{0} is subscribed to you."; &name),
-        notification_kind::LIKE => i18n!(ctx.1, "{0} liked your article."; &name),
-        notification_kind::MENTION => i18n!(ctx.1, "{0} mentioned you."; &name),
-        notification_kind::RESHARE => i18n!(ctx.1, "{0} boosted your article."; &name),
+        notification_kind::COMMENT => i18n!(cat, "{0} commented on your article."; &name),
+        notification_kind::FOLLOW => i18n!(cat, "{0} is subscribed to you."; &name),
+        notification_kind::LIKE => i18n!(cat, "{0} liked your article."; &name),
+        notification_kind::MENTION => i18n!(cat, "{0} mentioned you."; &name),
+        notification_kind::RESHARE => i18n!(cat, "{0} boosted your article."; &name),
         _ => unreachable!("translate_notification: Unknow type"),
     }
 }
@@ -137,9 +136,16 @@ impl Size {
     }
 }
 
+pub fn default_avatar(avatar_url: &Option<String>) -> &str {
+    match avatar_url {
+        Some(url) => url,
+        None => &"/static/images/default-avatar.png"
+    }
+}
+
 pub fn avatar(
-    conn: &Connection,
     user: &User,
+    avatar_url: &Option<String>,
     size: Size,
     pad: bool,
     catalog: &Catalog,
@@ -153,9 +159,28 @@ pub fn avatar(
         <img class="hidden u-photo" src="{url}"/>"#,
         size = size.as_str(),
         padded = if pad { "padded" } else { "" },
-        url = user.avatar_url(conn),
+        url = default_avatar(avatar_url),
         title = i18n!(catalog, "{0}'s avatar"; name),
     ))
+}
+
+pub fn render_comments(ctx: BaseContext, comments: Vec<CommentTree>, in_reply_to: &String, blog: &str, slug: &str) -> Html<String> {
+    let mut res: Vec<u8> = vec![];
+
+    for comment in comments {
+        render_comment(&mut res, ctx, comment, Some(in_reply_to), blog, slug);
+    }
+
+    Html(String::from_utf8(res).unwrap())
+}
+
+pub fn render_comment(res: &mut Vec<u8>, ctx: BaseContext, ct: CommentTree, in_reply_to: Option<&String>, blog: &str, slug: &str) {
+    crate::templates::partials::comment_head_html(&mut *res, ctx, &ct, in_reply_to, blog, slug).unwrap();
+    let ap_url = ct.comment.ap_url;
+    for comment in ct.responses {
+        render_comment(res, ctx, comment, ap_url.as_ref(), blog, slug);
+    }
+    res.append(&mut "</div>".as_bytes().to_owned());
 }
 
 pub fn tabs(links: &[(impl AsRef<str>, String, bool)]) -> Html<String> {
@@ -385,4 +410,38 @@ impl Input {
                 })
         ))
     }
+}
+
+
+pub struct PostCard {
+    pub post: plume_models::posts::Post,
+    pub cover_url: String,
+    pub author: User,
+    pub is_author: bool,
+    pub blog: plume_models::blogs::Blog,
+    pub blog_fqn: String,
+    pub count_likes: i64,
+    pub count_reshares: i64,
+}
+
+
+impl PostCard {
+    pub fn from(conn: &mut DbConn, post: plume_models::posts::Post, user: &Option<User>) -> PostCard {
+        let cover_url = post.cover_url(conn).unwrap_or_default();
+        let author = post.get_authors(conn).unwrap_or_default().swap_remove(0);
+        let is_author = user.as_ref().and_then(|u| post.is_author(conn, u.id).ok()).unwrap_or(false);
+        let blog = post.get_blog(conn).unwrap();
+        let blog_fqn = post.get_blog_fqn(conn);
+        let count_likes = post.count_likes(conn).unwrap_or_default();
+        let count_reshares = post.count_reshares(conn).unwrap_or_default();
+
+        PostCard {post, cover_url, author, is_author, blog, blog_fqn, count_likes, count_reshares}
+    }
+
+    pub fn from_posts(conn: &mut DbConn, posts: Vec<plume_models::posts::Post>, user: &Option<User>) -> Vec<PostCard> {
+        posts.into_iter()
+            .map(|p| PostCard::from(conn, p, user))
+            .collect()
+    }
+
 }

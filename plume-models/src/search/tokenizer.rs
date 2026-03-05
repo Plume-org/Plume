@@ -17,14 +17,15 @@ impl From<TokenizerKind> for TextAnalyzer {
         use TokenizerKind::*;
 
         match tokenizer {
-            Simple => TextAnalyzer::from(SimpleTokenizer)
+            Simple => TextAnalyzer::builder(SimpleTokenizer::default())
                 .filter(RemoveLongFilter::limit(40))
-                .filter(LowerCaser),
-            Ngram => TextAnalyzer::from(NgramTokenizer::new(2, 8, false)).filter(LowerCaser),
-            Whitespace => TextAnalyzer::from(WhitespaceTokenizer).filter(LowerCaser),
+                .filter(LowerCaser)
+                .build(),
+            Ngram => TextAnalyzer::builder(NgramTokenizer::new(2, 8, false).unwrap()).filter(LowerCaser).build(),
+            Whitespace => TextAnalyzer::builder(WhitespaceTokenizer).filter(LowerCaser).build(),
             #[cfg(feature = "search-lindera")]
             Lindera => {
-                TextAnalyzer::from(LinderaTokenizer::new("decompose", "")).filter(LowerCaser)
+                TextAnalyzer::builder(LinderaTokenizer::new("decompose", "")).filter(LowerCaser).build()
             }
         }
     }
@@ -42,8 +43,10 @@ pub struct WhitespaceTokenStream<'a> {
 }
 
 impl Tokenizer for WhitespaceTokenizer {
-    fn token_stream<'a>(&self, text: &'a str) -> BoxTokenStream<'a> {
-        BoxTokenStream::from(WhitespaceTokenStream {
+    type TokenStream<'a> = BoxTokenStream<'a>;
+
+    fn token_stream<'a>(&'a mut self, text: &'a str) -> Self::TokenStream<'a> {
+        BoxTokenStream::new(WhitespaceTokenStream {
             text,
             chars: text.char_indices(),
             token: Token::default(),

@@ -3,7 +3,7 @@ use crate::{
     Connection, Error, Result, CONFIG,
 };
 use activitystreams::{
-    activity::{ActorAndObjectRef, Like as LikeAct, Undo},
+    activity::{Like as LikeAct, Undo},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -26,7 +26,7 @@ pub struct Like {
 }
 
 #[derive(Default, Insertable)]
-#[table_name = "likes"]
+#[diesel(table_name = likes)]
 pub struct NewLike {
     pub user_id: i32,
     pub post_id: i32,
@@ -39,7 +39,7 @@ impl Like {
     find_by!(likes, find_by_ap_url, ap_url as &str);
     find_by!(likes, find_by_user_on_post, user_id as i32, post_id as i32);
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<LikeAct> {
+    pub fn to_activity(&self, conn: &mut Connection) -> Result<LikeAct> {
         let mut act = LikeAct::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
             Post::get(conn, self.post_id)?.ap_url.parse::<IriString>()?,
@@ -53,7 +53,7 @@ impl Like {
         Ok(act)
     }
 
-    pub fn notify(&self, conn: &Connection) -> Result<()> {
+    pub fn notify(&self, conn: &mut Connection) -> Result<()> {
         let post = Post::get(conn, self.post_id)?;
         for author in post.get_authors(conn)? {
             if author.is_local() {
@@ -70,7 +70,7 @@ impl Like {
         Ok(())
     }
 
-    pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
+    pub fn build_undo(&self, conn: &mut Connection) -> Result<Undo> {
         let mut act = Undo::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
             AnyBase::from_extended(self.to_activity(conn)?)?,
@@ -85,11 +85,11 @@ impl Like {
     }
 }
 
-impl AsObject<User, LikeAct, &Connection> for Post {
+impl AsObject<User, LikeAct, &mut Connection> for Post {
     type Error = Error;
     type Output = Like;
 
-    fn activity(self, conn: &Connection, actor: User, id: &str) -> Result<Like> {
+    async fn activity(self, conn: &mut Connection, actor: User, id: &str) -> Result<Like> {
         let res = Like::insert(
             conn,
             NewLike {
@@ -100,7 +100,7 @@ impl AsObject<User, LikeAct, &Connection> for Post {
         )?;
         res.notify(conn)?;
 
-        Timeline::add_to_all_timelines(conn, &self, Kind::Like(&actor))?;
+        Timeline::add_to_all_timelines(conn, &self, &Kind::Like(actor)).await?;
         Ok(res)
     }
 }
@@ -109,42 +109,43 @@ impl FromId<Connection> for Like {
     type Error = Error;
     type Object = LikeAct;
 
-    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
+    fn from_db(conn: &mut Connection, id: &str) -> Result<Self> {
         Like::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &Connection, act: LikeAct) -> Result<Self> {
-        let res = Like::insert(
-            conn,
-            NewLike {
-                post_id: Post::from_id(
-                    conn,
-                    act.object_field_ref()
-                        .as_single_id()
-                        .ok_or(Error::MissingApProperty)?
-                        .as_str(),
-                    None,
-                    CONFIG.proxy(),
-                )
-                .map_err(|(_, e)| e)?
-                .id,
-                user_id: User::from_id(
-                    conn,
-                    act.actor_field_ref()
-                        .as_single_id()
-                        .ok_or(Error::MissingApProperty)?
-                        .as_str(),
-                    None,
-                    CONFIG.proxy(),
-                )
-                .map_err(|(_, e)| e)?
-                .id,
-                ap_url: act
-                    .id_unchecked()
+    async fn from_activity(conn: &mut Connection, act: LikeAct) -> Result<Self> {
+        let like = NewLike {
+            post_id: Post::from_id(
+                conn,
+                act.object_unchecked()
+                    .as_single_id()
                     .ok_or(Error::MissingApProperty)?
-                    .to_string(),
-            },
-        )?;
+                    .as_str(),
+                None,
+                CONFIG.proxy(),
+            )
+            .await
+            .map_err(|(_, e)| e)?
+            .id,
+            user_id: User::from_id(
+                conn,
+                act.actor_unchecked()
+                    .as_single_id()
+                    .ok_or(Error::MissingApProperty)?
+                    .as_str(),
+                None,
+                CONFIG.proxy(),
+            )
+            .await
+            .map_err(|(_, e)| e)?
+            .id,
+            ap_url: act
+                .id_unchecked()
+                .ok_or(Error::MissingApProperty)?
+                .to_string(),
+        };
+
+        let res = Like::insert(conn, like)?;
         res.notify(conn)?;
         Ok(res)
     }
@@ -154,11 +155,11 @@ impl FromId<Connection> for Like {
     }
 }
 
-impl AsObject<User, Undo, &Connection> for Like {
+impl AsObject<User, Undo, &mut Connection> for Like {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
+    async fn activity(self, conn: &mut Connection, actor: User, _id: &str) -> Result<()> {
         if actor.id == self.user_id {
             diesel::delete(&self).execute(conn)?;
 

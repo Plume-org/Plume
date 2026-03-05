@@ -1,16 +1,15 @@
-@use plume_models::posts::Post;
-@use crate::templates::{base, partials::post_card};
+@use crate::templates::{base_html, partials::post_card_html};
 @use crate::template_utils::*;
 
-@(ctx: BaseContext, tag: String, articles: Vec<Post>, page: i32, n_pages: i32)
+@(ctx: BaseContext, tag: String, articles: Vec<PostCard>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "Articles tagged \"{0}\""; &tag), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Articles tagged \"{0}\""; &tag), {}, {}, {
     <h1>@i18n!(ctx.1, "Articles tagged \"{0}\""; &tag)</h1>
 
     @if !articles.is_empty() {
         <div class="cards">
             @for article in articles {
-                @:post_card(ctx, article)
+                @:post_card_html(ctx, article)
             }
         </div>
     } else {

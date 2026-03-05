@@ -1,12 +1,12 @@
 @use validator::ValidationErrors;
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 @use crate::routes::session::LoginForm;
 @use crate::routes::RemoteForm;
 
 @(ctx: BaseContext, title: String, login_msg: String, remote_msg: String, header: Content, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
 
-@:base(ctx, title, {}, {}, {
+@:base_html(ctx, title, {}, {}, {
     <div>
     	<header class="center">
     		@:header()

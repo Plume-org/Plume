@@ -1,15 +1,15 @@
 @use plume_models::medias::{Media, MediaCategory};
 @use plume_models::safe_string::SafeString;
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 @use crate::routes::*;
 
 @(ctx: BaseContext, media: Media)
 
-@:base(ctx, i18n!(ctx.1, "Media details"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Media details"), {}, {}, {
     <h1>@i18n!(ctx.1, "Media details")</h1>
     <section>
-        <a href="@uri!(medias::list: page = _)">@i18n!(ctx.1, "Go back to the gallery")</a>
+        <a href="@uri!(medias::list(page = _))">@i18n!(ctx.1, "Go back to the gallery")</a>
     </section>
 
     <section>
@@ -28,12 +28,12 @@
 
     <section>
         @if media.category() == MediaCategory::Image {
-            <form method="post" action="@uri!(medias::set_avatar: id = media.id)">
+            <form method="post" action="@uri!(medias::set_avatar(id = media.id))">
                 <input class="button" type="submit" value="@i18n!(ctx.1, "Use as an avatar")">
             </form>
         }
 
-        <form method="post" action="@uri!(medias::delete: id = media.id)">
+        <form method="post" action="@uri!(medias::delete(id = media.id))">
             <input class="button destructive" type="submit" value="@i18n!(ctx.1, "Delete")">
         </form>
     </section>

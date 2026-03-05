@@ -1,8 +1,7 @@
 use plume_models::{self, api_tokens::ApiToken};
 use rocket::{
     http::Status,
-    request::{self, FromRequest, Request},
-    Outcome,
+    request::{self, FromRequest, Outcome, Request},
 };
 use std::marker::PhantomData;
 
@@ -35,22 +34,22 @@ impl Scope for plume_models::posts::Post {
 
 pub struct Authorization<A, S>(pub ApiToken, PhantomData<(A, S)>);
 
-impl<'a, 'r, A, S> FromRequest<'a, 'r> for Authorization<A, S>
+#[rocket::async_trait]
+impl<'r, A, S> FromRequest<'r> for Authorization<A, S>
 where
     A: Action,
     S: Scope,
 {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<Authorization<A, S>, ()> {
-        request
-            .guard::<ApiToken>()
-            .map_failure(|_| (Status::Unauthorized, ()))
+    async fn from_request(request: &'r Request<'_>) -> request::Outcome<Authorization<A, S>, ()> {
+        request.guard::<ApiToken>().await
+            .map_error(|_| (Status::Unauthorized, ()))
             .and_then(|token| {
                 if token.can(A::to_str(), S::to_str()) {
                     Outcome::Success(Authorization(token, PhantomData))
                 } else {
-                    Outcome::Failure((Status::Unauthorized, ()))
+                    Outcome::Error((Status::Unauthorized, ()))
                 }
             })
     }

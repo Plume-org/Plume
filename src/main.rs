@@ -1,5 +1,4 @@
 #![allow(clippy::too_many_arguments)]
-#![feature(decl_macro, proc_macro_hygiene)]
 
 #[macro_use]
 extern crate gettext_macros;
@@ -8,17 +7,16 @@ extern crate rocket;
 #[macro_use]
 extern crate serde_json;
 
-use clap::App;
+use clap::Command;
 use diesel::r2d2::ConnectionManager;
 use plume_models::{
     db_conn::{DbPool, PragmaForeignKey},
     instance::Instance,
-    migrations::IMPORTED_MIGRATIONS,
     remote_fetch_actor::RemoteFetchActor,
     search::{actor::SearchActor, Searcher as UnmanagedSearcher},
     Connection, CONFIG,
 };
-use rocket_csrf::CsrfFairingBuilder;
+use rocket_csrf::Fairing;
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::process::exit;
 use std::sync::{Arc, Mutex};
@@ -56,14 +54,10 @@ fn init_pool() -> Option<DbPool> {
         builder = builder.max_size(max_size);
     };
     let pool = builder.build(manager).ok()?;
-    let conn = pool.get().unwrap();
-    Instance::cache_local(&conn);
-    let _ = Instance::create_local_instance_user(&conn);
-    Instance::cache_local_instance_user(&conn);
     Some(pool)
 }
 
-pub(crate) fn init_rocket() -> rocket::Rocket {
+pub(crate) fn init_rocket() -> rocket::Rocket<rocket::Build> {
     match dotenv::dotenv() {
         Ok(path) => eprintln!("Configuration read from {}", path.display()),
         Err(ref e) if e.not_found() => eprintln!("no .env was found"),
@@ -71,7 +65,7 @@ pub(crate) fn init_rocket() -> rocket::Rocket {
     }
     tracing_subscriber::fmt::init();
 
-    App::new("Plume")
+    Command::new("Plume")
         .bin_name("plume")
         .version(env!("CARGO_PKG_VERSION"))
         .about("Plume backend server")
@@ -85,23 +79,15 @@ and https://docs.joinplu.me/installation/init for more info.
         )
         .get_matches();
     let dbpool = init_pool().expect("main: database pool initialization error");
-    if IMPORTED_MIGRATIONS
-        .is_pending(&dbpool.get().unwrap())
-        .unwrap_or(true)
-    {
-        panic!(
-            r#"
-It appear your database migration does not run the migration required
-by this version of Plume. To fix this, you can run migrations via
-this command:
 
-    plm migration run
+    let mut conn = dbpool.get().expect("Failed to retrieve connection");
+    plume_models::migrations::run_pending_migrations(&mut conn).expect("Migrations error");
 
-Then try to restart Plume.
-"#
-        )
-    }
-    let workpool = ScheduledThreadPool::with_name("worker {}", num_cpus::get());
+    Instance::cache_local(&mut conn);
+    let _ = Instance::create_local_instance_user(&mut conn);
+    Instance::cache_local_instance_user(&mut conn);
+
+    let workpool = ScheduledThreadPool::builder().num_threads(num_cpus::get()).thread_name_pattern("worker {}").build();
     // we want a fast exit here, so
     let searcher = Arc::new(UnmanagedSearcher::open_or_recreate(
         &CONFIG.search_index,
@@ -125,7 +111,7 @@ Then try to restart Plume.
     .expect("Error setting Ctrl-c handler");
 
     let mail = mail::init();
-    if mail.is_none() && CONFIG.rocket.as_ref().unwrap().environment.is_prod() {
+    if mail.is_none() {
         warn!("Warning: the email server is not configured (or not completely).");
         warn!("Please refer to the documentation to see how to configure it.");
     }
@@ -249,7 +235,7 @@ Then try to restart Plume.
                 api::posts::delete,
             ],
         )
-        .register(catchers![
+        .register("/", catchers![
             routes::errors::not_found,
             routes::errors::unprocessable_entity,
             routes::errors::server_error
@@ -260,6 +246,8 @@ Then try to restart Plume.
         .manage(Arc::new(workpool))
         .manage(searcher)
         .manage(include_i18n!())
+        .attach(Fairing::default())
+/*
         .attach(
             CsrfFairingBuilder::new()
                 .set_default_target(
@@ -278,13 +266,15 @@ Then try to restart Plume.
                 .finalize()
                 .expect("main: csrf fairing creation error"),
         )
+*/
 }
 
-fn main() {
+#[rocket::main]
+async fn main() -> Result<(), rocket::Error> {
     let rocket = init_rocket();
 
     #[cfg(feature = "test")]
     let rocket = rocket.mount("/test", routes![test_routes::health,]);
 
-    rocket.launch();
+    rocket.launch().await.map(|_|())
 }

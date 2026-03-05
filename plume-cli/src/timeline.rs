@@ -1,149 +1,149 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::{Arg, ArgMatches, Command};
 
 use plume_models::{instance::Instance, posts::Post, timeline::*, users::*, Connection};
 
-pub fn command<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("timeline")
+pub fn command() -> Command {
+    Command::new("timeline")
         .about("Manage public timeline")
         .subcommand(
-            SubCommand::with_name("new")
+            Command::new("new")
                 .arg(
-                    Arg::with_name("name")
-                        .short("n")
+                    Arg::new("name")
+                        .short('n')
                         .long("name")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The name of this timeline"),
                 )
                 .arg(
-                    Arg::with_name("query")
-                        .short("q")
+                    Arg::new("query")
+                        .short('q')
                         .long("query")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The query posts in this timelines have to match"),
                 )
                 .arg(
-                    Arg::with_name("user")
-                        .short("u")
+                    Arg::new("user")
+                        .short('u')
                         .long("user")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help(
                             "Username of whom this timeline is for. Empty for an instance timeline",
                         ),
                 )
                 .arg(
-                    Arg::with_name("preload-count")
-                        .short("p")
+                    Arg::new("preload-count")
+                        .short('p')
                         .long("preload-count")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("Number of posts to try to preload in this timeline at its creation"),
                 )
                 .about("Create a new timeline"),
         )
         .subcommand(
-            SubCommand::with_name("delete")
+            Command::new("delete")
                 .arg(
-                    Arg::with_name("name")
-                        .short("n")
+                    Arg::new("name")
+                        .short('n')
                         .long("name")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The name of the timeline to delete"),
                 )
                 .arg(
-                    Arg::with_name("user")
-                        .short("u")
+                    Arg::new("user")
+                        .short('u')
                         .long("user")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help(
                             "Username of whom this timeline was for. Empty for instance timeline",
                         ),
                 )
                 .arg(
-                    Arg::with_name("yes")
-                        .short("y")
+                    Arg::new("yes")
+                        .short('y')
                         .long("yes")
                         .help("Confirm the deletion"),
                 )
                 .about("Delete a timeline"),
         )
         .subcommand(
-            SubCommand::with_name("edit")
+            Command::new("edit")
                 .arg(
-                    Arg::with_name("name")
-                        .short("n")
+                    Arg::new("name")
+                        .short('n')
                         .long("name")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The name of the timeline to edit"),
                 )
                 .arg(
-                    Arg::with_name("user")
-                        .short("u")
+                    Arg::new("user")
+                        .short('u')
                         .long("user")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("Username of whom this timeline is for. Empty for instance timeline"),
                 )
                 .arg(
-                    Arg::with_name("query")
-                        .short("q")
+                    Arg::new("query")
+                        .short('q')
                         .long("query")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The query posts in this timelines have to match"),
                 )
                 .about("Edit the query of a timeline"),
         )
         .subcommand(
-            SubCommand::with_name("repopulate")
+            Command::new("repopulate")
                 .arg(
-                    Arg::with_name("name")
-                        .short("n")
+                    Arg::new("name")
+                        .short('n')
                         .long("name")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The name of the timeline to repopulate"),
                 )
                 .arg(
-                    Arg::with_name("user")
-                        .short("u")
+                    Arg::new("user")
+                        .short('u')
                         .long("user")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help(
                             "Username of whom this timeline was for. Empty for instance timeline",
                         ),
                 )
                 .arg(
-                    Arg::with_name("preload-count")
-                        .short("p")
+                    Arg::new("preload-count")
+                        .short('p')
                         .long("preload-count")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("Number of posts to try to preload in this timeline at its creation"),
                 )
                 .about("Repopulate a timeline. Run this after modifying a list the timeline depends on."),
         )
 }
 
-pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
-    let conn = conn;
-    match args.subcommand() {
-        ("new", Some(x)) => new(x, conn),
-        ("edit", Some(x)) => edit(x, conn),
-        ("delete", Some(x)) => delete(x, conn),
-        ("repopulate", Some(x)) => repopulate(x, conn),
-        ("", None) => command().print_help().unwrap(),
-        _ => println!("Unknown subcommand"),
+pub async fn run<'a>(mut args: ArgMatches, conn: &mut Connection) {
+    if let Some((c, a)) = args.remove_subcommand() {
+        match c.as_str() {
+            "new" => new(a, conn).await,
+            "edit" => edit(a, conn),
+            "delete" => delete(a, conn),
+            "repopulate" => repopulate(a, conn).await,
+            _ => command().print_help().unwrap(),
+        }
+    } else {
+        println!("Unknown subcommand");
     }
 }
 
-fn get_timeline_identifier(args: &ArgMatches<'_>) -> (String, Option<String>) {
+fn get_timeline_identifier(args: &mut ArgMatches) -> (String, Option<String>) {
     let name = args
-        .value_of("name")
-        .map(String::from)
+        .remove_one::<String>("name")
         .expect("No name provided for the timeline");
-    let user = args.value_of("user").map(String::from);
+    let user = args.remove_one::<String>("user");
     (name, user)
 }
 
-fn get_query(args: &ArgMatches<'_>) -> String {
+fn get_query(args: &mut ArgMatches) -> String {
     let query = args
-        .value_of("query")
-        .map(String::from)
+        .remove_one::<String>("query")
         .expect("No query provided");
 
     match TimelineQuery::parse(&query) {
@@ -161,19 +161,18 @@ fn get_query(args: &ArgMatches<'_>) -> String {
     query
 }
 
-fn get_preload_count(args: &ArgMatches<'_>) -> usize {
-    args.value_of("preload-count")
-        .map(|arg| arg.parse().expect("invalid preload-count"))
+fn get_preload_count(args: &mut ArgMatches) -> usize {
+    args.remove_one::<usize>("preload-count")
         .unwrap_or(plume_models::ITEMS_PER_PAGE as usize)
 }
 
-fn resolve_user(username: &str, conn: &Connection) -> User {
+fn resolve_user(username: &str, conn: &mut Connection) -> User {
     let instance = Instance::get_local_uncached(conn).expect("Failed to load local instance");
 
     User::find_by_name(conn, username, instance.id).expect("User not found")
 }
 
-fn preload(timeline: Timeline, count: usize, conn: &Connection) {
+async fn preload(timeline: Timeline, count: usize, conn: &mut Connection) {
     timeline.remove_all_posts(conn).unwrap();
 
     if count == 0 {
@@ -186,7 +185,7 @@ fn preload(timeline: Timeline, count: usize, conn: &Connection) {
         .into_iter()
         .rev()
     {
-        if timeline.matches(conn, &post, Kind::Original).unwrap() {
+        if timeline.matches(conn, &post, &Kind::Original).await.unwrap() {
             posts.push(post);
             if posts.len() >= count {
                 break;
@@ -199,10 +198,10 @@ fn preload(timeline: Timeline, count: usize, conn: &Connection) {
     }
 }
 
-fn new(args: &ArgMatches<'_>, conn: &Connection) {
-    let (name, user) = get_timeline_identifier(args);
-    let query = get_query(args);
-    let preload_count = get_preload_count(args);
+async fn new(mut args: ArgMatches, conn: &mut Connection) {
+    let (name, user) = get_timeline_identifier(&mut args);
+    let query = get_query(&mut args);
+    let preload_count = get_preload_count(&mut args);
 
     let user = user.map(|user| resolve_user(&user, conn));
 
@@ -213,12 +212,12 @@ fn new(args: &ArgMatches<'_>, conn: &Connection) {
     }
     .expect("Failed to create new timeline");
 
-    preload(timeline, preload_count, conn);
+    preload(timeline, preload_count, conn).await;
 }
 
-fn edit(args: &ArgMatches<'_>, conn: &Connection) {
-    let (name, user) = get_timeline_identifier(args);
-    let query = get_query(args);
+fn edit(mut args: ArgMatches, conn: &mut Connection) {
+    let (name, user) = get_timeline_identifier(&mut args);
+    let query = get_query(&mut args);
 
     let user = user.map(|user| resolve_user(&user, conn));
 
@@ -230,10 +229,10 @@ fn edit(args: &ArgMatches<'_>, conn: &Connection) {
     timeline.update(conn).expect("Failed to update timeline");
 }
 
-fn delete(args: &ArgMatches<'_>, conn: &Connection) {
-    let (name, user) = get_timeline_identifier(args);
+fn delete(mut args: ArgMatches, conn: &mut Connection) {
+    let (name, user) = get_timeline_identifier(&mut args);
 
-    if !args.is_present("yes") {
+    if !args.contains_id("yes") {
         panic!("Warning, this operation is destructive. Add --yes to confirm you want to do it.")
     }
 
@@ -245,13 +244,13 @@ fn delete(args: &ArgMatches<'_>, conn: &Connection) {
     timeline.delete(conn).expect("Failed to update timeline");
 }
 
-fn repopulate(args: &ArgMatches<'_>, conn: &Connection) {
-    let (name, user) = get_timeline_identifier(args);
-    let preload_count = get_preload_count(args);
+async fn repopulate(mut args: ArgMatches, conn: &mut Connection) {
+    let (name, user) = get_timeline_identifier(&mut args);
+    let preload_count = get_preload_count(&mut args);
 
     let user = user.map(|user| resolve_user(&user, conn));
 
     let timeline = Timeline::find_for_user_by_name(conn, user.map(|u| u.id), &name)
         .expect("timeline not found");
-    preload(timeline, preload_count, conn);
+    preload(timeline, preload_count, conn).await;
 }

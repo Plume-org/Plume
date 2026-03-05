@@ -30,7 +30,7 @@ pub struct Notification {
 }
 
 #[derive(Insertable)]
-#[table_name = "notifications"]
+#[diesel(table_name = notifications)]
 pub struct NewNotification {
     pub user_id: i32,
     pub kind: String,
@@ -41,7 +41,7 @@ impl Notification {
     insert!(notifications, NewNotification);
     get!(notifications);
 
-    pub fn find_for_user(conn: &Connection, user: &User) -> Result<Vec<Notification>> {
+    pub fn find_for_user(conn: &mut Connection, user: &User) -> Result<Vec<Notification>> {
         notifications::table
             .filter(notifications::user_id.eq(user.id))
             .order_by(notifications::creation_date.desc())
@@ -49,7 +49,7 @@ impl Notification {
             .map_err(Error::from)
     }
 
-    pub fn find_for_mention(conn: &Connection, mention: &Mention) -> Result<Vec<Notification>> {
+    pub fn find_for_mention(conn: &mut Connection, mention: &Mention) -> Result<Vec<Notification>> {
         notifications::table
             .filter(notifications::kind.eq(notification_kind::MENTION))
             .filter(notifications::object_id.eq(mention.id))
@@ -57,7 +57,7 @@ impl Notification {
             .map_err(Error::from)
     }
 
-    pub fn find_for_comment(conn: &Connection, comment: &Comment) -> Result<Vec<Notification>> {
+    pub fn find_for_comment(conn: &mut Connection, comment: &Comment) -> Result<Vec<Notification>> {
         notifications::table
             .filter(notifications::kind.eq(notification_kind::COMMENT))
             .filter(notifications::object_id.eq(comment.id))
@@ -65,7 +65,7 @@ impl Notification {
             .map_err(Error::from)
     }
 
-    pub fn find_followed_by(conn: &Connection, user: &User) -> Result<Vec<Notification>> {
+    pub fn find_followed_by(conn: &mut Connection, user: &User) -> Result<Vec<Notification>> {
         notifications::table
             .inner_join(follows::table.on(notifications::object_id.eq(follows::id)))
             .filter(notifications::kind.eq(notification_kind::FOLLOW))
@@ -75,7 +75,7 @@ impl Notification {
             .map_err(Error::from)
     }
 
-    pub fn count_for_user(conn: &Connection, user: &User) -> Result<i64> {
+    pub fn count_for_user(conn: &mut Connection, user: &User) -> Result<i64> {
         notifications::table
             .filter(notifications::user_id.eq(user.id))
             .count()
@@ -84,7 +84,7 @@ impl Notification {
     }
 
     pub fn page_for_user(
-        conn: &Connection,
+        conn: &mut Connection,
         user: &User,
         (min, max): (i32, i32),
     ) -> Result<Vec<Notification>> {
@@ -97,7 +97,7 @@ impl Notification {
             .map_err(Error::from)
     }
 
-    pub fn find<S: Into<String>>(conn: &Connection, kind: S, obj: i32) -> Result<Notification> {
+    pub fn find<S: Into<String>>(conn: &mut Connection, kind: S, obj: i32) -> Result<Notification> {
         notifications::table
             .filter(notifications::kind.eq(kind.into()))
             .filter(notifications::object_id.eq(obj))
@@ -105,7 +105,7 @@ impl Notification {
             .map_err(Error::from)
     }
 
-    pub fn get_url(&self, conn: &Connection) -> Option<String> {
+    pub fn get_url(&self, conn: &mut Connection) -> Option<String> {
         match self.kind.as_ref() {
             notification_kind::COMMENT => self
                 .get_post(conn)
@@ -130,7 +130,7 @@ impl Notification {
         }
     }
 
-    pub fn get_post(&self, conn: &Connection) -> Option<Post> {
+    pub fn get_post(&self, conn: &mut Connection) -> Option<Post> {
         match self.kind.as_ref() {
             notification_kind::COMMENT => Comment::get(conn, self.object_id)
                 .and_then(|comment| comment.get_post(conn))
@@ -145,13 +145,17 @@ impl Notification {
         }
     }
 
-    pub fn get_actor(&self, conn: &Connection) -> Result<User> {
+    pub fn get_actor(&self, conn: &mut Connection) -> Result<User> {
         Ok(match self.kind.as_ref() {
             notification_kind::COMMENT => Comment::get(conn, self.object_id)?.get_author(conn)?,
             notification_kind::FOLLOW => {
-                User::get(conn, Follow::get(conn, self.object_id)?.follower_id)?
+                let follower = Follow::get(conn, self.object_id)?;
+                User::get(conn, follower.follower_id)?
             }
-            notification_kind::LIKE => User::get(conn, Like::get(conn, self.object_id)?.user_id)?,
+            notification_kind::LIKE => {
+                let like = Like::get(conn, self.object_id)?;
+                User::get(conn, like.user_id)?
+            },
             notification_kind::MENTION => Mention::get(conn, self.object_id)?.get_user(conn)?,
             notification_kind::RESHARE => Reshare::get(conn, self.object_id)?.get_user(conn)?,
             _ => unreachable!("Notification::get_actor: Unknow type"),
@@ -169,7 +173,7 @@ impl Notification {
         }
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<()> {
+    pub fn delete(&self, conn: &mut Connection) -> Result<()> {
         diesel::delete(self)
             .execute(conn)
             .map(|_| ())

@@ -1,9 +1,9 @@
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 
 @(ctx: BaseContext)
 
-@:base(ctx, i18n!(ctx.1, "Privacy policy"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Privacy policy"), {}, {}, {
     <h1>@i18n!(ctx.1, "Privacy policy")</h1>
     <section>
     	<p>@i18n!(ctx.1, "If you are browsing this site as a visitor, no data about you is collected.")</p>

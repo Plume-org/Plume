@@ -12,7 +12,7 @@ pub struct Tag {
 }
 
 #[derive(Insertable)]
-#[table_name = "tags"]
+#[diesel(table_name = tags)]
 pub struct NewTag {
     pub tag: String,
     pub is_hashtag: bool,
@@ -40,7 +40,7 @@ impl Tag {
     }
 
     pub fn from_activity(
-        conn: &Connection,
+        conn: &mut Connection,
         tag: &Hashtag,
         post: i32,
         is_hashtag: bool,
@@ -69,7 +69,7 @@ impl Tag {
         Ok(ht)
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<()> {
+    pub fn delete(&self, conn: &mut Connection) -> Result<()> {
         diesel::delete(self)
             .execute(conn)
             .map(|_| ())

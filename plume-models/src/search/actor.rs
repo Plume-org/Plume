@@ -38,11 +38,10 @@ impl Actor for SearchActor {
 
         match msg {
             PostPublished(post) => {
-                let conn = self.conn.get();
-                match conn {
-                    Ok(conn) => {
+                match self.conn.get() {
+                    Ok(mut conn) => {
                         self.searcher
-                            .add_document(&conn, &post)
+                            .add_document(&mut conn, &post)
                             .unwrap_or_else(|e| error!("{:?}", e));
                     }
                     _ => {
@@ -51,11 +50,10 @@ impl Actor for SearchActor {
                 }
             }
             PostUpdated(post) => {
-                let conn = self.conn.get();
-                match conn {
-                    Ok(_) => {
+                match self.conn.get() {
+                    Ok(mut conn) => {
                         self.searcher
-                            .update_document(&conn.unwrap(), &post)
+                            .update_document(&mut conn, &post)
                             .unwrap_or_else(|e| error!("{:?}", e));
                     }
                     _ => {

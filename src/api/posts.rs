@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 use crate::api::{authorization::*, Api, ApiError};
 use plume_api::posts::*;
@@ -11,13 +11,13 @@ use plume_models::{
 };
 
 #[get("/posts/<id>")]
-pub fn get(id: i32, auth: Option<Authorization<Read, Post>>, conn: DbConn) -> Api<PostData> {
-    let user = auth.and_then(|a| User::get(&conn, a.0.user_id).ok());
-    let post = Post::get(&conn, id)?;
+pub fn get(id: i32, auth: Option<Authorization<Read, Post>>, mut conn: DbConn) -> Api<PostData> {
+    let user = auth.and_then(|a| User::get(&mut conn, a.0.user_id).ok());
+    let post = Post::get(&mut conn, id)?;
 
     if !post.published
         && !user
-            .and_then(|u| post.is_author(&conn, u.id).ok())
+            .and_then(|u| post.is_author(&mut conn, u.id).ok())
             .unwrap_or(false)
     {
         return Err(Error::Unauthorized.into());
@@ -25,12 +25,12 @@ pub fn get(id: i32, auth: Option<Authorization<Read, Post>>, conn: DbConn) -> Ap
 
     Ok(Json(PostData {
         authors: post
-            .get_authors(&conn)?
+            .get_authors(&mut conn)?
             .into_iter()
             .map(|a| a.username)
             .collect(),
         creation_date: post.creation_date.format("%Y-%m-%d").to_string(),
-        tags: Tag::for_post(&conn, post.id)?
+        tags: Tag::for_post(&mut conn, post.id)?
             .into_iter()
             .map(|t| t.tag)
             .collect(),
@@ -53,60 +53,64 @@ pub fn list(
     subtitle: Option<String>,
     content: Option<String>,
     auth: Option<Authorization<Read, Post>>,
-    conn: DbConn,
+    mut conn: DbConn,
 ) -> Api<Vec<PostData>> {
-    let user = auth.and_then(|a| User::get(&conn, a.0.user_id).ok());
+    let user = auth.and_then(|a| User::get(&mut conn, a.0.user_id).ok());
     let user_id = user.map(|u| u.id);
 
     Ok(Json(
-        Post::list_filtered(&conn, title, subtitle, content)?
+        Post::list_filtered(&mut conn, title, subtitle, content)?
             .into_iter()
-            .filter(|p| {
-                p.published
-                    || user_id
-                        .and_then(|u| p.is_author(&conn, u).ok())
-                        .unwrap_or(false)
-            })
             .filter_map(|p| {
-                Some(PostData {
-                    authors: p
-                        .get_authors(&conn)
+                if p.published || user_id
+                    .and_then(|u| p.is_author(&mut conn, u).ok())
+                    .unwrap_or(false) {
+
+                    let authors = p
+                        .get_authors(&mut conn)
                         .ok()?
                         .into_iter()
                         .map(|a| a.username)
-                        .collect(),
-                    creation_date: p.creation_date.format("%Y-%m-%d").to_string(),
-                    tags: Tag::for_post(&conn, p.id)
+                        .collect();
+
+                    let tags = Tag::for_post(&mut conn, p.id)
                         .ok()?
                         .into_iter()
                         .map(|t| t.tag)
-                        .collect(),
+                        .collect();
 
-                    id: p.id,
-                    title: p.title,
-                    subtitle: p.subtitle,
-                    content: p.content.to_string(),
-                    source: Some(p.source),
-                    blog_id: p.blog_id,
-                    published: p.published,
-                    license: p.license,
-                    cover_id: p.cover_id,
-                })
+                    Some(PostData {
+                        authors,
+                        creation_date: p.creation_date.format("%Y-%m-%d").to_string(),
+                        tags,
+                        id: p.id,
+                        title: p.title,
+                        subtitle: p.subtitle,
+                        content: p.content.to_string(),
+                        source: Some(p.source),
+                        blog_id: p.blog_id,
+                        published: p.published,
+                        license: p.license,
+                        cover_id: p.cover_id,
+                    })
+                } else {
+                    None
+                }
             })
             .collect(),
     ))
 }
 
 #[post("/posts", data = "<payload>")]
-pub fn create(
+pub async fn create(
     auth: Authorization<Write, Post>,
     payload: Json<NewPostData>,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Api<PostData> {
     let worker = &rockets.worker;
 
-    let author = User::get(&conn, auth.0.user_id)?;
+    let author = User::get(&mut conn, auth.0.user_id)?;
 
     let slug = Post::slug(&payload.title);
     let date = payload.creation_date.clone().and_then(|d| {
@@ -118,13 +122,13 @@ pub fn create(
         &payload.source,
         Some(domain),
         false,
-        Some(Media::get_media_processor(&conn, vec![&author])),
+        Some(Media::get_media_processor(&mut conn, vec![&author])),
     );
 
     let blog = payload
         .blog_id
         .or_else(|| {
-            let blogs = Blog::find_for_author(&conn, &author).ok()?;
+            let blogs = Blog::find_for_author(&mut conn, &author).ok()?;
             if blogs.len() == 1 {
                 Some(blogs[0].id)
             } else {
@@ -133,12 +137,12 @@ pub fn create(
         })
         .ok_or(ApiError(Error::NotFound))?;
 
-    if Post::find_by_slug(&conn, slug, blog).is_ok() {
+    if Post::find_by_slug(&mut conn, slug, blog).is_ok() {
         return Err(Error::InvalidValue.into());
     }
 
     let post = Post::insert(
-        &conn,
+        &mut conn,
         NewPost {
             blog_id: blog,
             slug: slug.to_string(),
@@ -159,7 +163,7 @@ pub fn create(
     )?;
 
     PostAuthor::insert(
-        &conn,
+        &mut conn,
         NewPostAuthor {
             author_id: author.id,
             post_id: post.id,
@@ -169,7 +173,7 @@ pub fn create(
     if let Some(ref tags) = payload.tags {
         for tag in tags {
             Tag::insert(
-                &conn,
+                &mut conn,
                 NewTag {
                     tag: tag.to_string(),
                     is_hashtag: false,
@@ -180,7 +184,7 @@ pub fn create(
     }
     for hashtag in hashtags {
         Tag::insert(
-            &conn,
+            &mut conn,
             NewTag {
                 tag: hashtag,
                 is_hashtag: true,
@@ -191,30 +195,31 @@ pub fn create(
 
     if post.published {
         for m in mentions.into_iter() {
+            let activity = &Mention::build_activity(&mut conn, &m).await?;
             Mention::from_activity(
-                &conn,
-                &Mention::build_activity(&conn, &m)?,
+                &mut conn,
+                activity,
                 post.id,
                 true,
                 true,
             )?;
         }
 
-        let act = post.create_activity(&conn)?;
-        let dest = User::one_by_instance(&conn)?;
+        let act = post.create_activity(&mut conn)?;
+        let dest = User::one_by_instance(&mut conn)?;
         worker.execute(move || broadcast(&author, act, dest, CONFIG.proxy().cloned()));
     }
 
-    Timeline::add_to_all_timelines(&conn, &post, Kind::Original)?;
+    Timeline::add_to_all_timelines(&mut conn, &post, &Kind::Original).await?;
 
     Ok(Json(PostData {
         authors: post
-            .get_authors(&conn)?
+            .get_authors(&mut conn)?
             .into_iter()
             .map(|a| a.fqn)
             .collect(),
         creation_date: post.creation_date.format("%Y-%m-%d").to_string(),
-        tags: Tag::for_post(&conn, post.id)?
+        tags: Tag::for_post(&mut conn, post.id)?
             .into_iter()
             .map(|t| t.tag)
             .collect(),
@@ -232,11 +237,11 @@ pub fn create(
 }
 
 #[delete("/posts/<id>")]
-pub fn delete(auth: Authorization<Write, Post>, conn: DbConn, id: i32) -> Api<()> {
-    let author = User::get(&conn, auth.0.user_id)?;
-    if let Ok(post) = Post::get(&conn, id) {
-        if post.is_author(&conn, author.id).unwrap_or(false) {
-            post.delete(&conn)?;
+pub fn delete(auth: Authorization<Write, Post>, mut conn: DbConn, id: i32) -> Api<()> {
+    let author = User::get(&mut conn, auth.0.user_id)?;
+    if let Ok(post) = Post::get(&mut conn, id) {
+        if post.is_author(&mut conn, author.id).unwrap_or(false) {
+            post.delete(&mut conn)?;
         }
     }
     Ok(Json(()))

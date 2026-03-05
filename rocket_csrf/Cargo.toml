@@ -1,0 +1,16 @@
+[package]
+name = "rocket_csrf"
+version = "0.5.1"
+authors = ["Alex Kotov <kotovalexarian@gmail.com>", "Mahmoud Harmouch <oss@wiseai.dev>"]
+description = "CSRF (Cross-Site Request Forgery) protection for Rocket web framework"
+license = "MIT"
+readme = true
+
+edition = "2021"
+rust-version = "1.90.0"
+
+[dependencies]
+base64 = "0.22.1"
+bcrypt = "0.19.0"
+rand = "0.9.2"
+rocket = { version = "0.5.1", features = ["secrets"] }

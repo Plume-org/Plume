@@ -10,7 +10,7 @@ pub struct BlogAuthor {
 }
 
 #[derive(Insertable)]
-#[table_name = "blog_authors"]
+#[diesel(table_name = blog_authors)]
 pub struct NewBlogAuthor {
     pub blog_id: i32,
     pub author_id: i32,

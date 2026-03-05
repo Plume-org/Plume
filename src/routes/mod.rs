@@ -3,17 +3,19 @@ use crate::template_utils::Ructe;
 use atom_syndication::{
     ContentBuilder, Entry, EntryBuilder, Feed, FeedBuilder, LinkBuilder, Person, PersonBuilder,
 };
-use chrono::{naive::NaiveDateTime, DateTime, Utc};
+use chrono::{naive::NaiveDateTime, DateTime, Duration, Utc};
 use plume_models::{posts::Post, Connection, CONFIG, ITEMS_PER_PAGE};
 use rocket::{
+    form::{FromFormField, ValueField},
+    fs::NamedFile,
     http::{
-        hyper::header::{CacheControl, CacheDirective, ETag, EntityTag},
-        uri::{FromUriParam, Query},
-        RawStr, Status,
+        Header,
+        hyper::header::{CACHE_CONTROL, ETAG},
+        uri::fmt::{FromUriParam, Query},
+        Status,
     },
-    request::{self, FromFormValue, FromRequest, Request},
-    response::{self, Flash, NamedFile, Redirect, Responder, Response},
-    Outcome,
+    request::{self, FromRequest, Outcome, Request},
+    response::{self, Flash, Redirect, Responder, Response},
 };
 use std::{
     collections::hash_map::DefaultHasher,
@@ -68,13 +70,9 @@ impl From<i32> for Page {
     }
 }
 
-impl<'v> FromFormValue<'v> for Page {
-    type Error = &'v RawStr;
-    fn from_form_value(form_value: &'v RawStr) -> Result<Page, &'v RawStr> {
-        match form_value.parse::<i32>() {
-            Ok(page) => Ok(Page(page)),
-            _ => Err(form_value),
-        }
+impl<'r> FromFormField<'r> for Page {
+    fn from_value(field: ValueField<'r>) -> rocket::form::Result<'r, Page> {
+        Ok(Page(field.value.parse::<i32>()?))
     }
 }
 
@@ -104,13 +102,14 @@ impl Page {
 #[derive(Shrinkwrap)]
 pub struct ContentLen(pub u64);
 
-impl<'a, 'r> FromRequest<'a, 'r> for ContentLen {
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for ContentLen {
     type Error = ();
 
-    fn from_request(r: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+    async fn from_request(r: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
         match r.limits().get("forms") {
-            Some(l) => Outcome::Success(ContentLen(l)),
-            None => Outcome::Failure((Status::InternalServerError, ())),
+            Some(l) => Outcome::Success(ContentLen(l.as_u64())),
+            None => Outcome::Error((Status::InternalServerError, ())),
         }
     }
 }
@@ -132,7 +131,7 @@ pub fn build_atom_feed(
     uri: &str,
     title: &str,
     default_updated: &NaiveDateTime,
-    conn: &Connection,
+    conn: &mut Connection,
 ) -> Feed {
     let updated = if entries.is_empty() {
         default_updated
@@ -143,7 +142,7 @@ pub fn build_atom_feed(
     FeedBuilder::default()
         .title(title)
         .id(uri)
-        .updated(DateTime::<Utc>::from_utc(*updated, Utc))
+        .updated(DateTime::<Utc>::from_naive_utc_and_offset(*updated, Utc))
         .entries(
             entries
                 .into_iter()
@@ -158,7 +157,7 @@ pub fn build_atom_feed(
         .build()
 }
 
-fn post_to_atom(post: Post, conn: &Connection) -> Entry {
+fn post_to_atom(post: Post, conn: &mut Connection) -> Entry {
     EntryBuilder::default()
         .title(format!("<![CDATA[{}]]>", post.title))
         .content(
@@ -182,9 +181,9 @@ fn post_to_atom(post: Post, conn: &Connection) -> Entry {
         // Using RFC 4287 format, see https://tools.ietf.org/html/rfc4287#section-3.3 for dates
         // eg: 2003-12-13T18:30:02Z (Z is here because there is no timezone support with the NaiveDateTime crate)
         .published(Some(
-            DateTime::<Utc>::from_utc(post.creation_date, Utc).into(),
+            DateTime::<Utc>::from_naive_utc_and_offset(post.creation_date, Utc).into(),
         ))
-        .updated(DateTime::<Utc>::from_utc(post.creation_date, Utc))
+        .updated(DateTime::<Utc>::from_naive_utc_and_offset(post.creation_date, Utc))
         .id(post.ap_url.clone())
         .links(vec![LinkBuilder::default().href(post.ap_url).build()])
         .build()
@@ -218,13 +217,13 @@ enum FileKind {
 #[response()]
 pub struct CachedFile {
     inner: FileKind,
-    cache_control: CacheControl,
+    cache_control: Header<'static>,
 }
 
 #[derive(Debug)]
 pub struct ThemeFile(NamedFile);
 
-impl<'r> Responder<'r> for ThemeFile {
+impl<'r> Responder<'r, 'r> for ThemeFile {
     fn respond_to(self, r: &Request<'_>) -> response::Result<'r> {
         let contents = std::fs::read(self.0.path()).map_err(|_| Status::InternalServerError)?;
 
@@ -238,31 +237,32 @@ impl<'r> Responder<'r> for ThemeFile {
         {
             Response::build()
                 .status(Status::NotModified)
-                .header(ETag(EntityTag::strong(etag)))
+                .raw_header(ETAG.as_str(), etag)
                 .ok()
         } else {
             Response::build()
                 .merge(self.0.respond_to(r)?)
-                .header(ETag(EntityTag::strong(etag)))
+                .raw_header(ETAG.as_str(), etag)
                 .ok()
         }
     }
 }
 
 #[get("/static/cached/<_build_id>/css/<file..>", rank = 1)]
-pub fn theme_files(file: PathBuf, _build_id: &RawStr) -> Option<ThemeFile> {
+pub async fn theme_files(file: PathBuf, _build_id: &str) -> Option<ThemeFile> {
     NamedFile::open(Path::new("static/css/").join(file))
+        .await
         .ok()
         .map(ThemeFile)
 }
 
-#[allow(unused_variables)]
-#[get("/static/cached/<build_id>/<file..>", rank = 2)]
-pub fn plume_static_files(file: PathBuf, build_id: &RawStr) -> Option<CachedFile> {
-    static_files(file)
+#[get("/static/cached/<_build_id>/<file..>", rank = 2)]
+pub async fn plume_static_files(file: std::path::PathBuf, _build_id: &str) -> Option<CachedFile> {
+    static_files(file).await
 }
+
 #[get("/static/media/<file..>")]
-pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
+pub async fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
     if CONFIG.s3.is_some() {
         #[cfg(not(feature="s3"))]
         unreachable!();
@@ -280,24 +280,30 @@ pub fn plume_media_files(file: PathBuf) -> Option<CachedFile> {
 
             Some(CachedFile {
                 inner: FileKind::S3(data.to_vec(), ct),
-                cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+                cache_control: max_age(Duration::try_days(30).expect("Duration should not overflow")),
             })
         }
     } else {
         NamedFile::open(Path::new(&CONFIG.media_directory).join(file))
+            .await
             .ok()
             .map(|f| CachedFile {
                 inner: FileKind::Local(f),
-                cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+                cache_control: max_age(Duration::try_days(30).expect("Duration should not overflow")),
             })
     }
 }
 #[get("/static/<file..>", rank = 3)]
-pub fn static_files(file: PathBuf) -> Option<CachedFile> {
+pub async fn static_files(file: std::path::PathBuf) -> Option<CachedFile> {
     NamedFile::open(Path::new("static/").join(file))
+        .await
         .ok()
         .map(|f| CachedFile {
             inner: FileKind::Local(f),
-            cache_control: CacheControl(vec![CacheDirective::MaxAge(60 * 60 * 24 * 30)]),
+            cache_control: max_age(Duration::try_days(30).expect("Duration should not overflow")),
         })
+}
+
+fn max_age(duration: Duration) -> Header<'static> {
+    Header::new(CACHE_CONTROL.as_str(), format!("max-age={}", duration.num_seconds()))
 }

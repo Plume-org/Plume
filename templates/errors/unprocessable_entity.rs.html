@@ -1,9 +1,9 @@
-@use crate::templates::errors::base;
+@use crate::templates::errors::base_html;
 @use crate::template_utils::*;
 
 @(ctx: BaseContext)
 
-@:base(ctx, "Unprocessable entity".to_string(), {
+@:base_html(ctx, "Unprocessable entity".to_string(), {
   <h1>@i18n!(ctx.1, "The content you sent can't be processed.")</h1>
   <p>@i18n!(ctx.1, "Maybe it was too long.")</p>
 })

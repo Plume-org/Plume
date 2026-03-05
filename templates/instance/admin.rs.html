@@ -1,14 +1,14 @@
 @use plume_models::instance::Instance;
 @use validator::ValidationErrors;
-@use crate::templates::{base, instance::admin_header};
+@use crate::templates::{base_html, instance::admin_header_html};
 @use crate::template_utils::*;
 @use crate::routes::instance::InstanceSettingsForm;
 @use crate::routes::*;
 
 @(ctx: BaseContext, instance: Instance, form: InstanceSettingsForm, errors: ValidationErrors)
 
-@:base(ctx, i18n!(ctx.1, "Administration of {0}"; instance.name.clone()), {}, {}, {
-  @:admin_header(ctx, "Administration", 1)
+@:base_html(ctx, i18n!(ctx.1, "Administration of {0}"; instance.name.clone()), {}, {}, {
+  @:admin_header_html(ctx, "Administration", 1)
 
   <form method="post" action="@uri!(instance::update_settings)">
     @(Input::new("name", i18n!(ctx.1, "Name"))

@@ -1,14 +1,14 @@
 @use plume_models::users::User;
 @use validator::ValidationErrors;
-@use crate::templates::remote_interact_base;
+@use crate::templates::remote_interact_base_html;
 @use crate::template_utils::*;
 @use crate::routes::RemoteForm;
 @use crate::routes::session::LoginForm;
 
-@(ctx: BaseContext, user: User, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
+@(ctx: BaseContext, user: User, avatar_url: Option<String>, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
 
-@:remote_interact_base(ctx, i18n!(ctx.1, "Follow {}"; user.name()), i18n!(ctx.1, "Log in to follow"), i18n!(ctx.1, "Enter your full username handle to follow"), {
+@:remote_interact_base_html(ctx, i18n!(ctx.1, "Follow {}"; user.name()), i18n!(ctx.1, "Log in to follow"), i18n!(ctx.1, "Enter your full username handle to follow"), {
 	<h1>@i18n!(ctx.1, "Follow {}"; user.name())</h1>
-	@avatar(ctx.0, &user, Size::Medium, false, ctx.1)
+	@avatar(&user, &avatar_url, Size::Medium, false, ctx.1)
 	<small>@@@user.fqn</small>
 }, login_form, login_errs, remote_form, remote_errs)

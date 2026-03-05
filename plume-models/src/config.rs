@@ -1,7 +1,7 @@
 use crate::search::TokenizerKind as SearchTokenizer;
 use crate::signups::Strategy as SignupStrategy;
-use crate::smtp::{SMTP_PORT, SUBMISSIONS_PORT, SUBMISSION_PORT};
-use rocket::config::Limits;
+use lettre::transport::smtp::{SMTP_PORT, SUBMISSIONS_PORT, SUBMISSION_PORT};
+use rocket::data::Limits;
 use rocket::Config as RocketConfig;
 use std::collections::HashSet;
 use std::env::{self, var};
@@ -55,14 +55,21 @@ pub enum InvalidRocketConfig {
 }
 
 fn get_rocket_config() -> Result<RocketConfig, InvalidRocketConfig> {
-    let mut c = RocketConfig::active().map_err(|_| InvalidRocketConfig::Env)?;
+    use rocket::data::ToByteUnit;
 
-    let address = var("ROCKET_ADDRESS").unwrap_or_else(|_| "localhost".to_owned());
-    let port = var("ROCKET_PORT")
+    let mut c = RocketConfig::default();
+
+    c.address = var("ROCKET_ADDRESS").unwrap_or("127.0.0.1".to_string()).parse().map_err(|_| InvalidRocketConfig::Address)?;
+    c.port = var("ROCKET_PORT")
         .ok()
         .map(|s| s.parse::<u16>().unwrap())
         .unwrap_or(7878);
-    let secret_key = var("ROCKET_SECRET_KEY").map_err(|_| InvalidRocketConfig::SecretKey)?;
+    c.secret_key = rocket::config::SecretKey::from(
+        var("ROCKET_SECRET_KEY").map_err(|_| InvalidRocketConfig::SecretKey)?.as_bytes()
+    );
+
+    c.cli_colors = var("ROCKET_CLI_COLORS").ok().map(|cc| cc.parse::<bool>().unwrap_or(false) ).unwrap_or(true);
+
     let form_size = var("FORM_SIZE")
         .unwrap_or_else(|_| "128".to_owned())
         .parse::<u64>()
@@ -72,17 +79,9 @@ fn get_rocket_config() -> Result<RocketConfig, InvalidRocketConfig> {
         .parse::<u64>()
         .unwrap();
 
-    c.set_address(address)
-        .map_err(|_| InvalidRocketConfig::Address)?;
-    c.set_port(port);
-    c.set_secret_key(secret_key)
-        .map_err(|_| InvalidRocketConfig::SecretKey)?;
-
-    c.set_limits(
-        Limits::new()
-            .limit("forms", form_size * 1024)
-            .limit("json", activity_size * 1024),
-    );
+    c.limits = Limits::default()
+        .limit("forms", form_size.kilobytes())
+        .limit("json", activity_size.kilobytes());
 
     Ok(c)
 }
@@ -93,7 +92,7 @@ pub struct LogoConfig {
     pub other: Vec<Icon>, //url, size, type
 }
 
-#[derive(Serialize)]
+#[derive(serde::Serialize)]
 pub struct Icon {
     pub src: String,
     #[serde(skip_serializing_if = "Option::is_none")]

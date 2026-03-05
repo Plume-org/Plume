@@ -1,139 +1,141 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::{Arg, ArgMatches, Command};
 
 use plume_models::{blogs::Blog, instance::Instance, lists::*, users::User, Connection};
 
-pub fn command<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("lists")
+pub fn command() -> Command {
+    Command::new("lists")
         .about("Manage lists")
         .subcommand(
-            SubCommand::with_name("new")
+            Command::new("new")
                 .arg(
-                    Arg::with_name("name")
-                        .short("n")
+                    Arg::new("name")
+                        .short('n')
                         .long("name")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The name of this list"),
                 )
                 .arg(
-                    Arg::with_name("type")
-                        .short("t")
+                    Arg::new("type")
+                        .short('t')
                         .long("type")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help(
                             r#"The type of this list (one of "user", "blog", "word" or "prefix")"#,
                         ),
                 )
                 .arg(
-                    Arg::with_name("user")
-                        .short("u")
+                    Arg::new("user")
+                        .short('u')
                         .long("user")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("Username of whom this list is for. Empty for an instance list"),
                 )
                 .about("Create a new list"),
         )
         .subcommand(
-            SubCommand::with_name("delete")
+            Command::new("delete")
                 .arg(
-                    Arg::with_name("name")
-                        .short("n")
+                    Arg::new("name")
+                        .short('n')
                         .long("name")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The name of the list to delete"),
                 )
                 .arg(
-                    Arg::with_name("user")
-                        .short("u")
+                    Arg::new("user")
+                        .short('u')
                         .long("user")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("Username of whom this list was for. Empty for instance list"),
                 )
                 .arg(
-                    Arg::with_name("yes")
-                        .short("y")
+                    Arg::new("yes")
+                        .short('y')
                         .long("yes")
+                        .action(clap::ArgAction::SetTrue)
                         .help("Confirm the deletion"),
                 )
                 .about("Delete a list"),
         )
         .subcommand(
-            SubCommand::with_name("add")
+            Command::new("add")
                 .arg(
-                    Arg::with_name("name")
-                        .short("n")
+                    Arg::new("name")
+                        .short('n')
                         .long("name")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The name of the list to add an element to"),
                 )
                 .arg(
-                    Arg::with_name("user")
-                        .short("u")
+                    Arg::new("user")
+                        .short('u')
                         .long("user")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("Username of whom this list is for. Empty for instance list"),
                 )
                 .arg(
-                    Arg::with_name("value")
-                        .short("v")
+                    Arg::new("value")
+                        .short('v')
                         .long("value")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The value to add"),
                 )
                 .about("Add element to a list"),
         )
         .subcommand(
-            SubCommand::with_name("rm")
+            Command::new("rm")
                 .arg(
-                    Arg::with_name("name")
-                        .short("n")
+                    Arg::new("name")
+                        .short('n')
                         .long("name")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The name of the list to remove an element from"),
                 )
                 .arg(
-                    Arg::with_name("user")
-                        .short("u")
+                    Arg::new("user")
+                        .short('u')
                         .long("user")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("Username of whom this list is for. Empty for instance list"),
                 )
                 .arg(
-                    Arg::with_name("value")
-                        .short("v")
+                    Arg::new("value")
+                        .short('v')
                         .long("value")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The value to remove"),
                 )
                 .about("Remove element from list"),
         )
 }
 
-pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
-    let conn = conn;
-    match args.subcommand() {
-        ("new", Some(x)) => new(x, conn),
-        ("delete", Some(x)) => delete(x, conn),
-        ("add", Some(x)) => add(x, conn),
-        ("rm", Some(x)) => rm(x, conn),
-        ("", None) => command().print_help().unwrap(),
-        _ => println!("Unknown subcommand"),
+pub async fn run(mut args: ArgMatches, conn: &mut Connection) {
+    if let Some((c, a)) = args.remove_subcommand() {
+        match c.as_str() {
+            "new" => new(a, conn),
+            "delete" => delete(a, conn),
+            "add" => add(a, conn).await,
+            "rm" => rm(a, conn).await,
+            _ => command().print_help().unwrap(),
+        }
+    } else {
+      println!("Unknown subcommand");
     }
 }
 
-fn get_list_identifier(args: &ArgMatches<'_>) -> (String, Option<String>) {
+fn get_list_identifier(args: &mut ArgMatches) -> (String, Option<String>) {
     let name = args
-        .value_of("name")
-        .map(String::from)
+        .remove_one::<String>("name")
         .expect("No name provided for the list");
-    let user = args.value_of("user").map(String::from);
+    let user = args.remove_one::<String>("user");
     (name, user)
 }
 
-fn get_list_type(args: &ArgMatches<'_>) -> ListType {
+fn get_list_type(args: &mut ArgMatches) -> ListType {
     let typ = args
-        .value_of("type")
-        .map(String::from)
+        .remove_one::<String>("type")
         .expect("No name type for the list");
+
     match typ.as_str() {
         "user" => ListType::User,
         "blog" => ListType::Blog,
@@ -143,31 +145,29 @@ fn get_list_type(args: &ArgMatches<'_>) -> ListType {
     }
 }
 
-fn get_value(args: &ArgMatches<'_>) -> String {
-    args.value_of("value")
-        .map(String::from)
-        .expect("No query provided")
+fn get_value(args: &mut ArgMatches) -> String {
+    args.remove_one::<String>("value").expect("No query provided")
 }
 
-fn resolve_user(username: &str, conn: &Connection) -> User {
+fn resolve_user(username: &str, conn: &mut Connection) -> User {
     let instance = Instance::get_local_uncached(conn).expect("Failed to load local instance");
 
     User::find_by_name(conn, username, instance.id).expect("User not found")
 }
 
-fn new(args: &ArgMatches<'_>, conn: &Connection) {
-    let (name, user) = get_list_identifier(args);
-    let typ = get_list_type(args);
+fn new(mut args: ArgMatches, conn: &mut Connection) {
+    let (name, user) = get_list_identifier(&mut args);
+    let typ = get_list_type(&mut args);
 
     let user = user.map(|user| resolve_user(&user, conn));
 
     List::new(conn, &name, user.as_ref(), typ).expect("failed to create list");
 }
 
-fn delete(args: &ArgMatches<'_>, conn: &Connection) {
-    let (name, user) = get_list_identifier(args);
+fn delete(mut args: ArgMatches, conn: &mut Connection) {
+    let (name, user) = get_list_identifier(&mut args);
 
-    if !args.is_present("yes") {
+    if !args.contains_id("yes") {
         panic!("Warning, this operation is destructive. Add --yes to confirm you want to do it.")
     }
 
@@ -179,9 +179,9 @@ fn delete(args: &ArgMatches<'_>, conn: &Connection) {
     list.delete(conn).expect("Failed to update list");
 }
 
-fn add(args: &ArgMatches<'_>, conn: &Connection) {
-    let (name, user) = get_list_identifier(args);
-    let value = get_value(args);
+async fn add(mut args: ArgMatches, conn: &mut Connection) {
+    let (name, user) = get_list_identifier(&mut args);
+    let value = get_value(&mut args);
 
     let user = user.map(|user| resolve_user(&user, conn));
 
@@ -190,13 +190,13 @@ fn add(args: &ArgMatches<'_>, conn: &Connection) {
 
     match list.kind() {
         ListType::Blog => {
-            let blog_id = Blog::find_by_fqn(conn, &value).expect("unknown blog").id;
+            let blog_id = Blog::find_by_fqn(conn, &value).await.expect("unknown blog").id;
             if !list.contains_blog(conn, blog_id).unwrap() {
                 list.add_blogs(conn, &[blog_id]).unwrap();
             }
         }
         ListType::User => {
-            let user_id = User::find_by_fqn(conn, &value).expect("unknown user").id;
+            let user_id = User::find_by_fqn(conn, &value).await.expect("unknown user").id;
             if !list.contains_user(conn, user_id).unwrap() {
                 list.add_users(conn, &[user_id]).unwrap();
             }
@@ -214,9 +214,9 @@ fn add(args: &ArgMatches<'_>, conn: &Connection) {
     }
 }
 
-fn rm(args: &ArgMatches<'_>, conn: &Connection) {
-    let (name, user) = get_list_identifier(args);
-    let value = get_value(args);
+async fn rm(mut args: ArgMatches, conn: &mut Connection) {
+    let (name, user) = get_list_identifier(&mut args);
+    let value = get_value(&mut args);
 
     let user = user.map(|user| resolve_user(&user, conn));
 
@@ -225,7 +225,7 @@ fn rm(args: &ArgMatches<'_>, conn: &Connection) {
 
     match list.kind() {
         ListType::Blog => {
-            let blog_id = Blog::find_by_fqn(conn, &value).expect("unknown blog").id;
+            let blog_id = Blog::find_by_fqn(conn, &value).await.expect("unknown blog").id;
             let mut blogs = list.list_blogs(conn).unwrap();
             if let Some(index) = blogs.iter().position(|b| b.id == blog_id) {
                 blogs.swap_remove(index);
@@ -234,7 +234,7 @@ fn rm(args: &ArgMatches<'_>, conn: &Connection) {
             }
         }
         ListType::User => {
-            let user_id = User::find_by_fqn(conn, &value).expect("unknown user").id;
+            let user_id = User::find_by_fqn(conn, &value).await.expect("unknown user").id;
             let mut users = list.list_users(conn).unwrap();
             if let Some(index) = users.iter().position(|u| u.id == user_id) {
                 users.swap_remove(index);

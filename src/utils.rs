@@ -1,5 +1,5 @@
 use rocket::{
-    http::uri::Uri,
+    http::{RawStr, uri::Uri},
     response::{Flash, Redirect},
 };
 
@@ -10,7 +10,7 @@ use rocket::{
 */
 pub fn requires_login<T: Into<Uri<'static>>>(message: &str, url: T) -> Flash<Redirect> {
     Flash::new(
-        Redirect::to(format!("/login?m={}", Uri::percent_encode(message))),
+        Redirect::to(format!("/login?m={}", RawStr::new(&message).percent_encode().to_string())),
         "callback",
         url.into().to_string(),
     )

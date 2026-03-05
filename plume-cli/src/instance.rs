@@ -1,57 +1,55 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::{Arg, ArgMatches, Command};
 
 use plume_models::{instance::*, safe_string::SafeString, Connection};
 use std::env;
 
-pub fn command<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("instance")
+pub fn command() -> Command {
+    Command::new("instance")
         .about("Manage instances")
-        .subcommand(SubCommand::with_name("new")
-            .arg(Arg::with_name("domain")
-                .short("d")
+        .subcommand(Command::new("new")
+            .arg(Arg::new("domain")
+                .short('d')
                 .long("domain")
-                .takes_value(true)
+                .action(clap::ArgAction::Set)
                 .help("The domain name of your instance")
-            ).arg(Arg::with_name("name")
-                .short("n")
+            ).arg(Arg::new("name")
+                .short('n')
                 .long("name")
-                .takes_value(true)
+                .action(clap::ArgAction::Set)
                 .help("The name of your instance")
-            ).arg(Arg::with_name("default-license")
-                .short("l")
+            ).arg(Arg::new("default-license")
+                .short('l')
                 .long("default-license")
-                .takes_value(true)
+                .action(clap::ArgAction::Set)
                 .help("The license that will be used by default for new articles on this instance")
-            ).arg(Arg::with_name("private")
-                .short("p")
+            ).arg(Arg::new("private")
+                .short('p')
                 .long("private")
+                .action(clap::ArgAction::SetTrue)
                 .help("Closes the registrations on this instance")
             ).about("Create a new local instance"))
 }
 
-pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
-    let conn = conn;
-    match args.subcommand() {
-        ("new", Some(x)) => new(x, conn),
-        ("", None) => command().print_help().unwrap(),
-        _ => println!("Unknown subcommand"),
-    }
+pub fn run(mut args: ArgMatches, conn: &mut Connection) {
+    args.remove_subcommand().map(|(c, a)| {
+        match c.as_str() {
+            "new" => new(a, conn),
+            _ => command().print_help().unwrap(),
+        }
+    }).unwrap_or_else(|| println!("Unknown subcommand") )
 }
 
-fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
+fn new(mut args: ArgMatches, conn: &mut Connection) {
     let domain = args
-        .value_of("domain")
-        .map(String::from)
+        .remove_one::<String>("domain")
         .unwrap_or_else(|| env::var("BASE_URL").unwrap_or_else(|_| super::ask_for("Domain name")));
     let name = args
-        .value_of("name")
-        .map(String::from)
+        .remove_one::<String>("name")
         .unwrap_or_else(|| super::ask_for("Instance name"));
     let license = args
-        .value_of("default-license")
-        .map(String::from)
+        .remove_one::<String>("default-license")
         .unwrap_or_else(|| String::from("CC-BY-SA"));
-    let open_reg = !args.is_present("private");
+    let open_reg = !args.contains_id("private");
 
     Instance::insert(
         conn,

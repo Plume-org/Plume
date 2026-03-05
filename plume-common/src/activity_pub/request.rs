@@ -1,3 +1,4 @@
+use base64::prelude::{Engine as _, BASE64_STANDARD};
 use chrono::{offset::Utc, DateTime};
 use openssl::hash::{Hasher, MessageDigest};
 use reqwest::{
@@ -46,7 +47,7 @@ impl Digest {
         hasher
             .update(body.as_bytes())
             .expect("Digest::digest: content insertion error");
-        let res = base64::encode(&hasher.finish().expect("Digest::digest: finalizing error"));
+        let res = BASE64_STANDARD.encode(&hasher.finish().expect("Digest::digest: finalizing error"));
         HeaderValue::from_str(&format!("SHA-256={}", res))
             .expect("Digest::digest: header creation error")
     }
@@ -86,13 +87,13 @@ impl Digest {
             .find('=')
             .expect("Digest::value: invalid header error")
             + 1;
-        base64::decode(&self.0[pos..]).expect("Digest::value: invalid encoding error")
+        BASE64_STANDARD.decode(&self.0[pos..]).expect("Digest::value: invalid encoding error")
     }
 
     pub fn from_header(dig: &str) -> Result<Self, Error> {
         if let Some(pos) = dig.find('=') {
             let pos = pos + 1;
-            if base64::decode(&dig[pos..]).is_ok() {
+            if BASE64_STANDARD.decode(&dig[pos..]).is_ok() {
                 Ok(Digest(dig.to_owned()))
             } else {
                 Err(Error())
@@ -108,7 +109,7 @@ impl Digest {
         hasher
             .update(body.as_bytes())
             .expect("Digest::digest: content insertion error");
-        let res = base64::encode(&hasher.finish().expect("Digest::digest: finalizing error"));
+        let res = BASE64_STANDARD.encode(&hasher.finish().expect("Digest::digest: finalizing error"));
         Digest(format!("SHA-256={}", res))
     }
 }
@@ -178,7 +179,7 @@ pub fn signature(
         .join(" ");
 
     let data = signer.sign(&signed_string).map_err(|_| Error())?;
-    let sign = base64::encode(&data);
+    let sign = BASE64_STANDARD.encode(&data);
 
     HeaderValue::from_str(&format!(
         "keyId=\"{key_id}\",algorithm=\"rsa-sha256\",headers=\"{signed_headers}\",signature=\"{signature}\"",

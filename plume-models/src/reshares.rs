@@ -3,7 +3,7 @@ use crate::{
     Connection, Error, Result, CONFIG,
 };
 use activitystreams::{
-    activity::{ActorAndObjectRef, Announce, Undo},
+    activity::{Announce, Undo},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -26,7 +26,7 @@ pub struct Reshare {
 }
 
 #[derive(Insertable)]
-#[table_name = "reshares"]
+#[diesel(table_name = reshares)]
 pub struct NewReshare {
     pub user_id: i32,
     pub post_id: i32,
@@ -45,7 +45,7 @@ impl Reshare {
     );
 
     pub fn get_recents_for_author(
-        conn: &Connection,
+        conn: &mut Connection,
         user: &User,
         limit: i64,
     ) -> Result<Vec<Reshare>> {
@@ -57,15 +57,15 @@ impl Reshare {
             .map_err(Error::from)
     }
 
-    pub fn get_post(&self, conn: &Connection) -> Result<Post> {
+    pub fn get_post(&self, conn: &mut Connection) -> Result<Post> {
         Post::get(conn, self.post_id)
     }
 
-    pub fn get_user(&self, conn: &Connection) -> Result<User> {
+    pub fn get_user(&self, conn: &mut Connection) -> Result<User> {
         User::get(conn, self.user_id)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<Announce> {
+    pub fn to_activity(&self, conn: &mut Connection) -> Result<Announce> {
         let mut act = Announce::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
             Post::get(conn, self.post_id)?.ap_url.parse::<IriString>()?,
@@ -80,7 +80,7 @@ impl Reshare {
         Ok(act)
     }
 
-    pub fn notify(&self, conn: &Connection) -> Result<()> {
+    pub fn notify(&self, conn: &mut Connection) -> Result<()> {
         let post = self.get_post(conn)?;
         for author in post.get_authors(conn)? {
             if author.is_local() {
@@ -97,7 +97,7 @@ impl Reshare {
         Ok(())
     }
 
-    pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
+    pub fn build_undo(&self, conn: &mut Connection) -> Result<Undo> {
         let mut act = Undo::new(
             User::get(conn, self.user_id)?.ap_url.parse::<IriString>()?,
             AnyBase::from_extended(self.to_activity(conn)?)?,
@@ -113,11 +113,11 @@ impl Reshare {
     }
 }
 
-impl AsObject<User, Announce, &Connection> for Post {
+impl AsObject<User, Announce, &mut Connection> for Post {
     type Error = Error;
     type Output = Reshare;
 
-    fn activity(self, conn: &Connection, actor: User, id: &str) -> Result<Reshare> {
+    async fn activity(self, conn: &mut Connection, actor: User, id: &str) -> Result<Reshare> {
         let conn = conn;
         let reshare = Reshare::insert(
             conn,
@@ -129,7 +129,7 @@ impl AsObject<User, Announce, &Connection> for Post {
         )?;
         reshare.notify(conn)?;
 
-        Timeline::add_to_all_timelines(conn, &self, Kind::Reshare(&actor))?;
+        Timeline::add_to_all_timelines(conn, &self, &Kind::Reshare(actor)).await?;
         Ok(reshare)
     }
 }
@@ -138,42 +138,43 @@ impl FromId<Connection> for Reshare {
     type Error = Error;
     type Object = Announce;
 
-    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
+    fn from_db(conn: &mut Connection, id: &str) -> Result<Self> {
         Reshare::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &Connection, act: Announce) -> Result<Self> {
-        let res = Reshare::insert(
-            conn,
-            NewReshare {
-                post_id: Post::from_id(
-                    conn,
-                    act.object_field_ref()
-                        .as_single_id()
-                        .ok_or(Error::MissingApProperty)?
-                        .as_str(),
-                    None,
-                    CONFIG.proxy(),
-                )
-                .map_err(|(_, e)| e)?
-                .id,
-                user_id: User::from_id(
-                    conn,
-                    act.actor_field_ref()
-                        .as_single_id()
-                        .ok_or(Error::MissingApProperty)?
-                        .as_str(),
-                    None,
-                    CONFIG.proxy(),
-                )
-                .map_err(|(_, e)| e)?
-                .id,
-                ap_url: act
-                    .id_unchecked()
+    async fn from_activity(conn: &mut Connection, act: Announce) -> Result<Self> {
+
+        let new_reshare = NewReshare {
+            post_id: Post::from_id(
+                conn,
+                act.object_unchecked()
+                    .as_single_id()
                     .ok_or(Error::MissingApProperty)?
-                    .to_string(),
-            },
-        )?;
+                    .as_str(),
+                None,
+                CONFIG.proxy(),
+            )
+            .await
+            .map_err(|(_, e)| e)?
+            .id,
+            user_id: User::from_id(
+                conn,
+                act.actor_unchecked()
+                    .as_single_id()
+                    .ok_or(Error::MissingApProperty)?
+                    .as_str(),
+                None,
+                CONFIG.proxy(),
+            ).await
+            .map_err(|(_, e)| e)?
+            .id,
+            ap_url: act
+                .id_unchecked()
+                .ok_or(Error::MissingApProperty)?
+                .to_string(),
+        };
+
+        let res = Reshare::insert(conn, new_reshare)?;
         res.notify(conn)?;
         Ok(res)
     }
@@ -183,11 +184,11 @@ impl FromId<Connection> for Reshare {
     }
 }
 
-impl AsObject<User, Undo, &Connection> for Reshare {
+impl AsObject<User, Undo, &mut Connection> for Reshare {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
+    async fn activity(self, conn: &mut Connection, actor: User, _id: &str) -> Result<()> {
         if actor.id == self.user_id {
             diesel::delete(&self).execute(conn)?;
 

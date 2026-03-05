@@ -1,9 +1,9 @@
 @use crate::template_utils::*;
-@use crate::templates::base;
+@use crate::templates::base_html;
 
 @(ctx: BaseContext)
 
-@:base(ctx, i18n!(ctx.1, "Registration"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Registration"), {}, {}, {
     <h1>@i18n!(ctx.1, "Check your inbox!")</h1>
     <p>@i18n!(ctx.1, "We sent a mail to the address you gave us, with a link for registration.")</p>
 })

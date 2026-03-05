@@ -1,13 +1,13 @@
 @use std::borrow::Cow;
 @use validator::{ValidationErrors, ValidationErrorsKind};
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 @use crate::routes::email_signups::EmailSignupForm;
 @use crate::routes::*;
 
 @(ctx: BaseContext, enabled: bool, form: &EmailSignupForm, errors: ValidationErrors)
 
-@:base(ctx, i18n!(ctx.1, "Create your account"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Create your account"), {}, {}, {
     @if enabled {
         <h1>@i18n!(ctx.1, "Create an account")</h1>
         <form method="post" action="@uri!(email_signups::create)">

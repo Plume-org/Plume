@@ -1,20 +1,20 @@
 @use plume_models::instance::Instance;
 @use validator::ValidationErrors;
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 @use crate::routes::user::UpdateUserForm;
 @use crate::routes::*;
 
 @(ctx: BaseContext, form: UpdateUserForm, errors: ValidationErrors)
 
-@:base(ctx, i18n!(ctx.1, "Edit your account"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Edit your account"), {}, {}, {
     @if let Some(u) = ctx.2.clone() {
         <h1>@i18n!(ctx.1, "Your Profile")</h1>
         <p>
             @i18n!(ctx.1, "To change your avatar, upload it to your gallery and then select from there.")
             <a href="@uri!(medias::new)">@i18n!(ctx.1, "Upload an avatar")</a>
         </p>
-        <form method="post" action="@uri!(user::update: name = u.username.clone())">
+        <form method="post" action="@uri!(user::update(name = u.username.clone()))">
             <!-- Rocket hack to use various HTTP methods -->
             <input type=hidden name="_method" value="put">
 
@@ -53,7 +53,7 @@
         <h2>@i18n!(ctx.1, "Danger zone")</h2>
         <p>@i18n!(ctx.1, "Be very careful, any action taken here can't be cancelled.")
         @if !u.is_admin() {
-            <form method="post" action="@uri!(user::delete: name = u.username)">
+            <form method="post" action="@uri!(user::delete(name = u.username))">
                 <input type="submit" class="inline-block button destructive" value="@i18n!(ctx.1, "Delete your account")">
             </form>
         } else {

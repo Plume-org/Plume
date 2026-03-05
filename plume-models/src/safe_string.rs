@@ -4,13 +4,12 @@ use diesel::{
     deserialize::Queryable,
     serialize::{self, Output},
     sql_types::Text,
-    types::ToSql,
+    serialize::ToSql,
 };
 use serde::{self, de::Visitor, Deserialize, Deserializer, Serialize, Serializer};
 use std::{
     borrow::{Borrow, Cow},
     fmt::{self, Display},
-    io::Write,
     ops::Deref,
 };
 
@@ -94,7 +93,7 @@ fn url_add_prefix(url: &str) -> Option<Cow<'_, str>> {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, AsExpression, FromSqlRow, Default)]
-#[sql_type = "Text"]
+#[diesel(sql_type = Text)]
 pub struct SafeString {
     value: String,
 }
@@ -163,16 +162,16 @@ impl<'de> Deserialize<'de> for SafeString {
 #[cfg(all(feature = "postgres", not(feature = "sqlite")))]
 impl Queryable<Text, diesel::pg::Pg> for SafeString {
     type Row = String;
-    fn build(value: Self::Row) -> Self {
-        SafeString::new(&value)
+    fn build(value: Self::Row) -> diesel::deserialize::Result<Self> {
+        Ok(SafeString::new(&value))
     }
 }
 
 #[cfg(all(feature = "sqlite", not(feature = "postgres")))]
 impl Queryable<Text, diesel::sqlite::Sqlite> for SafeString {
     type Row = String;
-    fn build(value: Self::Row) -> Self {
-        SafeString::new(&value)
+    fn build(value: Self::Row) -> diesel::deserialize::Result<Self> {
+        Ok(SafeString::new(&value))
     }
 }
 
@@ -181,7 +180,7 @@ where
     DB: diesel::backend::Backend,
     str: ToSql<diesel::sql_types::Text, DB>,
 {
-    fn to_sql<W: Write>(&self, out: &mut Output<'_, W, DB>) -> serialize::Result {
+    fn to_sql<'b>(&'b self, out: &mut Output<'b, '_, DB>) -> serialize::Result {
         str::to_sql(&self.value, out)
     }
 }
@@ -211,14 +210,10 @@ impl AsRef<str> for SafeString {
     }
 }
 
-use rocket::http::RawStr;
-use rocket::request::FromFormValue;
+use rocket::form::{FromFormField, ValueField};
 
-impl<'v> FromFormValue<'v> for SafeString {
-    type Error = &'v RawStr;
-
-    fn from_form_value(form_value: &'v RawStr) -> Result<SafeString, &'v RawStr> {
-        let val = String::from_form_value(form_value)?;
-        Ok(SafeString::new(&val))
+impl<'r> FromFormField<'r> for SafeString {
+    fn from_value(field: ValueField<'r>) -> rocket::form::Result<'r, SafeString> {
+        Ok(SafeString::new(field.value))
     }
 }

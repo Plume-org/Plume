@@ -1,9 +1,9 @@
 #![warn(clippy::too_many_arguments)]
 use rocket::{
-    request::{Form, Request},
+    request::Request,
     response::{self, Responder},
 };
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 use plume_common::utils::random_hex;
 use plume_models::{api_tokens::*, apps::App, db_conn::DbConn, users::User, Error};
@@ -19,7 +19,7 @@ impl From<Error> for ApiError {
     }
 }
 
-impl<'r> Responder<'r> for ApiError {
+impl<'r> Responder<'r, 'r> for ApiError {
     fn respond_to(self, req: &Request<'_>) -> response::Result<'r> {
         match self.0 {
             Error::NotFound => Json(json!({
@@ -48,12 +48,12 @@ pub struct OAuthRequest {
 }
 
 #[get("/oauth2?<query..>")]
-pub fn oauth(query: Form<OAuthRequest>, conn: DbConn) -> Result<Json<serde_json::Value>, ApiError> {
-    let app = App::find_by_client_id(&conn, &query.client_id)?;
+pub fn oauth(query: OAuthRequest, mut conn: DbConn) -> Result<Json<serde_json::Value>, ApiError> {
+    let app = App::find_by_client_id(&mut conn, &query.client_id)?;
     if app.client_secret == query.client_secret {
-        if let Ok(user) = User::login(&conn, &query.username, &query.password) {
+        if let Ok(user) = User::login(&mut conn, &query.username, &query.password) {
             let token = ApiToken::insert(
-                &conn,
+                &mut conn,
                 NewApiToken {
                     app_id: app.id,
                     user_id: user.id,

@@ -19,7 +19,7 @@ pub struct Mention {
 }
 
 #[derive(Insertable)]
-#[table_name = "mentions"]
+#[diesel(table_name = mentions)]
 pub struct NewMention {
     pub mentioned_id: i32,
     pub post_id: Option<i32>,
@@ -33,23 +33,23 @@ impl Mention {
     list_by!(mentions, list_for_post, post_id as i32);
     list_by!(mentions, list_for_comment, comment_id as i32);
 
-    pub fn get_mentioned(&self, conn: &Connection) -> Result<User> {
+    pub fn get_mentioned(&self, conn: &mut Connection) -> Result<User> {
         User::get(conn, self.mentioned_id)
     }
 
-    pub fn get_post(&self, conn: &Connection) -> Result<Post> {
+    pub fn get_post(&self, conn: &mut Connection) -> Result<Post> {
         self.post_id
             .ok_or(Error::NotFound)
             .and_then(|id| Post::get(conn, id))
     }
 
-    pub fn get_comment(&self, conn: &Connection) -> Result<Comment> {
+    pub fn get_comment(&self, conn: &mut Connection) -> Result<Comment> {
         self.comment_id
             .ok_or(Error::NotFound)
             .and_then(|id| Comment::get(conn, id))
     }
 
-    pub fn get_user(&self, conn: &Connection) -> Result<User> {
+    pub fn get_user(&self, conn: &mut Connection) -> Result<User> {
         match self.get_post(conn) {
             Ok(p) => Ok(p
                 .get_authors(conn)?
@@ -60,15 +60,15 @@ impl Mention {
         }
     }
 
-    pub fn build_activity(conn: &Connection, ment: &str) -> Result<link::Mention> {
-        let user = User::find_by_fqn(conn, ment)?;
+    pub async fn build_activity(conn: &mut Connection, ment: &str) -> Result<link::Mention> {
+        let user = User::find_by_fqn(conn, ment).await?;
         let mut mention = link::Mention::new();
         mention.set_href(user.ap_url.parse::<IriString>()?);
         mention.set_name(format!("@{}", ment));
         Ok(mention)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<link::Mention> {
+    pub fn to_activity(&self, conn: &mut Connection) -> Result<link::Mention> {
         let user = self.get_mentioned(conn)?;
         let mut mention = link::Mention::new();
         mention.set_href(user.ap_url.parse::<IriString>()?);
@@ -77,7 +77,7 @@ impl Mention {
     }
 
     pub fn from_activity(
-        conn: &Connection,
+        conn: &mut Connection,
         ment: &link::Mention,
         inside: i32,
         in_post: bool,
@@ -119,7 +119,7 @@ impl Mention {
         }
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<()> {
+    pub fn delete(&self, conn: &mut Connection) -> Result<()> {
         //find related notifications and delete them
         if let Ok(n) = Notification::find(conn, notification_kind::MENTION, self.id) {
             n.delete(conn)?;
@@ -130,7 +130,7 @@ impl Mention {
             .map_err(Error::from)
     }
 
-    fn notify(&self, conn: &Connection) -> Result<()> {
+    fn notify(&self, conn: &mut Connection) -> Result<()> {
         let m = self.get_mentioned(conn)?;
         if m.is_local() {
             Notification::insert(

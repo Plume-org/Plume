@@ -50,7 +50,7 @@ pub struct List {
 }
 
 #[derive(Default, Insertable)]
-#[table_name = "lists"]
+#[diesel(table_name = lists)]
 struct NewList<'a> {
     pub name: &'a str,
     pub user_id: Option<i32>,
@@ -100,7 +100,7 @@ macro_rules! func {
     (@out_type Prefix) => { String };
 
     (add: $fn:ident, $kind:ident) => {
-        pub fn $fn(&self, conn: &Connection, vals: &[func!(@in_type $kind)]) -> Result<()> {
+        pub fn $fn(&self, conn: &mut Connection, vals: &[func!(@in_type $kind)]) -> Result<()> {
             if self.kind() != ListType::$kind {
                 return Err(Error::InvalidValue);
             }
@@ -117,7 +117,7 @@ macro_rules! func {
     };
 
     (list: $fn:ident, $kind:ident, $table:ident) => {
-        pub fn $fn(&self, conn: &Connection) -> Result<Vec<func!(@out_type $kind)>> {
+        pub fn $fn(&self, conn: &mut Connection) -> Result<Vec<func!(@out_type $kind)>> {
             if self.kind() != ListType::$kind {
                 return Err(Error::InvalidValue);
             }
@@ -133,7 +133,7 @@ macro_rules! func {
 
 
     (set: $fn:ident, $kind:ident, $add:ident) => {
-        pub fn $fn(&self, conn: &Connection, val: &[func!(@in_type $kind)]) -> Result<()> {
+        pub fn $fn(&self, conn: &mut Connection, val: &[func!(@in_type $kind)]) -> Result<()> {
             if self.kind() != ListType::$kind {
                 return Err(Error::InvalidValue);
             }
@@ -154,7 +154,7 @@ struct ListElem {
 }
 
 #[derive(Default, Insertable)]
-#[table_name = "list_elems"]
+#[diesel(table_name = list_elems)]
 struct NewListElem<'a> {
     pub list_id: i32,
     pub user_id: Option<i32>,
@@ -166,14 +166,14 @@ impl List {
     last!(lists);
     get!(lists);
 
-    fn insert(conn: &Connection, val: NewList<'_>) -> Result<Self> {
+    fn insert(conn: &mut Connection, val: NewList<'_>) -> Result<Self> {
         diesel::insert_into(lists::table)
             .values(val)
             .execute(conn)?;
         List::last(conn)
     }
 
-    pub fn list_for_user(conn: &Connection, user_id: Option<i32>) -> Result<Vec<Self>> {
+    pub fn list_for_user(conn: &mut Connection, user_id: Option<i32>) -> Result<Vec<Self>> {
         if let Some(user_id) = user_id {
             lists::table
                 .filter(lists::user_id.eq(user_id))
@@ -188,7 +188,7 @@ impl List {
     }
 
     pub fn find_for_user_by_name(
-        conn: &Connection,
+        conn: &mut Connection,
         user_id: Option<i32>,
         name: &str,
     ) -> Result<Self> {
@@ -207,7 +207,7 @@ impl List {
         }
     }
 
-    pub fn new(conn: &Connection, name: &str, user: Option<&User>, kind: ListType) -> Result<Self> {
+    pub fn new(conn: &mut Connection, name: &str, user: Option<&User>, kind: ListType) -> Result<Self> {
         Self::insert(
             conn,
             NewList {
@@ -225,25 +225,25 @@ impl List {
 
     /// Return Ok(true) if the list contain the given user, Ok(false) otherwiser,
     /// and Err(_) on error
-    pub fn contains_user(&self, conn: &Connection, user: i32) -> Result<bool> {
+    pub fn contains_user(&self, conn: &mut Connection, user: i32) -> Result<bool> {
         private::ListElem::user_in_list(conn, self, user)
     }
 
     /// Return Ok(true) if the list contain the given blog, Ok(false) otherwiser,
     /// and Err(_) on error
-    pub fn contains_blog(&self, conn: &Connection, blog: i32) -> Result<bool> {
+    pub fn contains_blog(&self, conn: &mut Connection, blog: i32) -> Result<bool> {
         private::ListElem::blog_in_list(conn, self, blog)
     }
 
     /// Return Ok(true) if the list contain the given word, Ok(false) otherwiser,
     /// and Err(_) on error
-    pub fn contains_word(&self, conn: &Connection, word: &str) -> Result<bool> {
+    pub fn contains_word(&self, conn: &mut Connection, word: &str) -> Result<bool> {
         private::ListElem::word_in_list(conn, self, word)
     }
 
     /// Return Ok(true) if the list match the given prefix, Ok(false) otherwiser,
     /// and Err(_) on error
-    pub fn contains_prefix(&self, conn: &Connection, word: &str) -> Result<bool> {
+    pub fn contains_prefix(&self, conn: &mut Connection, word: &str) -> Result<bool> {
         private::ListElem::prefix_in_list(conn, self, word)
     }
 
@@ -266,17 +266,17 @@ impl List {
     func! {list: list_blogs, Blog, blogs}
 
     /// Get all words in the list
-    pub fn list_words(&self, conn: &Connection) -> Result<Vec<String>> {
+    pub fn list_words(&self, conn: &mut Connection) -> Result<Vec<String>> {
         self.list_stringlike(conn, ListType::Word)
     }
 
     /// Get all prefixes in the list
-    pub fn list_prefixes(&self, conn: &Connection) -> Result<Vec<String>> {
+    pub fn list_prefixes(&self, conn: &mut Connection) -> Result<Vec<String>> {
         self.list_stringlike(conn, ListType::Prefix)
     }
 
     #[inline(always)]
-    fn list_stringlike(&self, conn: &Connection, t: ListType) -> Result<Vec<String>> {
+    fn list_stringlike(&self, conn: &mut Connection, t: ListType) -> Result<Vec<String>> {
         if self.kind() != t {
             return Err(Error::InvalidValue);
         }
@@ -290,14 +290,14 @@ impl List {
             .map(|r| r.into_iter().flatten().collect::<Vec<String>>())
     }
 
-    pub fn clear(&self, conn: &Connection) -> Result<()> {
+    pub fn clear(&self, conn: &mut Connection) -> Result<()> {
         diesel::delete(list_elems::table.filter(list_elems::list_id.eq(self.id)))
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<()> {
+    pub fn delete(&self, conn: &mut Connection) -> Result<()> {
         if let Some(user_id) = self.user_id {
             diesel::delete(
                 lists::table
@@ -336,7 +336,7 @@ mod private {
     impl ListElem {
         insert!(list_elems, NewListElem<'_>);
 
-        pub fn user_in_list(conn: &Connection, list: &List, user: i32) -> Result<bool> {
+        pub fn user_in_list(conn: &mut Connection, list: &List, user: i32) -> Result<bool> {
             dsl::select(dsl::exists(
                 list_elems::table
                     .filter(list_elems::list_id.eq(list.id))
@@ -346,7 +346,7 @@ mod private {
             .map_err(Error::from)
         }
 
-        pub fn blog_in_list(conn: &Connection, list: &List, blog: i32) -> Result<bool> {
+        pub fn blog_in_list(conn: &mut Connection, list: &List, blog: i32) -> Result<bool> {
             dsl::select(dsl::exists(
                 list_elems::table
                     .filter(list_elems::list_id.eq(list.id))
@@ -356,7 +356,7 @@ mod private {
             .map_err(Error::from)
         }
 
-        pub fn word_in_list(conn: &Connection, list: &List, word: &str) -> Result<bool> {
+        pub fn word_in_list(conn: &mut Connection, list: &List, word: &str) -> Result<bool> {
             dsl::select(dsl::exists(
                 list_elems::table
                     .filter(list_elems::list_id.eq(list.id))
@@ -366,7 +366,7 @@ mod private {
             .map_err(Error::from)
         }
 
-        pub fn prefix_in_list(conn: &Connection, list: &List, word: &str) -> Result<bool> {
+        pub fn prefix_in_list(conn: &mut Connection, list: &List, word: &str) -> Result<bool> {
             dsl::select(dsl::exists(
                 list_elems::table
                     .filter(

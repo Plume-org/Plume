@@ -8,9 +8,7 @@ use std::env::temp_dir;
 fn db() -> Conn {
     let conn =
         Conn::establish(CONFIG.database_url.as_str()).expect("Couldn't connect to the database");
-    let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
-    IMPORTED_MIGRATIONS
-        .run_pending_migrations(&conn, &dir)
+    plume_models::migrations::run_pending_migrations(&conn)
         .expect("Couldn't run migrations");
     conn
 }

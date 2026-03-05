@@ -5,12 +5,13 @@ use crate::{
 };
 
 use plume_models::{
-    db_conn::DbConn, email_signups::EmailSignup, instance::Instance, lettre::Transport, signups,
+    db_conn::DbConn, email_signups::EmailSignup, instance::Instance, signups,
     Error, PlumeRocket, CONFIG,
 };
+use lettre::Transport;
 use rocket::{
     http::Status,
-    request::LenientForm,
+    form::Form,
     response::{Flash, Redirect},
     State,
 };
@@ -70,9 +71,9 @@ pub fn passwords_match(form: &NewUserForm) -> Result<(), ValidationError> {
 
 #[post("/email_signups/new", data = "<form>")]
 pub fn create(
-    mail: State<'_, Arc<Mutex<Mailer>>>,
-    form: LenientForm<EmailSignupForm>,
-    conn: DbConn,
+    mail: &State<Arc<Mutex<Mailer>>>,
+    form: Form<EmailSignupForm>,
+    mut conn: DbConn,
     rockets: PlumeRocket,
     _enabled: signups::Email,
 ) -> Result<RespondOrRedirect, ErrorPage> {
@@ -93,23 +94,23 @@ pub fn create(
     let mut form = form.into_inner();
     form.email = form.email.trim().to_owned();
     if let Err(err) = form.validate() {
-        return Ok(render!(email_signups::new(
-            &(&conn, &rockets).to_context(),
+        return Ok(render!(email_signups::new_html(
+            &(&mut conn, &rockets).to_context(),
             registration_open,
             &form,
             err
         ))
         .into());
     }
-    let res = EmailSignup::start(&conn, &form.email);
+    let res = EmailSignup::start(&mut conn, &form.email);
     if let Some(err) = res.as_ref().err() {
         return Ok(match err {
             Error::UserAlreadyExists => {
                 // TODO: Notify to admin (and the user?)
                 warn!("Registration attempted for existing user: {}. Registraion halted and email sending skipped.", &form.email);
-                render!(email_signups::create(&(&conn, &rockets).to_context())).into()
+                render!(email_signups::create_html(&(&mut conn, &rockets).to_context())).into()
             }
-            Error::NotFound => render!(errors::not_found(&(&conn, &rockets).to_context())).into(),
+            Error::NotFound => render!(errors::not_found_html(&(&mut conn, &rockets).to_context())).into(),
             Error::Blocklisted(show, msg) => {
                 let mut errors = ValidationErrors::new();
                 if *show {
@@ -122,22 +123,22 @@ pub fn create(
                         },
                     );
                 }
-                render!(email_signups::new(
-                    &(&conn, &rockets).to_context(),
+                render!(email_signups::new_html(
+                    &(&mut conn, &rockets).to_context(),
                     registration_open,
                     &form,
                     errors
                 ))
                 .into()
             }
-            _ => render!(errors::not_found(&(&conn, &rockets).to_context())).into(), // FIXME
+            _ => render!(errors::not_found_html(&(&mut conn, &rockets).to_context())).into(), // FIXME
         });
     }
     let token = res.unwrap();
     let url = format!(
         "https://{}{}",
         CONFIG.base_url,
-        uri!(show: token = token.to_string())
+        uri!(show(token = token.to_string()))
     );
     let message = build_mail(
         form.email,
@@ -147,31 +148,31 @@ pub fn create(
     .expect("Mail configuration has already been done at ignition process");
     // TODO: Render error page
     if let Some(ref mut mailer) = *mail.lock().unwrap() {
-        mailer.send(message.into()).ok(); // TODO: Render error page
+        mailer.send(&message).ok(); // TODO: Render error page
     }
 
-    Ok(render!(email_signups::create(&(&conn, &rockets).to_context())).into())
+    Ok(render!(email_signups::create_html(&(&mut conn, &rockets).to_context())).into())
 }
 
 #[get("/email_signups/new")]
-pub fn created(conn: DbConn, rockets: PlumeRocket, _enabled: signups::Email) -> Ructe {
-    render!(email_signups::create(&(&conn, &rockets).to_context()))
+pub fn created(mut conn: DbConn, rockets: PlumeRocket, _enabled: signups::Email) -> Ructe {
+    render!(email_signups::create_html(&(&mut conn, &rockets).to_context()))
 }
 
 #[get("/email_signups/<token>")]
 pub fn show(
-    token: String,
-    conn: DbConn,
+    token: &str,
+    mut conn: DbConn,
     rockets: PlumeRocket,
     _enabled: signups::Email,
 ) -> Result<Ructe, ErrorPage> {
-    let signup = EmailSignup::find_by_token(&conn, token.into())?;
-    let confirmation = signup.confirm(&conn);
+    let signup = EmailSignup::find_by_token(&mut conn, token.to_string().into())?;
+    let confirmation = signup.confirm(&mut conn);
     if let Some(err) = confirmation.err() {
         match err {
             Error::Expired => {
-                return Ok(render!(email_signups::new(
-                    &(&conn, &rockets).to_context(),
+                return Ok(render!(email_signups::new_html(
+                    &(&mut conn, &rockets).to_context(),
                     Instance::get_local()?.open_registrations,
                     &EmailSignupForm::default(),
                     ValidationErrors::default()
@@ -190,8 +191,8 @@ pub fn show(
                         },
                     );
                 }
-                return Ok(render!(email_signups::new(
-                    &(&conn, &rockets).to_context(),
+                return Ok(render!(email_signups::new_html(
+                    &(&mut conn, &rockets).to_context(),
                     Instance::get_local()?.open_registrations,
                     &EmailSignupForm {
                         email: signup.email.clone(),
@@ -209,8 +210,8 @@ pub fn show(
         token: signup.token,
         ..NewUserForm::default()
     };
-    Ok(render!(email_signups::edit(
-        &(&conn, &rockets).to_context(),
+    Ok(render!(email_signups::edit_html(
+        &(&mut conn, &rockets).to_context(),
         Instance::get_local()?.open_registrations,
         &form,
         ValidationErrors::default()
@@ -219,8 +220,8 @@ pub fn show(
 
 #[post("/email_signups/signup", data = "<form>")]
 pub fn signup(
-    form: LenientForm<NewUserForm>,
-    conn: DbConn,
+    form: Form<NewUserForm>,
+    mut conn: DbConn,
     rockets: PlumeRocket,
     _enabled: signups::Email,
 ) -> Result<RespondOrRedirect, Status> {
@@ -231,14 +232,14 @@ pub fn signup(
         Status::InternalServerError
     })?;
     if let Some(err) = form.validate().err() {
-        return Ok(Response(render!(email_signups::edit(
-            &(&conn, &rockets).to_context(),
+        return Ok(Response(render!(email_signups::edit_html(
+            &(&mut conn, &rockets).to_context(),
             instance.open_registrations,
             &form,
             err
         ))));
     }
-    let signup = EmailSignup::find_by_token(&conn, form.token.clone().into())
+    let signup = EmailSignup::find_by_token(&mut conn, form.token.clone().into())
         .map_err(|_| Status::NotFound)?;
     if form.email != signup.email {
         let mut err = ValidationErrors::default();
@@ -247,14 +248,14 @@ pub fn signup(
             email: signup.email,
             ..form.into_inner()
         };
-        return Ok(Response(render!(email_signups::edit(
-            &(&conn, &rockets).to_context(),
+        return Ok(Response(render!(email_signups::edit_html(
+            &(&mut conn, &rockets).to_context(),
             instance.open_registrations,
             &form,
             err
         ))));
     }
-    let user = signup.complete(&conn, form.username.clone(), form.password.clone());
+    let user = signup.complete(&mut conn, form.username.clone(), form.password.clone());
     match user {
         Err(Error::Blocklisted(show, msg)) => {
             let instance = Instance::get_local().map_err(|_| Status::UnprocessableEntity)?;
@@ -269,8 +270,8 @@ pub fn signup(
                     },
                 );
             }
-            return Ok(render!(email_signups::new(
-                &(&conn, &rockets).to_context(),
+            return Ok(render!(email_signups::new_html(
+                &(&mut conn, &rockets).to_context(),
                 instance.open_registrations,
                 &EmailSignupForm {
                     email: signup.email.clone(),
@@ -287,7 +288,7 @@ pub fn signup(
         _ => {}
     }
     Ok(FlashRedirect(Flash::success(
-        Redirect::to(uri!(super::session::new: m = _)),
+        Redirect::to(uri!(super::session::new(m = _))),
         i18n!(
             rockets.intl.catalog,
             "Your account has been created. Now you just need to log in, before you can use it."

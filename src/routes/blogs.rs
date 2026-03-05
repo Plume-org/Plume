@@ -1,16 +1,15 @@
 use activitystreams::collection::{OrderedCollection, OrderedCollectionPage};
-use diesel::SaveChangesDsl;
 use rocket::{
     http::ContentType,
-    request::LenientForm,
-    response::{content::Content, Flash, Redirect},
+    form::Form,
+    response::{Flash, Redirect},
 };
 use rocket_i18n::I18n;
 use std::{borrow::Cow, collections::HashMap};
 use validator::{Validate, ValidationError, ValidationErrors};
 
 use crate::routes::{errors::ErrorPage, Page, RespondOrRedirect};
-use crate::template_utils::{IntoContext, Ructe};
+use crate::template_utils::{IntoContext, Ructe, PostCard};
 use crate::utils::requires_login;
 use plume_common::activity_pub::{ActivityStream, ApRequest, CustomGroup};
 use plume_common::utils;
@@ -20,22 +19,30 @@ use plume_models::{
 };
 
 #[get("/~/<name>?<page>", rank = 2)]
-pub fn details(
+pub async fn details(
     name: String,
-    page: Option<Page>,
-    conn: DbConn,
+    page: Option<crate::routes::Page>,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let blog = Blog::find_by_fqn(&conn, &name)?;
-    let posts = Post::blog_page(&conn, &blog, page.limits())?;
-    let articles_count = Post::count_for_blog(&conn, &blog)?;
-    let authors = &blog.list_authors(&conn)?;
+    let blog = Blog::find_by_fqn(&mut conn, &name).await?;
+    let blog_icon_url = blog.icon_url(&mut conn);
+    let blog_banner_url = blog.banner_url(&mut conn);
+    let articles_count = Post::count_for_blog(&mut conn, &blog)?;
+    let authors = &blog.list_authors(&mut conn)?;
+    let is_author = rockets.user.as_ref().and_then(|u| u.is_author_in(&mut conn, &blog).ok()).unwrap_or(false);
 
-    Ok(render!(blogs::details(
-        &(&conn, &rockets).to_context(),
+    let blog_pages = Post::blog_page(&mut conn, &blog, page.limits())?;
+    let posts = PostCard::from_posts(&mut conn, blog_pages, &rockets.user);
+
+    Ok(render!(blogs::details_html(
+        &(&mut conn, &rockets).to_context(),
         blog,
+        blog_icon_url,
+        blog_banner_url,
         authors,
+        is_author,
         page.0,
         Page::total(articles_count as i32),
         posts
@@ -43,19 +50,19 @@ pub fn details(
 }
 
 #[get("/~/<name>", rank = 1)]
-pub fn activity_details(
+pub async fn activity_details(
     name: String,
-    conn: DbConn,
+    mut conn: DbConn,
     _ap: ApRequest,
 ) -> Option<ActivityStream<CustomGroup>> {
-    let blog = Blog::find_by_fqn(&conn, &name).ok()?;
-    Some(ActivityStream::new(blog.to_activity(&conn).ok()?))
+    let blog = Blog::find_by_fqn(&mut conn, &name).await.ok()?;
+    Some(ActivityStream::new(blog.to_activity(&mut conn).ok()?))
 }
 
 #[get("/blogs/new")]
-pub fn new(conn: DbConn, rockets: PlumeRocket, _user: User) -> Ructe {
-    render!(blogs::new(
-        &(&conn, &rockets).to_context(),
+pub fn new(mut conn: DbConn, rockets: PlumeRocket, _user: User) -> Ructe {
+    render!(blogs::new_html(
+        &(&mut conn, &rockets).to_context(),
         &NewBlogForm::default(),
         ValidationErrors::default()
     ))
@@ -88,9 +95,9 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/blogs/new", data = "<form>")]
-pub fn create(
-    form: LenientForm<NewBlogForm>,
-    conn: DbConn,
+pub async fn create(
+    form: Form<NewBlogForm>,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
     let slug = Blog::slug(&form.title);
@@ -101,7 +108,7 @@ pub fn create(
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,
     };
-    if Blog::find_by_fqn(&conn, slug).is_ok() {
+    if Blog::find_by_fqn(&mut conn, slug).await.is_ok() {
         errors.add(
             "title",
             ValidationError {
@@ -116,11 +123,11 @@ pub fn create(
     }
 
     if !errors.is_empty() {
-        return render!(blogs::new(&(&conn, &rockets).to_context(), &*form, errors)).into();
+        return render!(blogs::new_html(&(&mut conn, &rockets).to_context(), &*form, errors)).into();
     }
 
     let blog = Blog::insert(
-        &conn,
+        &mut conn,
         NewBlog::new_local(
             slug.into(),
             form.title.to_string(),
@@ -134,7 +141,7 @@ pub fn create(
     .expect("blog::create:  error");
 
     BlogAuthor::insert(
-        &conn,
+        &mut conn,
         NewBlogAuthor {
             blog_id: blog.id,
             author_id: user.id,
@@ -144,23 +151,23 @@ pub fn create(
     .expect("blog::create: author error");
 
     Flash::success(
-        Redirect::to(uri!(details: name = slug, page = _)),
+        Redirect::to(uri!(details(name = slug, page = _))),
         &i18n!(intl, "Your blog was successfully created!"),
     )
     .into()
 }
 
 #[post("/~/<name>/delete")]
-pub fn delete(name: String, conn: DbConn, rockets: PlumeRocket) -> RespondOrRedirect {
-    let blog = Blog::find_by_fqn(&conn, &name).expect("blog::delete: blog not found");
+pub async fn delete(name: &str, mut conn: DbConn, rockets: PlumeRocket) -> RespondOrRedirect {
+    let blog = Blog::find_by_fqn(&mut conn, name).await.expect("blog::delete: blog not found");
 
     if rockets
         .user
         .clone()
-        .and_then(|u| u.is_author_in(&conn, &blog).ok())
+        .and_then(|u| u.is_author_in(&mut conn, &blog).ok())
         .unwrap_or(false)
     {
-        blog.delete(&conn).expect("blog::expect: deletion error");
+        blog.delete(&mut conn).expect("blog::expect: deletion error");
         Flash::success(
             Redirect::to(uri!(super::instance::index)),
             i18n!(rockets.intl.catalog, "Your blog was deleted."),
@@ -168,8 +175,8 @@ pub fn delete(name: String, conn: DbConn, rockets: PlumeRocket) -> RespondOrRedi
         .into()
     } else {
         // TODO actually return 403 error code
-        render!(errors::not_authorized(
-            &(&conn, &rockets).to_context(),
+        render!(errors::not_authorized_html(
+            &(&mut conn, &rockets).to_context(),
             i18n!(
                 rockets.intl.catalog,
                 "You are not allowed to delete this blog."
@@ -190,21 +197,21 @@ pub struct EditForm {
 }
 
 #[get("/~/<name>/edit")]
-pub fn edit(name: String, conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let blog = Blog::find_by_fqn(&conn, &name)?;
+pub async fn edit(name: &str, mut conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let blog = Blog::find_by_fqn(&mut conn, name).await?;
     if rockets
         .user
         .clone()
-        .and_then(|u| u.is_author_in(&conn, &blog).ok())
+        .and_then(|u| u.is_author_in(&mut conn, &blog).ok())
         .unwrap_or(false)
     {
         let user = rockets
             .user
             .clone()
             .expect("blogs::edit: User was None while it shouldn't");
-        let medias = Media::for_user(&conn, user.id).expect("Couldn't list media");
-        Ok(render!(blogs::edit(
-            &(&conn, &rockets).to_context(),
+        let medias = Media::for_user(&mut conn, user.id).expect("Couldn't list media");
+        Ok(render!(blogs::edit_html(
+            &(&mut conn, &rockets).to_context(),
             &blog,
             medias,
             &EditForm {
@@ -218,8 +225,8 @@ pub fn edit(name: String, conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, E
         )))
     } else {
         // TODO actually return 403 error code
-        Ok(render!(errors::not_authorized(
-            &(&conn, &rockets).to_context(),
+        Ok(render!(errors::not_authorized_html(
+            &(&mut conn, &rockets).to_context(),
             i18n!(
                 rockets.intl.catalog,
                 "You are not allowed to edit this blog."
@@ -229,7 +236,7 @@ pub fn edit(name: String, conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, E
 }
 
 /// Returns true if the media is owned by `user` and is a picture
-fn check_media(conn: &Connection, id: i32, user: &User) -> bool {
+fn check_media(conn: &mut Connection, id: i32, user: &User) -> bool {
     if let Ok(media) = Media::get(conn, id) {
         media.owner_id == user.id && media.category() == MediaCategory::Image
     } else {
@@ -238,23 +245,23 @@ fn check_media(conn: &Connection, id: i32, user: &User) -> bool {
 }
 
 #[put("/~/<name>/edit", data = "<form>")]
-pub fn update(
-    name: String,
-    form: LenientForm<EditForm>,
-    conn: DbConn,
+pub async fn update(
+    name: &str,
+    form: Form<EditForm>,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
     let intl = &rockets.intl.catalog;
-    let mut blog = Blog::find_by_fqn(&conn, &name).expect("blog::update: blog not found");
+    let mut blog = Blog::find_by_fqn(&mut conn, name).await.expect("blog::update: blog not found");
     if !rockets
         .user
         .clone()
-        .and_then(|u| u.is_author_in(&conn, &blog).ok())
+        .and_then(|u| u.is_author_in(&mut conn, &blog).ok())
         .unwrap_or(false)
     {
         // TODO actually return 403 error code
-        return render!(errors::not_authorized(
-            &(&conn, &rockets).to_context(),
+        return render!(errors::not_authorized_html(
+            &(&mut conn, &rockets).to_context(),
             i18n!(
                 rockets.intl.catalog,
                 "You are not allowed to edit this blog."
@@ -270,7 +277,7 @@ pub fn update(
     form.validate()
         .and_then(|_| {
             if let Some(icon) = form.icon {
-                if !check_media(&conn, icon, &user) {
+                if !check_media(&mut conn, icon, &user) {
                     let mut errors = ValidationErrors::new();
                     errors.add(
                         "",
@@ -288,7 +295,7 @@ pub fn update(
             }
 
             if let Some(banner) = form.banner {
-                if !check_media(&conn, banner, &user) {
+                if !check_media(&mut conn, banner, &user) {
                     let mut errors = ValidationErrors::new();
                     errors.add(
                         "",
@@ -305,6 +312,9 @@ pub fn update(
                 }
             }
 
+            let authors = blog.list_authors(&mut conn)
+                .expect("Couldn't get list of authors");
+
             blog.title = form.title.clone();
             blog.summary = form.summary.clone();
             blog.summary_html = SafeString::new(
@@ -312,30 +322,23 @@ pub fn update(
                     &form.summary,
                     None,
                     true,
-                    Some(Media::get_media_processor(
-                        &conn,
-                        blog.list_authors(&conn)
-                            .expect("Couldn't get list of authors")
-                            .iter()
-                            .collect(),
-                    )),
+                    Some(Media::get_media_processor(&mut conn, authors.iter().collect())),
                 )
                 .0,
             );
             blog.icon_id = form.icon;
             blog.banner_id = form.banner;
             blog.theme = form.theme.clone();
-            blog.save_changes::<Blog>(&*conn)
-                .expect("Couldn't save blog changes");
+            blog.save(&mut conn).expect("Couldn't save blog changes");
             Ok(Flash::success(
-                Redirect::to(uri!(details: name = name, page = _)),
+                Redirect::to(uri!(details(name = name, page = _))),
                 i18n!(intl, "Your blog information have been updated."),
             ))
         })
         .map_err(|err| {
-            let medias = Media::for_user(&conn, user.id).expect("Couldn't list media");
-            render!(blogs::edit(
-                &(&conn, &rockets).to_context(),
+            let medias = Media::for_user(&mut conn, user.id).expect("Couldn't list media");
+            render!(blogs::edit_html(
+                &(&mut conn, &rockets).to_context(),
                 &blog,
                 medias,
                 &*form,
@@ -347,31 +350,31 @@ pub fn update(
 }
 
 #[get("/~/<name>/outbox")]
-pub fn outbox(name: String, conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
-    let blog = Blog::find_by_fqn(&conn, &name).ok()?;
-    blog.outbox(&conn).ok()
+pub async fn outbox(name: &str, mut conn: DbConn) -> Option<ActivityStream<OrderedCollection>> {
+    let blog = Blog::find_by_fqn(&mut conn, name).await.ok()?;
+    blog.outbox(&mut conn).ok()
 }
 #[allow(unused_variables)]
 #[get("/~/<name>/outbox?<page>")]
-pub fn outbox_page(
-    name: String,
+pub async fn outbox_page(
+    name: &str,
     page: Page,
-    conn: DbConn,
+    mut conn: DbConn,
 ) -> Option<ActivityStream<OrderedCollectionPage>> {
-    let blog = Blog::find_by_fqn(&conn, &name).ok()?;
-    blog.outbox_page(&conn, page.limits()).ok()
+    let blog = Blog::find_by_fqn(&mut conn, name).await.ok()?;
+    blog.outbox_page(&mut conn, page.limits()).ok()
 }
 #[get("/~/<name>/atom.xml")]
-pub fn atom_feed(name: String, conn: DbConn) -> Option<Content<String>> {
-    let blog = Blog::find_by_fqn(&conn, &name).ok()?;
-    let entries = Post::get_recents_for_blog(&conn, &blog, 15).ok()?;
+pub async fn atom_feed(name: &str, mut conn: DbConn) -> Option<(ContentType, String)> {
+    let blog = Blog::find_by_fqn(&mut conn, name).await.ok()?;
+    let entries = Post::get_recents_for_blog(&mut conn, &blog, 15).ok()?;
     let uri = Instance::get_local()
         .ok()?
         .compute_box("~", &name, "atom.xml");
     let title = &blog.title;
     let default_updated = &blog.creation_date;
-    let feed = super::build_atom_feed(entries, &uri, title, default_updated, &conn);
-    Some(Content(
+    let feed = super::build_atom_feed(entries, &uri, title, default_updated, &mut conn);
+    Some((
         ContentType::new("application", "atom+xml"),
         feed.to_string(),
     ))
@@ -395,15 +398,18 @@ mod tests {
         Connection as Conn, CONFIG,
     };
     use rocket::{
-        http::{Cookie, Cookies, SameSite},
-        local::{Client, LocalRequest},
+        http::{Cookie, SameSite},
+        local::blocking::Client,
     };
 
     #[test]
     fn edit_link_within_post_card() {
-        let conn = Conn::establish(CONFIG.database_url.as_str()).unwrap();
+        let mut conn = Conn::establish(CONFIG.database_url.as_str()).unwrap();
+
+        plume_models::migrations::run_pending_migrations(&mut conn).expect("Couldn't run migrations");
+
         Instance::insert(
-            &conn,
+            &mut conn,
             NewInstance {
                 public_domain: "example.org".to_string(),
                 name: "Plume".to_string(),
@@ -417,33 +423,37 @@ mod tests {
             },
         )
         .unwrap();
+
         let rocket = init_rocket();
-        let client = Client::new(rocket).expect("valid rocket instance");
+        let client = Client::tracked(rocket).expect("valid rocket instance");
         let dbpool = client.rocket().state::<DbPool>().unwrap();
-        let conn = &DbConn(dbpool.get().unwrap());
+        let mut conn = DbConn(dbpool.get().unwrap());
 
-        let (_instance, user, blog, post) = create_models(conn);
+        let (_instance, user, blog, post) = create_models(&mut conn);
 
-        let blog_path = uri!(super::activity_details: name = &blog.fqn).to_string();
+        let blog_path = uri!(super::activity_details(name = &blog.fqn)).to_string();
         let edit_link = uri!(
-            super::super::posts::edit: blog = &blog.fqn,
-            slug = &post.slug
+            super::super::posts::edit(blog = &blog.fqn, slug = &post.slug)
         )
         .to_string();
 
-        let mut response = client.get(&blog_path).dispatch();
-        let body = response.body_string().unwrap();
+        let response = client.get(&blog_path).dispatch();
+        let body = response.into_string().unwrap();
         assert!(!body.contains(&edit_link));
 
-        let request = client.get(&blog_path);
-        login(&request, &user);
-        let mut response = request.dispatch();
-        let body = response.body_string().unwrap();
+        let request = client.get(&blog_path)
+            .private_cookie(
+                Cookie::build((AUTH_COOKIE, user.id.to_string()))
+                    .same_site(SameSite::Lax)
+                    .build()
+            );
+        let response = request.dispatch();
+        let body = response.into_string().unwrap();
         assert!(body.contains(&edit_link));
     }
 
-    fn create_models(conn: &DbConn) -> (Instance, User, Blog, Post) {
-        conn.transaction::<(Instance, User, Blog, Post), diesel::result::Error, _>(|| {
+    fn create_models(conn: &mut DbConn) -> (Instance, User, Blog, Post) {
+        conn.transaction::<(Instance, User, Blog, Post), diesel::result::Error, _>(|conn| {
             let instance = Instance::get_local().unwrap_or_else(|_| {
                 let instance = Instance::insert(
                     conn,
@@ -520,14 +530,6 @@ mod tests {
             Ok((instance, user, blog, post))
         })
         .unwrap()
-    }
-
-    fn login(request: &LocalRequest, user: &User) {
-        request.inner().guard::<Cookies>().unwrap().add_private(
-            Cookie::build(AUTH_COOKIE, user.id.to_string())
-                .same_site(SameSite::Lax)
-                .finish(),
-        );
     }
 
     #[test]

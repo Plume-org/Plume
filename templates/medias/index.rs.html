@@ -1,11 +1,11 @@
 @use plume_models::medias::*;
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 @use crate::routes::*;
 
 @(ctx: BaseContext, medias: Vec<Media>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "Your media"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Your media"), {}, {}, {
     <h1>@i18n!(ctx.1, "Your media")</h1>
     <div>
         <a href="@uri!(medias::new)" class="inline-block button">@i18n!(ctx.1, "Upload")</a>
@@ -30,11 +30,11 @@
                   }
               </main>
               <footer>
-                <form action="@uri!(medias::delete: id = media.id)" class="inline" method="POST">
+                <form action="@uri!(medias::delete(id = media.id))" class="inline" method="POST">
                     <input type="submit" value="@i18n!(ctx.1, "Delete")"/>
                 </form>
                 &mdash;
-                <a href="@uri!(medias::details: id = media.id)">@i18n!(ctx.1, "Details")</a>
+                <a href="@uri!(medias::details(id = media.id))">@i18n!(ctx.1, "Details")</a>
               </footer>
           </div>
         }

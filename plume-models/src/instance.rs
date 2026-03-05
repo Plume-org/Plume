@@ -29,7 +29,7 @@ pub struct Instance {
 }
 
 #[derive(Clone, Insertable)]
-#[table_name = "instances"]
+#[diesel(table_name = instances)]
 pub struct NewInstance {
     pub public_domain: String,
     pub name: String,
@@ -62,25 +62,25 @@ impl Instance {
             .ok_or(Error::NotFound)
     }
 
-    pub fn get_local_uncached(conn: &Connection) -> Result<Instance> {
+    pub fn get_local_uncached(conn: &mut Connection) -> Result<Instance> {
         instances::table
             .filter(instances::local.eq(true))
             .first(conn)
             .map_err(Error::from)
     }
 
-    pub fn cache_local(conn: &Connection) {
+    pub fn cache_local(conn: &mut Connection) {
         *LOCAL_INSTANCE.write().unwrap() = Instance::get_local_uncached(conn).ok();
     }
 
-    pub fn get_remotes(conn: &Connection) -> Result<Vec<Instance>> {
+    pub fn get_remotes(conn: &mut Connection) -> Result<Vec<Instance>> {
         instances::table
             .filter(instances::local.eq(false))
             .load::<Instance>(conn)
             .map_err(Error::from)
     }
 
-    pub fn create_local_instance_user(conn: &Connection) -> Result<User> {
+    pub fn create_local_instance_user(conn: &mut Connection) -> Result<User> {
         let instance = Instance::get_local()?;
         let email = format!("{}@{}", LOCAL_INSTANCE_USERNAME, &instance.public_domain);
         NewUser::new_local(
@@ -98,7 +98,7 @@ impl Instance {
         LOCAL_INSTANCE_USER.get()
     }
 
-    pub fn get_local_instance_user_uncached(conn: &Connection) -> Result<User> {
+    pub fn get_local_instance_user_uncached(conn: &mut Connection) -> Result<User> {
         users::table
             .filter(users::role.eq(3))
             .first(conn)
@@ -108,7 +108,7 @@ impl Instance {
             })
     }
 
-    pub fn cache_local_instance_user(conn: &Connection) {
+    pub fn cache_local_instance_user(conn: &mut Connection) {
         let _ = LOCAL_INSTANCE_USER.get_or_init(|| {
             Self::get_local_instance_user_uncached(conn)
                 .or_else(|_| Self::create_local_instance_user(conn))
@@ -116,7 +116,7 @@ impl Instance {
         });
     }
 
-    pub fn page(conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<Instance>> {
+    pub fn page(conn: &mut Connection, (min, max): (i32, i32)) -> Result<Vec<Instance>> {
         instances::table
             .order(instances::public_domain.asc())
             .offset(min.into())
@@ -129,7 +129,7 @@ impl Instance {
     get!(instances);
     find_by!(instances, find_by_domain, public_domain as &str);
 
-    pub fn toggle_block(&self, conn: &Connection) -> Result<()> {
+    pub fn toggle_block(&self, conn: &mut Connection) -> Result<()> {
         diesel::update(self)
             .set(instances::blocked.eq(!self.blocked))
             .execute(conn)
@@ -138,7 +138,7 @@ impl Instance {
     }
 
     /// id: AP object id
-    pub fn is_blocked(conn: &Connection, id: &str) -> Result<bool> {
+    pub fn is_blocked(conn: &mut Connection, id: &str) -> Result<bool> {
         for block in instances::table
             .filter(instances::blocked.eq(true))
             .get_results::<Instance>(conn)?
@@ -151,7 +151,7 @@ impl Instance {
         Ok(false)
     }
 
-    pub fn has_admin(&self, conn: &Connection) -> Result<bool> {
+    pub fn has_admin(&self, conn: &mut Connection) -> Result<bool> {
         users::table
             .filter(users::instance_id.eq(self.id))
             .filter(users::role.eq(Role::Admin as i32))
@@ -160,7 +160,7 @@ impl Instance {
             .map(|r| !r.is_empty())
     }
 
-    pub fn main_admin(&self, conn: &Connection) -> Result<User> {
+    pub fn main_admin(&self, conn: &mut Connection) -> Result<User> {
         users::table
             .filter(users::instance_id.eq(self.id))
             .filter(users::role.eq(Role::Admin as i32))
@@ -180,7 +180,7 @@ impl Instance {
 
     pub fn update(
         &self,
-        conn: &Connection,
+        conn: &mut Connection,
         name: String,
         open_registrations: bool,
         short_description: SafeString,
@@ -218,7 +218,7 @@ impl Instance {
         res
     }
 
-    pub fn count(conn: &Connection) -> Result<i64> {
+    pub fn count(conn: &mut Connection) -> Result<i64> {
         instances::table
             .count()
             .get_result(conn)

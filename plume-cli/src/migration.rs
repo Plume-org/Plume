@@ -1,59 +1,25 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::{ArgMatches, Command};
 
-use plume_models::{migrations::IMPORTED_MIGRATIONS, Connection};
-use std::path::Path;
+use plume_models::Connection;
 
-pub fn command<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("migration")
+pub fn command() -> Command {
+    Command::new("migration")
         .about("Manage migrations")
         .subcommand(
-            SubCommand::with_name("run")
-                .arg(
-                    Arg::with_name("path")
-                        .short("p")
-                        .long("path")
-                        .takes_value(true)
-                        .required(false)
-                        .help("Path to Plume's working directory"),
-                )
-                .about("Run migrations"),
-        )
-        .subcommand(
-            SubCommand::with_name("redo")
-                .arg(
-                    Arg::with_name("path")
-                        .short("p")
-                        .long("path")
-                        .takes_value(true)
-                        .required(false)
-                        .help("Path to Plume's working directory"),
-                )
-                .about("Rerun latest migration"),
+            Command::new("run").about("Run migrations"),
         )
 }
 
-pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
-    let conn = conn;
-    match args.subcommand() {
-        ("run", Some(x)) => run_(x, conn),
-        ("redo", Some(x)) => redo(x, conn),
-        ("", None) => command().print_help().unwrap(),
-        _ => println!("Unknown subcommand"),
-    }
+pub fn run(mut args: ArgMatches, conn: &mut Connection) {
+    args.remove_subcommand().map(|(c, _)| {
+        match c.as_str() {
+            "run" => run_(conn),
+            _ => command().print_help().unwrap(),
+        }
+    }).unwrap_or_else(|| println!("Unknown subcommand") )
 }
 
-fn run_<'a>(args: &ArgMatches<'a>, conn: &Connection) {
-    let path = args.value_of("path").unwrap_or(".");
-
-    IMPORTED_MIGRATIONS
-        .run_pending_migrations(conn, Path::new(path))
-        .expect("Failed to run migrations")
-}
-
-fn redo<'a>(args: &ArgMatches<'a>, conn: &Connection) {
-    let path = args.value_of("path").unwrap_or(".");
-
-    IMPORTED_MIGRATIONS
-        .rerun_last_migration(conn, Path::new(path))
-        .expect("Failed to rerun migrations")
+fn run_(conn: &mut Connection) {
+    plume_models::migrations::run_pending_migrations(conn)
+        .expect("Failed to run migrations");
 }

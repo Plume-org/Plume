@@ -1,9 +1,9 @@
-@use crate::templates::errors::base;
+@use crate::templates::errors::base_html;
 @use crate::template_utils::*;
 
 @(ctx: BaseContext)
 
-@:base(ctx, i18n!(ctx.1, "Invalid CSRF token"), {
+@:base_html(ctx, i18n!(ctx.1, "Invalid CSRF token"), {
     <h1>@i18n!(ctx.1, "Invalid CSRF token")</h1>
     <p>
         @i18n!(ctx.1,

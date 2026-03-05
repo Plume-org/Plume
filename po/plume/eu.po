@@ -45,6 +45,11 @@ msgstr "{0}(e)k zure artikulua partekatu du."
 msgid "Your feed"
 msgstr "Zure feed-a"
 
+# src/template_utils.rs:118
+#, fuzzy
+msgid "My feed"
+msgstr "Zure feed-a"
+
 # src/template_utils.rs:119
 msgid "Local feed"
 msgstr "Feed-a lokala"
@@ -126,8 +131,12 @@ msgid "Here is the link for registration: {0}"
 msgstr "Hemen duzu izena emateko esteka: {0}"
 
 # src/routes/email_signups.rs:219
-msgid "Your account has been created. Now you just need to log in, before you can use it."
-msgstr "Zure kontua sortu da. Orain saioa hasi besterik ez duzu egin behar, erabili aurretik."
+msgid ""
+"Your account has been created. Now you just need to log in, before you can "
+"use it."
+msgstr ""
+"Zure kontua sortu da. Orain saioa hasi besterik ez duzu egin behar, erabili "
+"aurretik."
 
 # src/routes/instance.rs:117
 msgid "Instance settings have been saved."
@@ -234,12 +243,20 @@ msgid "Your article has been deleted."
 msgstr "Zure artikulua ezabatu da."
 
 # src/routes/posts.rs:631
-msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
-msgstr "Badirudi ezabatzen saiatu zaren artikulua ez dela existitzen. Beharbada dagoeneko ezabatuta dago."
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
+msgstr ""
+"Badirudi ezabatzen saiatu zaren artikulua ez dela existitzen. Beharbada "
+"dagoeneko ezabatuta dago."
 
 # src/routes/posts.rs:673
-msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr "Ezin izan da zure kontuari buruzko nahikoa informazio lortu. Mesedez, egiaztatu erabiltzailea zuzena dela."
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+"Ezin izan da zure kontuari buruzko nahikoa informazio lortu. Mesedez, "
+"egiaztatu erabiltzailea zuzena dela."
 
 # src/routes/reshares.rs:58
 msgid "To reshare a post, you need to be logged in"
@@ -297,29 +314,22 @@ msgstr "Kontua ezabatu da."
 msgid "You can't delete someone else's account."
 msgstr "Ezin duzu beste norbaiten kontua ezabatu."
 
-msgid "Create your account"
-msgstr "Sortu zure kontua"
-
-msgid "Create an account"
-msgstr "Sortu kontu bat"
-
-msgid "Email"
-msgstr "Posta elektronikoa"
-
-msgid "Email confirmation"
-msgstr "Baieztatu helbide elektronikoa"
-
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr "Sentitzen dugu, baina ezin duzu instantzia honetan izena eman. Hala ere, beste instantzia bat aurki dezakezu."
-
 msgid "Registration"
 msgstr "Izen-ematea"
 
 msgid "Check your inbox!"
 msgstr "Begiratu zure sarrera-erretilua!"
 
-msgid "We sent a mail to the address you gave us, with a link for registration."
-msgstr "Mezu bat bidali dugu eman diguzun helbidera, izena emateko estekarekin."
+msgid ""
+"We sent a mail to the address you gave us, with a link for registration."
+msgstr ""
+"Mezu bat bidali dugu eman diguzun helbidera, izena emateko estekarekin."
+
+msgid "Create your account"
+msgstr "Sortu zure kontua"
+
+msgid "Create an account"
+msgstr "Sortu kontu bat"
 
 msgid "Username"
 msgstr "Erabiltzailea"
@@ -330,245 +340,35 @@ msgstr "Pasahitza"
 msgid "Password confirmation"
 msgstr "Baieztatu pasahitza"
 
-msgid "Media upload"
-msgstr "Igo baliabideak"
-
-msgid "Description"
-msgstr "Azalpena"
-
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "Ikusmen-desgaitasuna duten pertsonentzat erabilgarria, bai eta lizentziei buruzko informazioa ere"
-
-msgid "Content warning"
-msgstr "Edukiari buruzko oharra"
-
-msgid "Leave it empty, if none is needed"
-msgstr "Utzi hutsik, behar ez bada"
-
-msgid "File"
-msgstr "Fitxategia"
-
-msgid "Send"
-msgstr "Bidali"
-
-msgid "Your media"
-msgstr "Zure baliabideak"
-
-msgid "Upload"
-msgstr "Igo"
-
-msgid "You don't have any media yet."
-msgstr "Oraindik ez duzu baliabiderik."
-
-msgid "Content warning: {0}"
-msgstr "Edukiari buruzko oharra: {0}"
-
-msgid "Delete"
-msgstr "Ezabatu"
-
-msgid "Details"
-msgstr "Xehetasunak"
-
-msgid "Media details"
-msgstr "Baliabide fitxategien xehetasunak"
-
-msgid "Go back to the gallery"
-msgstr "Itzuli galeriara"
-
-msgid "Markdown syntax"
-msgstr "Markdown sintaxia"
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr "Kopiatu artikuluetan irudi hau txertatzeko:"
-
-msgid "Use as an avatar"
-msgstr "Erabili avatar gisa"
-
-msgid "Plume"
-msgstr "Plume"
-
-msgid "Menu"
-msgstr "Menua"
-
-msgid "Search"
-msgstr "Bilatu"
-
-msgid "Dashboard"
-msgstr "Mahaigaina"
-
-msgid "Notifications"
-msgstr "Jakinarazpenak"
-
-msgid "Log Out"
-msgstr "Amaitu saioa"
-
-msgid "My account"
-msgstr "Nire kontua"
-
-msgid "Log In"
-msgstr "Hasi saioa"
-
-msgid "Register"
-msgstr "Erregistratu"
-
-msgid "About this instance"
-msgstr "Instantzia honi buruz"
-
-msgid "Privacy policy"
-msgstr "Pribatutasun politika"
-
-msgid "Administration"
-msgstr "Administrazioa"
-
-msgid "Documentation"
-msgstr "Dokumentazioa"
-
-msgid "Source code"
-msgstr "Iturburu kodea"
-
-msgid "Matrix room"
-msgstr "Matrix gela"
-
-msgid "Admin"
-msgstr "Administratzailea"
-
-msgid "It is you"
-msgstr "Zu zara"
-
-msgid "Edit your profile"
-msgstr "Editatu zure profila"
-
-msgid "Open on {0}"
-msgstr "Ireki {0}(e)n"
-
-msgid "Unsubscribe"
-msgstr "Ezeztatu harpidetza"
-
-msgid "Subscribe"
-msgstr "Harpidetu"
-
-msgid "Follow {}"
-msgstr "Jarraitu {}"
-
-msgid "Log in to follow"
-msgstr "Hasi saioa jarraitzeko"
-
-msgid "Enter your full username handle to follow"
-msgstr "Sartu zure erabiltzaile-izen osoa jarraitzeko"
-
-msgid "{0}'s subscribers"
-msgstr "{0} harpidedun"
-
-msgid "Articles"
-msgstr "Artikuluak"
-
-msgid "Subscribers"
-msgstr "Harpidedunak"
-
-msgid "Subscriptions"
-msgstr "Harpidetzak"
-
-msgid "{0}'s subscriptions"
-msgstr "{0}(r)en harpidetzak"
-
-msgid "Your Dashboard"
-msgstr "Zure mahaigaina"
-
-msgid "Your Blogs"
-msgstr "Zure blogak"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "Oraindik ez duzu blogik. Sortu bat zeure buruarentzat edo eskatu batekin bat egitea."
-
-msgid "Start a new blog"
-msgstr "Hasi blog berri bat."
-
-msgid "Your Drafts"
-msgstr "Zure zirriborroak"
-
-msgid "Go to your gallery"
-msgstr "Joan zure galeriara"
-
-msgid "Edit your account"
-msgstr "Editatu zure kontua"
-
-msgid "Your Profile"
-msgstr "Zure profila"
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr "Zure avatarra aldatzeko, sartu zure galerian eta aukeratu hortik."
-
-msgid "Upload an avatar"
-msgstr "Igo avatar bat"
-
-msgid "Display name"
-msgstr "Erakusteko izena"
-
-msgid "Summary"
-msgstr "Laburpena"
-
-msgid "Theme"
-msgstr "Gaia"
-
-msgid "Default theme"
-msgstr "Lehenetsitako gaia"
-
-msgid "Error while loading theme selector."
-msgstr "Errorea gai-hautatzailea kargatzean."
-
-msgid "Never load blogs custom themes"
-msgstr "Inoiz ez kargatu blogetako gai pertsonalizatuak"
-
-msgid "Update account"
-msgstr "Eguneratu kontua"
-
-msgid "Danger zone"
-msgstr "Arrisku-eremua"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "Kontuz ibili, hemen burututako edozein ekintza atzeraezina da."
-
-msgid "Delete your account"
-msgstr "Ezabatu zure kontua"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "Sentitzen dugu, baina administratzaile gisa, ezin duzu zure instantzia utzi."
-
-msgid "Latest articles"
-msgstr "Azken artikuluak"
-
-msgid "Atom feed"
-msgstr "Atom iturria"
-
-msgid "Recently boosted"
-msgstr "Duela gutxi partekatua"
-
-msgid "Articles tagged \"{0}\""
-msgstr "\"{0}\" etiketa duten artikuluak"
-
-msgid "There are currently no articles with such a tag"
-msgstr "Oraingoz ez dago etiketa hori duen artikulurik"
-
-msgid "The content you sent can't be processed."
-msgstr "Bidali duzun edukia ezin da prozesatu."
-
-msgid "Maybe it was too long."
-msgstr "Agian luzeegia zen."
-
-msgid "Internal server error"
-msgstr "Zerbitzariaren barne-errorea"
-
-msgid "Something broke on our side."
-msgstr "Zerbait gaizki atera zaigu."
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "Sentitzen dugu. Akats bat dela uste baduzu, jakinaraziguzu."
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+"Sentitzen dugu, baina ezin duzu instantzia honetan izena eman. Hala ere, "
+"beste instantzia bat aurki dezakezu."
+
+msgid "Email"
+msgstr "Posta elektronikoa"
+
+msgid "Email confirmation"
+msgstr "Baieztatu helbide elektronikoa"
+
+msgid ""
+"An email will be sent to provided email. You can continue signing-up via the "
+"email."
+msgstr ""
 
 msgid "Invalid CSRF token"
 msgstr "CSRF token baliogabea"
 
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "Arazo bat dago zure CSRF tokenarekin. Ziurtatu cookieak zure nabigatzailean gaituta daudela eta saiatu orri hau birkargatzen. Errore-mezu hau ikusten jarraitzen baduzu, mesedez, jakinaraziguzu."
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"Arazo bat dago zure CSRF tokenarekin. Ziurtatu cookieak zure nabigatzailean "
+"gaituta daudela eta saiatu orri hau birkargatzen. Errore-mezu hau ikusten "
+"jarraitzen baduzu, mesedez, jakinaraziguzu."
 
 msgid "You are not authorized."
 msgstr "Ez duzu baimenik."
@@ -582,53 +382,23 @@ msgstr "Ezin izan dugu orrialdea aurkitu."
 msgid "The link that led you here may be broken."
 msgstr "Hona ekarri zaituen esteka hondatuta egon liteke."
 
-msgid "Users"
-msgstr "Erabiltzaileak"
+msgid "Internal server error"
+msgstr "Zerbitzariaren barne-errorea"
 
-msgid "Configuration"
-msgstr "Ezarpenak"
+msgid "Something broke on our side."
+msgstr "Zerbait gaizki atera zaigu."
 
-msgid "Instances"
-msgstr "Instantziak"
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "Sentitzen dugu. Akats bat dela uste baduzu, jakinaraziguzu."
 
-msgid "Email blocklist"
-msgstr "Blokeatutako posta elektronikoen zerrenda"
+msgid "The content you sent can't be processed."
+msgstr "Bidali duzun edukia ezin da prozesatu."
 
-msgid "Grant admin rights"
-msgstr "Eman administrazio-eskubideak"
-
-msgid "Revoke admin rights"
-msgstr "Kendu administrazio-eskubideak"
-
-msgid "Grant moderator rights"
-msgstr "Eman moderatzaile-eskubideak"
-
-msgid "Revoke moderator rights"
-msgstr "Kendu moderatzaile-eskubideak"
-
-msgid "Ban"
-msgstr "Debekatu"
-
-msgid "Run on selected users"
-msgstr "Aukeratutako erabiltzaileei"
-
-msgid "Moderator"
-msgstr "Moderatzailea"
-
-msgid "Moderation"
-msgstr "Moderazioa"
-
-msgid "Home"
-msgstr "Hasiera"
+msgid "Maybe it was too long."
+msgstr "Agian luzeegia zen."
 
 msgid "Administration of {0}"
 msgstr "{0}(r)en administrazioa"
-
-msgid "Unblock"
-msgstr "Desblokeatu"
-
-msgid "Block"
-msgstr "Blokeatu"
 
 msgid "Name"
 msgstr "Izena"
@@ -651,14 +421,20 @@ msgstr "Artikuluen lizentzia, besterik adierazi ezean"
 msgid "Save these settings"
 msgstr "Gorde ezarpenak"
 
-msgid "If you are browsing this site as a visitor, no data about you is collected."
-msgstr "Saiorik hasi ez baduzu, ez dugu zuri buruzko inolako daturik gordeko."
+msgid "Configuration"
+msgstr "Ezarpenak"
 
-msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
-msgstr "Izena eman baduzu, erabiltzaile izena (ez da beharrezkoa zure benetako izena izatea), helbide elektronikoa eta pasahitza zehaztu behar dituzu saioa hasi ahal izateko, artikuluak idazteko eta iruzkinak egiteko. Igotzen duzun edukia gorde egingo da zuk ezabatzen duzun arte."
+msgid "Instances"
+msgstr "Instantziak"
 
-msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
-msgstr "Saioa hasten duzunean bi cookie gordetzen ditugu: bata saioa irekita mantentzeko; bestea beste batzuek zu izango bazina jardun ahal ez izateko. Ez dugu bestelako cookierik gordetzen."
+msgid "Users"
+msgstr "Erabiltzaileak"
+
+msgid "Email blocklist"
+msgstr "Blokeatutako posta elektronikoen zerrenda"
+
+msgid "Moderation"
+msgstr "Moderazioa"
 
 msgid "Blocklisted Emails"
 msgstr "Debekatutako helbide elektronikoak"
@@ -666,8 +442,14 @@ msgstr "Debekatutako helbide elektronikoak"
 msgid "Email address"
 msgstr "Helbide elektronikoa"
 
-msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
-msgstr "Blokeatu nahiko zenukeen helbide elektronikoa. Domeinu bat blokeatzeko globbing sintaxia erabil dezakezu, adibidez '*@adibidea.eus'-ek adibidea.eus domeinuko helbide elektroniko guztiak blokeatuko ditu"
+msgid ""
+"The email address you wish to block. In order to block domains, you can use "
+"globbing syntax, for example '*@example.com' blocks all addresses from "
+"example.com"
+msgstr ""
+"Blokeatu nahiko zenukeen helbide elektronikoa. Domeinu bat blokeatzeko "
+"globbing sintaxia erabil dezakezu, adibidez '*@adibidea.eus'-ek adibidea.eus "
+"domeinuko helbide elektroniko guztiak blokeatuko ditu"
 
 msgid "Note"
 msgstr "Oharra"
@@ -675,14 +457,22 @@ msgstr "Oharra"
 msgid "Notify the user?"
 msgstr "Erabiltzailea jakinarazi?"
 
-msgid "Optional, shows a message to the user when they attempt to create an account with that address"
-msgstr "Hautazkoa, mezu bat erakusten die erabiltzaileei helbide honekin kontu bat sortzen saiatzen direnean"
+msgid ""
+"Optional, shows a message to the user when they attempt to create an account "
+"with that address"
+msgstr ""
+"Hautazkoa, mezu bat erakusten die erabiltzaileei helbide honekin kontu bat "
+"sortzen saiatzen direnean"
 
 msgid "Blocklisting notification"
 msgstr "Blokeoaren jakinarazpena"
 
-msgid "The message to be shown when the user attempts to create an account with this email address"
-msgstr "Helbide elektroniko hau duen kontu bat sortzen saiatzen den erabiltzaileari agertuko zaion mezua"
+msgid ""
+"The message to be shown when the user attempts to create an account with "
+"this email address"
+msgstr ""
+"Helbide elektroniko hau duen kontu bat sortzen saiatzen den erabiltzaileari "
+"agertuko zaion mezua"
 
 msgid "Add blocklisted address"
 msgstr "Gehitu helbide blokeatua"
@@ -705,11 +495,38 @@ msgstr "Kontua sortzean, mezu honekin jakinaraziko zaie:"
 msgid "The user will be silently prevented from making an account"
 msgstr "Erabiltzaileari isilean eragotziko zaio kontu bat sortzea"
 
-msgid "Welcome to {}"
-msgstr "Ongi etorri {}(e)ra"
+msgid "Unblock"
+msgstr "Desblokeatu"
 
-msgid "View all"
-msgstr "Ikusi guztia"
+msgid "Block"
+msgstr "Blokeatu"
+
+msgid "Privacy policy"
+msgstr "Pribatutasun politika"
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr "Saiorik hasi ez baduzu, ez dugu zuri buruzko inolako daturik gordeko."
+
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+"Izena eman baduzu, erabiltzaile izena (ez da beharrezkoa zure benetako izena "
+"izatea), helbide elektronikoa eta pasahitza zehaztu behar dituzu saioa hasi "
+"ahal izateko, artikuluak idazteko eta iruzkinak egiteko. Igotzen duzun "
+"edukia gorde egingo da zuk ezabatzen duzun arte."
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
+"Saioa hasten duzunean bi cookie gordetzen ditugu: bata saioa irekita "
+"mantentzeko; bestea beste batzuek zu izango bazina jardun ahal ez izateko. "
+"Ez dugu bestelako cookierik gordetzen."
 
 msgid "About {0}"
 msgstr "{0}ri buruz"
@@ -729,14 +546,153 @@ msgstr "Eta beste <em>{0}</em> instantziarekin daude konektatuta"
 msgid "Administred by"
 msgstr "Kudeatzailea:"
 
-msgid "Interact with {}"
-msgstr "{}(r)ekin elkarreragin"
+msgid "Welcome to {}"
+msgstr "Ongi etorri {}(e)ra"
 
-msgid "Log in to interact"
-msgstr "Hasi saioa parte hartzeko"
+msgid "Nothing to see here yet."
+msgstr "Oraindik ez dago zerikusirik hemen."
 
-msgid "Enter your full username to interact"
-msgstr "Idatzi erabiltzaile-izen osoa parte hartzeko"
+#, fuzzy
+msgid "Search users"
+msgstr "Bilatu"
+
+msgid "Grant admin rights"
+msgstr "Eman administrazio-eskubideak"
+
+msgid "Revoke admin rights"
+msgstr "Kendu administrazio-eskubideak"
+
+msgid "Grant moderator rights"
+msgstr "Eman moderatzaile-eskubideak"
+
+msgid "Revoke moderator rights"
+msgstr "Kendu moderatzaile-eskubideak"
+
+msgid "Ban"
+msgstr "Debekatu"
+
+msgid "Run on selected users"
+msgstr "Aukeratutako erabiltzaileei"
+
+msgid "Admin"
+msgstr "Administratzailea"
+
+msgid "Moderator"
+msgstr "Moderatzailea"
+
+msgid "Media details"
+msgstr "Baliabide fitxategien xehetasunak"
+
+msgid "Go back to the gallery"
+msgstr "Itzuli galeriara"
+
+msgid "Markdown syntax"
+msgstr "Markdown sintaxia"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr "Kopiatu artikuluetan irudi hau txertatzeko:"
+
+msgid "Use as an avatar"
+msgstr "Erabili avatar gisa"
+
+msgid "Delete"
+msgstr "Ezabatu"
+
+msgid "Your media"
+msgstr "Zure baliabideak"
+
+msgid "Upload"
+msgstr "Igo"
+
+msgid "You don't have any media yet."
+msgstr "Oraindik ez duzu baliabiderik."
+
+msgid "Content warning: {0}"
+msgstr "Edukiari buruzko oharra: {0}"
+
+msgid "Details"
+msgstr "Xehetasunak"
+
+msgid "Media upload"
+msgstr "Igo baliabideak"
+
+msgid "Description"
+msgstr "Azalpena"
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr ""
+"Ikusmen-desgaitasuna duten pertsonentzat erabilgarria, bai eta lizentziei "
+"buruzko informazioa ere"
+
+msgid "Content warning"
+msgstr "Edukiari buruzko oharra"
+
+msgid "Leave it empty, if none is needed"
+msgstr "Utzi hutsik, behar ez bada"
+
+msgid "File"
+msgstr "Fitxategia"
+
+msgid "Send"
+msgstr "Bidali"
+
+msgid "Notifications"
+msgstr "Jakinarazpenak"
+
+msgid "None"
+msgstr "Bat ere ez"
+
+msgid "No description"
+msgstr "Deskribapenik gabe"
+
+msgid "What is Plume?"
+msgstr "Zer da Plume?"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume blog-motor deszentralizatua da."
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
+"Egileek blog bat baino gehiago kudeatu ditzakete, bakoitza webgune bat "
+"bailitzan."
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+"Artikuluak beste Plume instantzietan daude ikusgai, eta Mastodon bezalako "
+"plataformekin parte hartu dezakezu."
+
+msgid "Read the detailed rules"
+msgstr "Irakurri arauak bere osotasunean"
+
+msgid "Edit"
+msgstr "Editatu"
+
+msgid "By {0}"
+msgstr "{0}(r)i esker"
+
+msgid "Draft"
+msgstr "Zirriborroa"
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "Atsegite {0}"
+msgstr[1] "{0} atsegite"
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] "Bultzada bat"
+msgstr[1] "{0} bultzada"
+
+msgid "Respond"
+msgstr "Erantzun"
+
+msgid "Are you sure?"
+msgstr "Ziur al zaude?"
+
+msgid "Delete this comment"
+msgstr "Ezabatu iruzkina"
 
 msgid "Publish"
 msgstr "Argitaratu"
@@ -753,8 +709,12 @@ msgstr "Azpititulua"
 msgid "Content"
 msgstr "Edukia"
 
-msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr "Baliabideak igo ditzakezu zure galeriara eta ondoren Markdown kodea kopiatu artikuluan txertatzeko."
+msgid ""
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
+msgstr ""
+"Baliabideak igo ditzakezu zure galeriara eta ondoren Markdown kodea kopiatu "
+"artikuluan txertatzeko."
 
 msgid "Upload media"
 msgstr "Igo baliabideak"
@@ -780,6 +740,15 @@ msgstr "Eguneratu edo argitaratu"
 msgid "Publish your post"
 msgstr "Argitaratu artikulua"
 
+msgid "Interact with {}"
+msgstr "{}(r)ekin elkarreragin"
+
+msgid "Log in to interact"
+msgstr "Hasi saioa parte hartzeko"
+
+msgid "Enter your full username to interact"
+msgstr "Idatzi erabiltzaile-izen osoa parte hartzeko"
+
 msgid "Written by {0}"
 msgstr "{0}(e)k idatzia"
 
@@ -789,21 +758,11 @@ msgstr "Eskubide guztiak erreserbatuta."
 msgid "This article is under the {0} license."
 msgstr "Artikulu honen lizentzia {0} da."
 
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] "Atsegite {0}"
-msgstr[1] "{0} atsegite"
-
 msgid "I don't like this anymore"
 msgstr "Jada ez zait gustatzen"
 
 msgid "Add yours"
 msgstr "Zuk ere gogoko egin"
-
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] "Bultzada bat"
-msgstr[1] "{0} bultzada"
 
 msgid "I don't want to boost this anymore"
 msgstr "Jada ez dut partekatu nahi"
@@ -811,8 +770,16 @@ msgstr "Jada ez dut partekatu nahi"
 msgid "Boost"
 msgstr "Bultzatu"
 
-msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr "{0}Hasi saioa{1} edo {2}erabili Fedibertsoko kontua{3}"
+
+msgid "Unsubscribe"
+msgstr "Ezeztatu harpidetza"
+
+msgid "Subscribe"
+msgstr "Harpidetu"
 
 msgid "Comments"
 msgstr "Iruzkinak"
@@ -826,154 +793,16 @@ msgstr "Bidali iruzkina"
 msgid "No comments yet. Be the first to react!"
 msgstr "Oraingoz ez du iruzkinik. Izan lehena!"
 
-msgid "Are you sure?"
-msgstr "Ziur al zaude?"
-
 msgid "This article is still a draft. Only you and other authors can see it."
-msgstr "Artikulu hau zirriborro bat baino ez da. Zuk eta beste egileek bakarrik ikus dezakezue."
+msgstr ""
+"Artikulu hau zirriborro bat baino ez da. Zuk eta beste egileek bakarrik ikus "
+"dezakezue."
 
 msgid "Only you and other authors can edit this article."
 msgstr "Zuk eta beste egileek bakarrik moldatu dezakezue artikulu hau."
 
-msgid "Edit"
-msgstr "Editatu"
-
-msgid "I'm from this instance"
-msgstr "Instantzia honetakoa naiz"
-
-msgid "Username, or email"
-msgstr "Erabiltzailea edo helbide elektronikoa"
-
-msgid "Log in"
-msgstr "Hasi saioa"
-
-msgid "I'm from another instance"
-msgstr "Beste instantzia batekoa naiz"
-
-msgid "Continue to your instance"
-msgstr "Joan zure instantziara"
-
-msgid "Reset your password"
-msgstr "Berrezarri pasahitza"
-
-msgid "New password"
-msgstr "Pasahitz berria"
-
-msgid "Confirmation"
-msgstr "Baieztapena"
-
-msgid "Update password"
-msgstr "Eguneratu pasahitza"
-
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr "Pasahitza berrezartzeko esteka bidali dizugu eman zenigun helbidera."
-
-msgid "Send password reset link"
-msgstr "Bidali pasahitza berrezartzeko esteka"
-
-msgid "This token has expired"
-msgstr "Token hau iraungi egin da"
-
-msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
-msgstr "Mesedez, hasi berriro prozesua <a href=\"/password-reset\">hemen</a> klik eginez."
-
-msgid "New Blog"
-msgstr "Blog berria"
-
-msgid "Create a blog"
-msgstr "Sortu bloga"
-
-msgid "Create blog"
-msgstr "Sortu bloga"
-
-msgid "Edit \"{}\""
-msgstr "Editatu \"{}\""
-
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr "Irudiak igo ditzakezu zure galeriara, blogeko ikono edo baner gisa erabiltzeko."
-
-msgid "Upload images"
-msgstr "Igo irudiak"
-
-msgid "Blog icon"
-msgstr "Blogeko ikonoa"
-
-msgid "Blog banner"
-msgstr "Blogeko banerra"
-
-msgid "Custom theme"
-msgstr "Pertsonalizatutako gaia"
-
-msgid "Update blog"
-msgstr "Eguneratu bloga"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Adi! Hemen egindako ekintzak ezin dira desegin."
-
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr "Ziur al zaude blog hau betiko ezabatu nahi duzula?"
-
-msgid "Permanently delete this blog"
-msgstr "Betiko ezabatu blog hau"
-
-msgid "{}'s icon"
-msgstr "{}(r)en ikonoa"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Egile bat dago blog honetan: "
-msgstr[1] "{0} egile daude blog honetan: "
-
-msgid "No posts to see here yet."
-msgstr "Oraindik ez dago artikulurik ikusgai."
-
-msgid "Nothing to see here yet."
-msgstr "Oraindik ez dago zerikusirik hemen."
-
-msgid "None"
-msgstr "Bat ere ez"
-
-msgid "No description"
-msgstr "Deskribapenik gabe"
-
-msgid "Respond"
-msgstr "Erantzun"
-
-msgid "Delete this comment"
-msgstr "Ezabatu iruzkina"
-
-msgid "What is Plume?"
-msgstr "Zer da Plume?"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr "Plume blog-motor deszentralizatua da."
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr "Egileek blog bat baino gehiago kudeatu ditzakete, bakoitza webgune bat bailitzan."
-
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr "Artikuluak beste Plume instantzietan daude ikusgai, eta Mastodon bezalako plataformekin parte hartu dezakezu."
-
-msgid "Read the detailed rules"
-msgstr "Irakurri arauak bere osotasunean"
-
-msgid "By {0}"
-msgstr "{0}(r)i esker"
-
-msgid "Draft"
-msgstr "Zirriborroa"
-
-msgid "Search result(s) for \"{0}\""
-msgstr "\"{0}\" bilaketaren emaitza(k)"
-
-msgid "Search result(s)"
-msgstr "Bilatu emaitzak"
-
-msgid "No results for your query"
-msgstr "Ez dago emaitzarik zure kontsultarako"
-
-msgid "No more results for your query"
-msgstr "Ez dago emaitza gehiagorik zure kontsultarako"
+msgid "Search"
+msgstr "Bilatu"
 
 msgid "Advanced search"
 msgstr "Bilaketa aurreratua"
@@ -1032,3 +861,269 @@ msgstr "Lizentzia honekin argitaratua"
 msgid "Article license"
 msgstr "Artikuluaren lizentzia"
 
+msgid "Search result(s) for \"{0}\""
+msgstr "\"{0}\" bilaketaren emaitza(k)"
+
+msgid "Search result(s)"
+msgstr "Bilatu emaitzak"
+
+msgid "No results for your query"
+msgstr "Ez dago emaitzarik zure kontsultarako"
+
+msgid "No more results for your query"
+msgstr "Ez dago emaitza gehiagorik zure kontsultarako"
+
+msgid "Log in"
+msgstr "Hasi saioa"
+
+msgid "Username, or email"
+msgstr "Erabiltzailea edo helbide elektronikoa"
+
+msgid "Reset your password"
+msgstr "Berrezarri pasahitza"
+
+msgid "New password"
+msgstr "Pasahitz berria"
+
+msgid "Confirmation"
+msgstr "Baieztapena"
+
+msgid "Update password"
+msgstr "Eguneratu pasahitza"
+
+msgid "Send password reset link"
+msgstr "Bidali pasahitza berrezartzeko esteka"
+
+msgid "This token has expired"
+msgstr "Token hau iraungi egin da"
+
+msgid ""
+"Please start the process again by clicking <a href=\"/password-reset\">here</"
+"a>."
+msgstr ""
+"Mesedez, hasi berriro prozesua <a href=\"/password-reset\">hemen</a> klik "
+"eginez."
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr "Pasahitza berrezartzeko esteka bidali dizugu eman zenigun helbidera."
+
+msgid "Articles tagged \"{0}\""
+msgstr "\"{0}\" etiketa duten artikuluak"
+
+msgid "There are currently no articles with such a tag"
+msgstr "Oraingoz ez dago etiketa hori duen artikulurik"
+
+msgid "Edit your account"
+msgstr "Editatu zure kontua"
+
+msgid "Your Profile"
+msgstr "Zure profila"
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr "Zure avatarra aldatzeko, sartu zure galerian eta aukeratu hortik."
+
+msgid "Upload an avatar"
+msgstr "Igo avatar bat"
+
+msgid "Display name"
+msgstr "Erakusteko izena"
+
+msgid "Summary"
+msgstr "Laburpena"
+
+msgid "Theme"
+msgstr "Gaia"
+
+msgid "Default theme"
+msgstr "Lehenetsitako gaia"
+
+msgid "Error while loading theme selector."
+msgstr "Errorea gai-hautatzailea kargatzean."
+
+msgid "Never load blogs custom themes"
+msgstr "Inoiz ez kargatu blogetako gai pertsonalizatuak"
+
+msgid "Update account"
+msgstr "Eguneratu kontua"
+
+msgid "Danger zone"
+msgstr "Arrisku-eremua"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "Kontuz ibili, hemen burututako edozein ekintza atzeraezina da."
+
+msgid "Delete your account"
+msgstr "Ezabatu zure kontua"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr ""
+"Sentitzen dugu, baina administratzaile gisa, ezin duzu zure instantzia utzi."
+
+msgid "Your Dashboard"
+msgstr "Zure mahaigaina"
+
+msgid "Your Blogs"
+msgstr "Zure blogak"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr ""
+"Oraindik ez duzu blogik. Sortu bat zeure buruarentzat edo eskatu batekin bat "
+"egitea."
+
+msgid "Start a new blog"
+msgstr "Hasi blog berri bat."
+
+msgid "Your Drafts"
+msgstr "Zure zirriborroak"
+
+msgid "Go to your gallery"
+msgstr "Joan zure galeriara"
+
+msgid "Articles"
+msgstr "Artikuluak"
+
+msgid "Subscribers"
+msgstr "Harpidedunak"
+
+msgid "Subscriptions"
+msgstr "Harpidetzak"
+
+msgid "Latest articles"
+msgstr "Azken artikuluak"
+
+msgid "Atom feed"
+msgstr "Atom iturria"
+
+msgid "Recently boosted"
+msgstr "Duela gutxi partekatua"
+
+msgid "Follow {}"
+msgstr "Jarraitu {}"
+
+msgid "Log in to follow"
+msgstr "Hasi saioa jarraitzeko"
+
+msgid "Enter your full username handle to follow"
+msgstr "Sartu zure erabiltzaile-izen osoa jarraitzeko"
+
+msgid "{0}'s subscriptions"
+msgstr "{0}(r)en harpidetzak"
+
+msgid "{0}'s subscribers"
+msgstr "{0} harpidedun"
+
+msgid "It is you"
+msgstr "Zu zara"
+
+msgid "Edit your profile"
+msgstr "Editatu zure profila"
+
+msgid "Open on {0}"
+msgstr "Ireki {0}(e)n"
+
+msgid "Edit \"{}\""
+msgstr "Editatu \"{}\""
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+"Irudiak igo ditzakezu zure galeriara, blogeko ikono edo baner gisa "
+"erabiltzeko."
+
+msgid "Upload images"
+msgstr "Igo irudiak"
+
+msgid "Blog icon"
+msgstr "Blogeko ikonoa"
+
+msgid "Blog banner"
+msgstr "Blogeko banerra"
+
+msgid "Custom theme"
+msgstr "Pertsonalizatutako gaia"
+
+msgid "Update blog"
+msgstr "Eguneratu bloga"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Adi! Hemen egindako ekintzak ezin dira desegin."
+
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr "Ziur al zaude blog hau betiko ezabatu nahi duzula?"
+
+msgid "Permanently delete this blog"
+msgstr "Betiko ezabatu blog hau"
+
+msgid "New Blog"
+msgstr "Blog berria"
+
+msgid "Create a blog"
+msgstr "Sortu bloga"
+
+msgid "Create blog"
+msgstr "Sortu bloga"
+
+msgid "{}'s icon"
+msgstr "{}(r)en ikonoa"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Egile bat dago blog honetan: "
+msgstr[1] "{0} egile daude blog honetan: "
+
+msgid "No posts to see here yet."
+msgstr "Oraindik ez dago artikulurik ikusgai."
+
+msgid "I'm from this instance"
+msgstr "Instantzia honetakoa naiz"
+
+msgid "I'm from another instance"
+msgstr "Beste instantzia batekoa naiz"
+
+msgid "Continue to your instance"
+msgstr "Joan zure instantziara"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Menua"
+
+msgid "Dashboard"
+msgstr "Mahaigaina"
+
+msgid "Log Out"
+msgstr "Amaitu saioa"
+
+msgid "My account"
+msgstr "Nire kontua"
+
+msgid "Log In"
+msgstr "Hasi saioa"
+
+msgid "Register"
+msgstr "Erregistratu"
+
+msgid "About this instance"
+msgstr "Instantzia honi buruz"
+
+msgid "Administration"
+msgstr "Administrazioa"
+
+msgid "Documentation"
+msgstr "Dokumentazioa"
+
+msgid "Source code"
+msgstr "Iturburu kodea"
+
+msgid "Matrix room"
+msgstr "Matrix gela"
+
+#~ msgid "Home"
+#~ msgstr "Hasiera"
+
+#~ msgid "View all"
+#~ msgstr "Ikusi guztia"

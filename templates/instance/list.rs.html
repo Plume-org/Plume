@@ -1,12 +1,12 @@
 @use plume_models::instance::Instance;
-@use crate::templates::{base, instance::admin_header};
+@use crate::templates::{base_html, instance::admin_header_html};
 @use crate::template_utils::*;
 @use crate::routes::*;
 
 @(ctx: BaseContext, instance: Instance, instances: Vec<Instance>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "Administration of {0}"; instance.name), {}, {}, {
-    @:admin_header(ctx, "Instances", 2))
+@:base_html(ctx, i18n!(ctx.1, "Administration of {0}"; instance.name), {}, {}, {
+    @:admin_header_html(ctx, "Instances", 2))
 
     <div class="list">
         @for instance in instances {
@@ -16,7 +16,7 @@
                     <small>@instance.public_domain</small>
                 </p>
                 @if !instance.local {
-                    <form class="inline" method="post" action="@uri!(instance::toggle_block: id = instance.id)">
+                    <form class="inline" method="post" action="@uri!(instance::toggle_block(id = instance.id))">
                         <input type="submit" value="@if instance.blocked { @i18n!(ctx.1, "Unblock") } else { @i18n!(ctx.1, "Block") }">
                     </form>
                 }

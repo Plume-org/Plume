@@ -1,8 +1,8 @@
-@use crate::templates::{base, instance::admin_header};
+@use crate::templates::{base_html, instance::admin_header_html};
 @use crate::template_utils::*;
 
 @(ctx: BaseContext)
 
-@:base(ctx, i18n!(ctx.1, "Moderation"), {}, {}, {
-  @:admin_header(ctx, "Moderation", 0)
+@:base_html(ctx, i18n!(ctx.1, "Moderation"), {}, {}, {
+  @:admin_header_html(ctx, "Moderation", 0)
 })

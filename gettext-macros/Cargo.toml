@@ -1,0 +1,20 @@
+[package]
+name = "gettext-macros"
+version = "0.6.1"
+authors = ["Plume contributors"]
+description = "A few proc-macros to help internationalizing Rust applications"
+repository = "https://github.com/Plume-org/gettext-macros"
+license = "GPL-3.0"
+
+edition = "2021"
+rust-version = "1.90.0"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+gettext = "0.4"
+gettext-utils = "0.1.0"
+proc-macro2 = { version = "1.0.106", features = ["span-locations"] }
+quote = "1.0.45"
+syn = "2.0.117"

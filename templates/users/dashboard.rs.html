@@ -1,12 +1,11 @@
 @use plume_models::blogs::Blog;
-@use plume_models::posts::Post;
-@use crate::templates::{base, partials::post_card};
+@use crate::templates::{base_html, partials::post_card_html};
 @use crate::template_utils::*;
 @use crate::routes::*;
 
-@(ctx: BaseContext, blogs: Vec<Blog>, drafts: Vec<Post>)
+@(ctx: BaseContext, blogs: Vec<(Blog, String)>, drafts: Vec<PostCard>)
 
-@:base(ctx, i18n!(ctx.1, "Your Dashboard"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Your Dashboard"), {}, {}, {
     <h1>@i18n!(ctx.1, "Your Dashboard")</h1>
 
     <section>
@@ -15,15 +14,15 @@
             <p>@i18n!(ctx.1, "You don't have any blog yet. Create your own, or ask to join one.")</p>
         }
         <div class="cards">
-            @for blog in blogs {
+            @for (blog, banner) in blogs {
                 <div class="card">
                     @if blog.banner_id.is_some() {
-                        <a class="cover-link" href="@uri!(blogs::details: name = &blog.actor_id, page = _)">
-                            <div class="cover" style="background-image: url('@Html(blog.banner_url(ctx.0).unwrap_or_default())')">
+                        <a class="cover-link" href="@uri!(blogs::details(name = &blog.actor_id, page = _))">
+                            <div class="cover" style="background-image: url('@Html(banner)')">
                             </div>
                         </a>
                     }
-                    <h3><a href="@uri!(blogs::details: name = blog.actor_id, page = _)">@blog.title</a></h3>
+                    <h3><a href="@uri!(blogs::details(name = blog.actor_id, page = _))">@blog.title</a></h3>
                     <main><p>@Html(blog.summary_html)</p></main>
                 </div>
             }
@@ -36,7 +35,7 @@
             <h2>@i18n!(ctx.1, "Your Drafts")</h2>
             <div class="cards">
                 @for draft in drafts {
-                    @:post_card(ctx, draft)
+                    @:post_card_html(ctx, draft)
                 }
             </div>
         </section>
@@ -44,6 +43,6 @@
 
     <section>
         <h2>@i18n!(ctx.1, "Your media")</h2>
-        <a class="button" href="@uri!(medias::list: page = _)">@i18n!(ctx.1, "Go to your gallery")</a>
+        <a class="button" href="@uri!(medias::list(page = _))">@i18n!(ctx.1, "Go to your gallery")</a>
     </section>
 })

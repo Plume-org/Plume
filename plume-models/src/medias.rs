@@ -34,7 +34,7 @@ pub struct Media {
 }
 
 #[derive(Insertable)]
-#[table_name = "medias"]
+#[diesel(table_name = medias)]
 pub struct NewMedia {
     pub file_path: String,
     pub alt_text: String,
@@ -69,7 +69,7 @@ impl Media {
     get!(medias);
     find_by!(medias, find_by_file_path, file_path as &str);
 
-    pub fn for_user(conn: &Connection, owner: i32) -> Result<Vec<Media>> {
+    pub fn for_user(conn: &mut Connection, owner: i32) -> Result<Vec<Media>> {
         medias::table
             .filter(medias::owner_id.eq(owner))
             .order(medias::id.desc())
@@ -77,12 +77,12 @@ impl Media {
             .map_err(Error::from)
     }
 
-    pub fn list_all_medias(conn: &Connection) -> Result<Vec<Media>> {
+    pub fn list_all_medias(conn: &mut Connection) -> Result<Vec<Media>> {
         medias::table.load::<Media>(conn).map_err(Error::from)
     }
 
     pub fn page_for_user(
-        conn: &Connection,
+        conn: &mut Connection,
         user: &User,
         (min, max): (i32, i32),
     ) -> Result<Vec<Media>> {
@@ -95,7 +95,7 @@ impl Media {
             .map_err(Error::from)
     }
 
-    pub fn count_for_user(conn: &Connection, user: &User) -> Result<i64> {
+    pub fn count_for_user(conn: &mut Connection, user: &User) -> Result<i64> {
         medias::table
             .filter(medias::owner_id.eq(user.id))
             .count()
@@ -235,7 +235,7 @@ impl Media {
         }
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<()> {
+    pub fn delete(&self, conn: &mut Connection) -> Result<()> {
         if !self.is_remote {
             if CONFIG.s3.is_some() {
                 #[cfg(not(feature="s3"))]
@@ -254,7 +254,7 @@ impl Media {
             .map_err(Error::from)
     }
 
-    pub fn save_remote(conn: &Connection, url: String, user: &User) -> Result<Media> {
+    pub fn save_remote(conn: &mut Connection, url: String, user: &User) -> Result<Media> {
         if url.contains(&['<', '>', '"'][..]) {
             Err(Error::Url)
         } else {
@@ -273,7 +273,7 @@ impl Media {
         }
     }
 
-    pub fn set_owner(&self, conn: &Connection, user: &User) -> Result<()> {
+    pub fn set_owner(&self, conn: &mut Connection, user: &User) -> Result<()> {
         diesel::update(self)
             .set(medias::owner_id.eq(user.id))
             .execute(conn)
@@ -282,7 +282,7 @@ impl Media {
     }
 
     // TODO: merge with save_remote?
-    pub fn from_activity(conn: &Connection, image: &Image) -> Result<Media> {
+    pub async fn from_activity(conn: &mut Connection, image: &Image) -> Result<Media> {
         let remote_url = image
             .url()
             .and_then(|url| url.to_as_uri())
@@ -340,8 +340,8 @@ impl Media {
             path.to_str().ok_or(Error::InvalidValue)?.to_string()
         };
 
-        Media::find_by_file_path(conn, &file_path)
-            .and_then(|mut media| {
+        match Media::find_by_file_path(conn, &file_path) {
+            Ok(mut media) => {
                 let mut updated = false;
 
                 let alt_text = image
@@ -375,9 +375,22 @@ impl Media {
                     diesel::update(&media).set(&media).execute(conn)?;
                 }
                 Ok(media)
-            })
-            .or_else(|_| {
+            },
+            Err(_) => {
                 let summary = image.summary().and_then(|summary| summary.to_as_string());
+                let owner_id = User::from_id(
+                        conn,
+                        &image
+                            .attributed_to()
+                            .and_then(|attributed_to| attributed_to.to_as_uri())
+                            .ok_or(Error::MissingApProperty)?,
+                        None,
+                        CONFIG.proxy(),
+                    )
+                    .await
+                    .map_err(|(_, e)| e)?
+                    .id;
+
                 Media::insert(
                     conn,
                     NewMedia {
@@ -390,28 +403,19 @@ impl Media {
                         remote_url: None,
                         sensitive: summary.is_some(),
                         content_warning: summary,
-                        owner_id: User::from_id(
-                            conn,
-                            &image
-                                .attributed_to()
-                                .and_then(|attributed_to| attributed_to.to_as_uri())
-                                .ok_or(Error::MissingApProperty)?,
-                            None,
-                            CONFIG.proxy(),
-                        )
-                        .map_err(|(_, e)| e)?
-                        .id,
+                        owner_id,
                     },
                 )
-            })
+            }
+        }
     }
 
-    pub fn get_media_processor<'a>(conn: &'a Connection, user: Vec<&User>) -> MediaProcessor<'a> {
-        let uid = user.iter().map(|u| u.id).collect::<Vec<_>>();
+    pub fn get_media_processor<'a>(conn: &'a mut Connection, user: Vec<&User>) -> MediaProcessor<'a> {
+        let uids = user.iter().map(|u| u.id).collect::<std::collections::HashSet<_>>();
         Box::new(move |id| {
             let media = Media::get(conn, id).ok()?;
             // if owner is user or check is disabled
-            if uid.contains(&media.owner_id) || uid.is_empty() {
+            if uids.contains(&media.owner_id) || uids.is_empty() {
                 Some((media.url().ok()?, media.content_warning))
             } else {
                 None

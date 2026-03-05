@@ -1,10 +1,10 @@
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 @use crate::routes::*;
 
 @(ctx: BaseContext)
 
-@:base(ctx, i18n!(ctx.1, "Media upload"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Media upload"), {}, {}, {
     <h1>@i18n!(ctx.1, "Media upload")</h1>
     <form method="post" enctype="multipart/form-data" action="@uri!(medias::upload)">
         @(Input::new("alt", i18n!(ctx.1, "Description"))

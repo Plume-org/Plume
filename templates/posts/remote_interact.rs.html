@@ -1,14 +1,13 @@
-@use plume_models::posts::Post;
 @use validator::ValidationErrors;
-@use crate::templates::remote_interact_base;
-@use crate::templates::partials::post_card;
+@use crate::templates::remote_interact_base_html;
+@use crate::templates::partials::post_card_html;
 @use crate::template_utils::*;
 @use crate::routes::RemoteForm;
 @use crate::routes::session::LoginForm;
 
-@(ctx: BaseContext, post: Post, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
+@(ctx: BaseContext, pc: PostCard, login_form: LoginForm, login_errs: ValidationErrors, remote_form: RemoteForm, remote_errs: ValidationErrors)
 
-@:remote_interact_base(ctx, i18n!(ctx.1, "Interact with {}"; post.title.clone()), i18n!(ctx.1, "Log in to interact"), i18n!(ctx.1, "Enter your full username to interact"), {
-	<h1 dir="auto">@i18n!(ctx.1, "Interact with {}"; post.title.clone())</h1>
-	@:post_card(ctx, post)
+@:remote_interact_base_html(ctx, i18n!(ctx.1, "Interact with {}"; pc.post.title.clone()), i18n!(ctx.1, "Log in to interact"), i18n!(ctx.1, "Enter your full username to interact"), {
+	<h1 dir="auto">@i18n!(ctx.1, "Interact with {}"; pc.post.title.clone())</h1>
+	@:post_card_html(ctx, pc)
 }, login_form, login_errs, remote_form, remote_errs)

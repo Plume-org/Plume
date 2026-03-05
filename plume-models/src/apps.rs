@@ -2,7 +2,7 @@ use crate::{schema::apps, Error, Result};
 use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 
-#[derive(Clone, Queryable, Serialize)]
+#[derive(Clone, Queryable, serde::Serialize)]
 pub struct App {
     pub id: i32,
     pub name: String,
@@ -14,7 +14,7 @@ pub struct App {
 }
 
 #[derive(Insertable)]
-#[table_name = "apps"]
+#[diesel(table_name = apps)]
 pub struct NewApp {
     pub name: String,
     pub client_id: String,

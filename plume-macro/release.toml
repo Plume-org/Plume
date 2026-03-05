@@ -1,3 +1,0 @@
-pre-release-hook = ["cargo", "fmt"]
-pre-release-replacements = []
-release = false

@@ -1,9 +1,9 @@
-@use crate::templates::base as base_template;
+@use crate::templates::base_html as base;
 @use crate::template_utils::*;
 
 @(ctx: BaseContext, error_message: String, error: Content)
 
-@:base_template(ctx, error_message.clone(), {}, {}, {
+@:base(ctx, error_message.clone(), {}, {}, {
   @:error()
   <p>@error_message</p>
 })

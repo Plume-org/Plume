@@ -45,6 +45,11 @@ msgstr "{0} 助推了您的文章。"
 msgid "Your feed"
 msgstr "您的推流"
 
+# src/template_utils.rs:118
+#, fuzzy
+msgid "My feed"
+msgstr "您的推流"
+
 # src/template_utils.rs:119
 msgid "Local feed"
 msgstr "本站推流"
@@ -126,7 +131,9 @@ msgid "Here is the link for registration: {0}"
 msgstr "這是註冊連結：{0}"
 
 # src/routes/email_signups.rs:219
-msgid "Your account has been created. Now you just need to log in, before you can use it."
+msgid ""
+"Your account has been created. Now you just need to log in, before you can "
+"use it."
 msgstr "已創建您的帳號。現在，只要登入就可以使用。"
 
 # src/routes/instance.rs:117
@@ -234,11 +241,15 @@ msgid "Your article has been deleted."
 msgstr "已刪除您的文章。"
 
 # src/routes/posts.rs:631
-msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
 msgstr "您試圖刪除的文章不存在。可能早已被刪除？"
 
 # src/routes/posts.rs:673
-msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
 msgstr "關於您的帳號，無法取得足夠的資訊。請確認您的使用者名稱正確。"
 
 # src/routes/reshares.rs:58
@@ -297,29 +308,21 @@ msgstr "已刪除您的帳號。"
 msgid "You can't delete someone else's account."
 msgstr "您不能刪除他人的帳號。"
 
-msgid "Create your account"
-msgstr "創建您的帳號"
-
-msgid "Create an account"
-msgstr "創建一個帳號"
-
-msgid "Email"
-msgstr "Email"
-
-msgid "Email confirmation"
-msgstr "確認 Email"
-
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr "很抱歉，這個實例不開放註冊。然而，您可以找尋另一個實例。"
-
 msgid "Registration"
 msgstr "註冊"
 
 msgid "Check your inbox!"
 msgstr "請檢查您的電子郵件收件箱！"
 
-msgid "We sent a mail to the address you gave us, with a link for registration."
+msgid ""
+"We sent a mail to the address you gave us, with a link for registration."
 msgstr "我們寄了一封郵件到您提供的地址，附有註冊連結。"
+
+msgid "Create your account"
+msgstr "創建您的帳號"
+
+msgid "Create an account"
+msgstr "創建一個帳號"
 
 msgid "Username"
 msgstr "用戶名稱"
@@ -330,245 +333,32 @@ msgstr "密碼"
 msgid "Password confirmation"
 msgstr "確認密碼"
 
-msgid "Media upload"
-msgstr "上傳媒體"
-
-msgid "Description"
-msgstr "說明"
-
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "對視障人士有幫助，以及授權資訊"
-
-msgid "Content warning"
-msgstr "內容警告"
-
-msgid "Leave it empty, if none is needed"
-msgstr "若無需要可留空白"
-
-msgid "File"
-msgstr "檔案"
-
-msgid "Send"
-msgstr "發送"
-
-msgid "Your media"
-msgstr "您的媒體"
-
-msgid "Upload"
-msgstr "上傳"
-
-msgid "You don't have any media yet."
-msgstr "您還沒有任何媒體。"
-
-msgid "Content warning: {0}"
-msgstr "內容警告：{0}"
-
-msgid "Delete"
-msgstr "刪除"
-
-msgid "Details"
-msgstr "詳細資訊"
-
-msgid "Media details"
-msgstr "媒體的詳細資訊"
-
-msgid "Go back to the gallery"
-msgstr "返回圖片集"
-
-msgid "Markdown syntax"
-msgstr "Markdown 語法"
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr "拷貝至您的文章中以插入此媒體："
-
-msgid "Use as an avatar"
-msgstr "當做頭像"
-
-msgid "Plume"
-msgstr "Plume"
-
-msgid "Menu"
-msgstr "選單"
-
-msgid "Search"
-msgstr "搜尋"
-
-msgid "Dashboard"
-msgstr "儀表板"
-
-msgid "Notifications"
-msgstr "通知"
-
-msgid "Log Out"
-msgstr "登出"
-
-msgid "My account"
-msgstr "我的帳號"
-
-msgid "Log In"
-msgstr "登入"
-
-msgid "Register"
-msgstr "註冊"
-
-msgid "About this instance"
-msgstr "關於本實例"
-
-msgid "Privacy policy"
-msgstr "隱私政策"
-
-msgid "Administration"
-msgstr "管理"
-
-msgid "Documentation"
-msgstr "說明文件"
-
-msgid "Source code"
-msgstr "原始碼"
-
-msgid "Matrix room"
-msgstr "Matrix 聊天室"
-
-msgid "Admin"
-msgstr "管理員"
-
-msgid "It is you"
-msgstr "是你"
-
-msgid "Edit your profile"
-msgstr "編輯您的個人資料"
-
-msgid "Open on {0}"
-msgstr "開啟於 {0}"
-
-msgid "Unsubscribe"
-msgstr "取消訂閱"
-
-msgid "Subscribe"
-msgstr "訂閱"
-
-msgid "Follow {}"
-msgstr "跟隨 {}"
-
-msgid "Log in to follow"
-msgstr "登入以跟隨"
-
-msgid "Enter your full username handle to follow"
-msgstr "輸入您的「帳號@實例」以跟隨"
-
-msgid "{0}'s subscribers"
-msgstr "{0} 位訂閱者"
-
-msgid "Articles"
-msgstr "文章"
-
-msgid "Subscribers"
-msgstr "訂閱者"
-
-msgid "Subscriptions"
-msgstr "訂閱"
-
-msgid "{0}'s subscriptions"
-msgstr "{0} 的訂閱"
-
-msgid "Your Dashboard"
-msgstr "您的儀表板"
-
-msgid "Your Blogs"
-msgstr "您的部落格"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "您尚未有任何部落格。創建您自己的，或者請求加入一個部落格。"
-
-msgid "Start a new blog"
-msgstr "創建新的部落格"
-
-msgid "Your Drafts"
-msgstr "您的草稿"
-
-msgid "Go to your gallery"
-msgstr "前往您的圖片集"
-
-msgid "Edit your account"
-msgstr "編輯您的帳號"
-
-msgid "Your Profile"
-msgstr "您的個人資料"
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr "要變更您的頭像，請先上傳到您的圖片集並從中選擇。"
-
-msgid "Upload an avatar"
-msgstr "上傳頭像"
-
-msgid "Display name"
-msgstr "顯示名稱"
-
-msgid "Summary"
-msgstr "摘要"
-
-msgid "Theme"
-msgstr "佈景主題"
-
-msgid "Default theme"
-msgstr "預設佈景主題"
-
-msgid "Error while loading theme selector."
-msgstr "載入佈景主題選擇器時發生錯誤。"
-
-msgid "Never load blogs custom themes"
-msgstr "從不載入部落格自訂佈景主題"
-
-msgid "Update account"
-msgstr "更新帳號"
-
-msgid "Danger zone"
-msgstr "危險區域"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "務必小心，在這裡的任何操作都無法撤銷。"
-
-msgid "Delete your account"
-msgstr "刪除您的帳號"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "抱歉，身為管理員，您不能離開自己的實例。"
-
-msgid "Latest articles"
-msgstr "最新文章"
-
-msgid "Atom feed"
-msgstr "Atom 源"
-
-msgid "Recently boosted"
-msgstr "最近助推的"
-
-msgid "Articles tagged \"{0}\""
-msgstr "使用標籤「{0}」的文章"
-
-msgid "There are currently no articles with such a tag"
-msgstr "目前沒有文章使用這個標籤"
-
-msgid "The content you sent can't be processed."
-msgstr "無法處理您發送的內容。"
-
-msgid "Maybe it was too long."
-msgstr "也許是字數太多了。"
-
-msgid "Internal server error"
-msgstr "內部伺服器錯誤"
-
-msgid "Something broke on our side."
-msgstr "我們這邊出了一些問題。"
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "很抱歉。如果您認為這是一個漏洞，請回報。"
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr "很抱歉，這個實例不開放註冊。然而，您可以找尋另一個實例。"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Email confirmation"
+msgstr "確認 Email"
+
+msgid ""
+"An email will be sent to provided email. You can continue signing-up via the "
+"email."
+msgstr ""
 
 msgid "Invalid CSRF token"
 msgstr "無效的 CSRF 權杖"
 
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "您的 CSRF 權杖有誤。請確保您的瀏覽器啟用 cookie 並嘗試重新載入此頁面。 如果您持續看到這個錯誤訊息，請回報。"
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"您的 CSRF 權杖有誤。請確保您的瀏覽器啟用 cookie 並嘗試重新載入此頁面。 如果您"
+"持續看到這個錯誤訊息，請回報。"
 
 msgid "You are not authorized."
 msgstr "您未被授權。"
@@ -582,53 +372,23 @@ msgstr "我們找不到這個頁面。"
 msgid "The link that led you here may be broken."
 msgstr "無效連結。"
 
-msgid "Users"
-msgstr "用戶"
+msgid "Internal server error"
+msgstr "內部伺服器錯誤"
 
-msgid "Configuration"
-msgstr "設定"
+msgid "Something broke on our side."
+msgstr "我們這邊出了一些問題。"
 
-msgid "Instances"
-msgstr "實例"
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "很抱歉。如果您認為這是一個漏洞，請回報。"
 
-msgid "Email blocklist"
-msgstr "Email 地址攔截列表"
+msgid "The content you sent can't be processed."
+msgstr "無法處理您發送的內容。"
 
-msgid "Grant admin rights"
-msgstr "授予管理員權限"
-
-msgid "Revoke admin rights"
-msgstr "撤銷管理員權限"
-
-msgid "Grant moderator rights"
-msgstr "授予仲裁員權限"
-
-msgid "Revoke moderator rights"
-msgstr "撤銷仲裁員權限"
-
-msgid "Ban"
-msgstr "封鎖"
-
-msgid "Run on selected users"
-msgstr "在所選用戶上執行"
-
-msgid "Moderator"
-msgstr "仲裁員"
-
-msgid "Moderation"
-msgstr "仲裁"
-
-msgid "Home"
-msgstr "主頁"
+msgid "Maybe it was too long."
+msgstr "也許是字數太多了。"
 
 msgid "Administration of {0}"
 msgstr "正在管理 {0}"
-
-msgid "Unblock"
-msgstr "解除封鎖"
-
-msgid "Block"
-msgstr "封鎖"
 
 msgid "Name"
 msgstr "名稱"
@@ -651,14 +411,20 @@ msgstr "預設文章授權條款"
 msgid "Save these settings"
 msgstr "儲存這些設定"
 
-msgid "If you are browsing this site as a visitor, no data about you is collected."
-msgstr "如果您正在以訪客身分瀏覽這個站點，我們不會收集您的相關資料。"
+msgid "Configuration"
+msgstr "設定"
 
-msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
-msgstr "作為註冊用戶，您必須提供您的用戶名（不必是真實姓名），可用的電子郵件地址和密碼以便能夠登入，寫文章和評論。您提交的內容會被保存，直到您刪除它為止。"
+msgid "Instances"
+msgstr "實例"
 
-msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
-msgstr "當您登入時，我們會儲存兩個 cookie，一個是為了保持您的登入狀態，第二個是為了防止其他人代替您操作。我們不會儲存其他任何的 cookie。"
+msgid "Users"
+msgstr "用戶"
+
+msgid "Email blocklist"
+msgstr "Email 地址攔截列表"
+
+msgid "Moderation"
+msgstr "仲裁"
 
 msgid "Blocklisted Emails"
 msgstr "已封鎖的 Email"
@@ -666,8 +432,13 @@ msgstr "已封鎖的 Email"
 msgid "Email address"
 msgstr "Email 地址"
 
-msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
-msgstr "您想要封鎖的 Email 地址。您可以使用萬用符號來封鎖網域，例如 '*@example.com' 來封鎖所有來自 example.com 的地址"
+msgid ""
+"The email address you wish to block. In order to block domains, you can use "
+"globbing syntax, for example '*@example.com' blocks all addresses from "
+"example.com"
+msgstr ""
+"您想要封鎖的 Email 地址。您可以使用萬用符號來封鎖網域，例如 '*@example.com' "
+"來封鎖所有來自 example.com 的地址"
 
 msgid "Note"
 msgstr "備註"
@@ -675,13 +446,17 @@ msgstr "備註"
 msgid "Notify the user?"
 msgstr "通知此用戶？"
 
-msgid "Optional, shows a message to the user when they attempt to create an account with that address"
+msgid ""
+"Optional, shows a message to the user when they attempt to create an account "
+"with that address"
 msgstr "選用，當用戶嘗試以此地址創建帳號時顯示訊息"
 
 msgid "Blocklisting notification"
 msgstr "封鎖通知"
 
-msgid "The message to be shown when the user attempts to create an account with this email address"
+msgid ""
+"The message to be shown when the user attempts to create an account with "
+"this email address"
 msgstr "當用戶嘗試使用此 Email 地址創建帳號時顯示的訊息"
 
 msgid "Add blocklisted address"
@@ -705,11 +480,35 @@ msgstr "在創建帳號時通知他們此訊息："
 msgid "The user will be silently prevented from making an account"
 msgstr "用戶將會被靜默阻止創建帳號"
 
-msgid "Welcome to {}"
-msgstr "歡迎來到 {}"
+msgid "Unblock"
+msgstr "解除封鎖"
 
-msgid "View all"
-msgstr "顯示全部"
+msgid "Block"
+msgstr "封鎖"
+
+msgid "Privacy policy"
+msgstr "隱私政策"
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr "如果您正在以訪客身分瀏覽這個站點，我們不會收集您的相關資料。"
+
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+"作為註冊用戶，您必須提供您的用戶名（不必是真實姓名），可用的電子郵件地址和密"
+"碼以便能夠登入，寫文章和評論。您提交的內容會被保存，直到您刪除它為止。"
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
+"當您登入時，我們會儲存兩個 cookie，一個是為了保持您的登入狀態，第二個是為了防"
+"止其他人代替您操作。我們不會儲存其他任何的 cookie。"
 
 msgid "About {0}"
 msgstr "關於 {0}"
@@ -729,14 +528,146 @@ msgstr "並和<em>{0}</em>個實例產生了聯繫"
 msgid "Administred by"
 msgstr "管理員："
 
-msgid "Interact with {}"
-msgstr "與 {} 互動"
+msgid "Welcome to {}"
+msgstr "歡迎來到 {}"
 
-msgid "Log in to interact"
-msgstr "登入以互動"
+msgid "Nothing to see here yet."
+msgstr "這裡還沒有任何內容。"
 
-msgid "Enter your full username to interact"
-msgstr "輸入完整用戶名以互動"
+#, fuzzy
+msgid "Search users"
+msgstr "搜尋"
+
+msgid "Grant admin rights"
+msgstr "授予管理員權限"
+
+msgid "Revoke admin rights"
+msgstr "撤銷管理員權限"
+
+msgid "Grant moderator rights"
+msgstr "授予仲裁員權限"
+
+msgid "Revoke moderator rights"
+msgstr "撤銷仲裁員權限"
+
+msgid "Ban"
+msgstr "封鎖"
+
+msgid "Run on selected users"
+msgstr "在所選用戶上執行"
+
+msgid "Admin"
+msgstr "管理員"
+
+msgid "Moderator"
+msgstr "仲裁員"
+
+msgid "Media details"
+msgstr "媒體的詳細資訊"
+
+msgid "Go back to the gallery"
+msgstr "返回圖片集"
+
+msgid "Markdown syntax"
+msgstr "Markdown 語法"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr "拷貝至您的文章中以插入此媒體："
+
+msgid "Use as an avatar"
+msgstr "當做頭像"
+
+msgid "Delete"
+msgstr "刪除"
+
+msgid "Your media"
+msgstr "您的媒體"
+
+msgid "Upload"
+msgstr "上傳"
+
+msgid "You don't have any media yet."
+msgstr "您還沒有任何媒體。"
+
+msgid "Content warning: {0}"
+msgstr "內容警告：{0}"
+
+msgid "Details"
+msgstr "詳細資訊"
+
+msgid "Media upload"
+msgstr "上傳媒體"
+
+msgid "Description"
+msgstr "說明"
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "對視障人士有幫助，以及授權資訊"
+
+msgid "Content warning"
+msgstr "內容警告"
+
+msgid "Leave it empty, if none is needed"
+msgstr "若無需要可留空白"
+
+msgid "File"
+msgstr "檔案"
+
+msgid "Send"
+msgstr "發送"
+
+msgid "Notifications"
+msgstr "通知"
+
+msgid "None"
+msgstr "無"
+
+msgid "No description"
+msgstr "沒有說明"
+
+msgid "What is Plume?"
+msgstr "什麼是 Plume？"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "Plume 是一個去中心化的部落格引擎。"
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr "作者可以分別管理多個部落格。"
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+"文章在其他 Plume 實例上同樣可見，您也可以從其他平台例如 Mastodon 與之互動。"
+
+msgid "Read the detailed rules"
+msgstr "閱讀詳細規則"
+
+msgid "Edit"
+msgstr "編輯"
+
+msgid "By {0}"
+msgstr "來自 {0}"
+
+msgid "Draft"
+msgstr "草稿"
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "{0} 讚"
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] "{0} 助推"
+
+msgid "Respond"
+msgstr "回應"
+
+msgid "Are you sure?"
+msgstr "您確定嗎？"
+
+msgid "Delete this comment"
+msgstr "刪除此評論"
 
 msgid "Publish"
 msgstr "發佈"
@@ -753,8 +684,12 @@ msgstr "副標題"
 msgid "Content"
 msgstr "內容"
 
-msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr "你可以上傳媒體到你的圖片集，然後複製它們的 Markdown 代碼並貼在文章中來嵌入它們。"
+msgid ""
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
+msgstr ""
+"你可以上傳媒體到你的圖片集，然後複製它們的 Markdown 代碼並貼在文章中來嵌入它"
+"們。"
 
 msgid "Upload media"
 msgstr "上傳媒體"
@@ -780,6 +715,15 @@ msgstr "更新或發佈"
 msgid "Publish your post"
 msgstr "發佈文章"
 
+msgid "Interact with {}"
+msgstr "與 {} 互動"
+
+msgid "Log in to interact"
+msgstr "登入以互動"
+
+msgid "Enter your full username to interact"
+msgstr "輸入完整用戶名以互動"
+
 msgid "Written by {0}"
 msgstr "作者：{0}"
 
@@ -789,19 +733,11 @@ msgstr "版權所有。"
 msgid "This article is under the {0} license."
 msgstr "此作品採用 {0} 授權協議。"
 
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] "{0} 讚"
-
 msgid "I don't like this anymore"
 msgstr "我不再喜歡這個了"
 
 msgid "Add yours"
 msgstr "讚"
-
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] "{0} 助推"
 
 msgid "I don't want to boost this anymore"
 msgstr "我不想再助推這個了"
@@ -809,8 +745,16 @@ msgstr "我不想再助推這個了"
 msgid "Boost"
 msgstr "助推"
 
-msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
 msgstr "{0}登入{1} 或 {2}使用您的 Fediverse 帳號{3} 與此文互動。"
+
+msgid "Unsubscribe"
+msgstr "取消訂閱"
+
+msgid "Subscribe"
+msgstr "訂閱"
 
 msgid "Comments"
 msgstr "評論"
@@ -824,153 +768,14 @@ msgstr "提交評論"
 msgid "No comments yet. Be the first to react!"
 msgstr "還沒有評論。發表第一個評論吧！"
 
-msgid "Are you sure?"
-msgstr "您確定嗎？"
-
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr "本文章仍是草稿，只有您與其他作者可見。"
 
 msgid "Only you and other authors can edit this article."
 msgstr "只有您與其他作者可以編輯本文章。"
 
-msgid "Edit"
-msgstr "編輯"
-
-msgid "I'm from this instance"
-msgstr "我來自此實例"
-
-msgid "Username, or email"
-msgstr "用戶名或 Email"
-
-msgid "Log in"
-msgstr "登入"
-
-msgid "I'm from another instance"
-msgstr "我來自其他實例"
-
-msgid "Continue to your instance"
-msgstr "到您的實例繼續操作"
-
-msgid "Reset your password"
-msgstr "重設密碼"
-
-msgid "New password"
-msgstr "新密碼"
-
-msgid "Confirmation"
-msgstr "確認"
-
-msgid "Update password"
-msgstr "更新密碼"
-
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr "我們寄了一封郵件到您提供的地址，附有重設密碼的連結。"
-
-msgid "Send password reset link"
-msgstr "發送重設密碼的連結"
-
-msgid "This token has expired"
-msgstr "此權杖已過期"
-
-msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
-msgstr "請點擊<a href=\"/password-reset\">這裡</a>再次申請重設密碼的連結。"
-
-msgid "New Blog"
-msgstr "新增部落格"
-
-msgid "Create a blog"
-msgstr "創建部落格"
-
-msgid "Create blog"
-msgstr "創建部落格"
-
-msgid "Edit \"{}\""
-msgstr "編輯「{}」"
-
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr "您可以將圖片上傳到您的圖片庫，用作部落格標誌或橫幅。"
-
-msgid "Upload images"
-msgstr "上傳圖片"
-
-msgid "Blog icon"
-msgstr "部落格標誌"
-
-msgid "Blog banner"
-msgstr "部落格橫幅"
-
-msgid "Custom theme"
-msgstr "自訂佈景主題"
-
-msgid "Update blog"
-msgstr "更新部落格"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "務必小心，在這裡的任何操作都無法撤銷。"
-
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr "您確定要永久刪除這個部落格嗎？"
-
-msgid "Permanently delete this blog"
-msgstr "永久刪除這個部落格"
-
-msgid "{}'s icon"
-msgstr "{} 的標誌"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "這個部落格上有 {0} 位作者： "
-
-msgid "No posts to see here yet."
-msgstr "這裡還沒有文章。"
-
-msgid "Nothing to see here yet."
-msgstr "這裡還沒有任何內容。"
-
-msgid "None"
-msgstr "無"
-
-msgid "No description"
-msgstr "沒有說明"
-
-msgid "Respond"
-msgstr "回應"
-
-msgid "Delete this comment"
-msgstr "刪除此評論"
-
-msgid "What is Plume?"
-msgstr "什麼是 Plume？"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr "Plume 是一個去中心化的部落格引擎。"
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr "作者可以分別管理多個部落格。"
-
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr "文章在其他 Plume 實例上同樣可見，您也可以從其他平台例如 Mastodon 與之互動。"
-
-msgid "Read the detailed rules"
-msgstr "閱讀詳細規則"
-
-msgid "By {0}"
-msgstr "來自 {0}"
-
-msgid "Draft"
-msgstr "草稿"
-
-msgid "Search result(s) for \"{0}\""
-msgstr "关键词「{0}」的搜尋结果"
-
-msgid "Search result(s)"
-msgstr "搜尋結果"
-
-msgid "No results for your query"
-msgstr "沒有符合您查詢的項目"
-
-msgid "No more results for your query"
-msgstr "沒有更多符合您查詢的項目了"
+msgid "Search"
+msgstr "搜尋"
 
 msgid "Advanced search"
 msgstr "進階搜尋"
@@ -1029,3 +834,261 @@ msgstr "發佈所用之授權條款"
 msgid "Article license"
 msgstr "文章授權條款"
 
+msgid "Search result(s) for \"{0}\""
+msgstr "关键词「{0}」的搜尋结果"
+
+msgid "Search result(s)"
+msgstr "搜尋結果"
+
+msgid "No results for your query"
+msgstr "沒有符合您查詢的項目"
+
+msgid "No more results for your query"
+msgstr "沒有更多符合您查詢的項目了"
+
+msgid "Log in"
+msgstr "登入"
+
+msgid "Username, or email"
+msgstr "用戶名或 Email"
+
+msgid "Reset your password"
+msgstr "重設密碼"
+
+msgid "New password"
+msgstr "新密碼"
+
+msgid "Confirmation"
+msgstr "確認"
+
+msgid "Update password"
+msgstr "更新密碼"
+
+msgid "Send password reset link"
+msgstr "發送重設密碼的連結"
+
+msgid "This token has expired"
+msgstr "此權杖已過期"
+
+msgid ""
+"Please start the process again by clicking <a href=\"/password-reset\">here</"
+"a>."
+msgstr "請點擊<a href=\"/password-reset\">這裡</a>再次申請重設密碼的連結。"
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr "我們寄了一封郵件到您提供的地址，附有重設密碼的連結。"
+
+msgid "Articles tagged \"{0}\""
+msgstr "使用標籤「{0}」的文章"
+
+msgid "There are currently no articles with such a tag"
+msgstr "目前沒有文章使用這個標籤"
+
+msgid "Edit your account"
+msgstr "編輯您的帳號"
+
+msgid "Your Profile"
+msgstr "您的個人資料"
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr "要變更您的頭像，請先上傳到您的圖片集並從中選擇。"
+
+msgid "Upload an avatar"
+msgstr "上傳頭像"
+
+msgid "Display name"
+msgstr "顯示名稱"
+
+msgid "Summary"
+msgstr "摘要"
+
+msgid "Theme"
+msgstr "佈景主題"
+
+msgid "Default theme"
+msgstr "預設佈景主題"
+
+msgid "Error while loading theme selector."
+msgstr "載入佈景主題選擇器時發生錯誤。"
+
+msgid "Never load blogs custom themes"
+msgstr "從不載入部落格自訂佈景主題"
+
+msgid "Update account"
+msgstr "更新帳號"
+
+msgid "Danger zone"
+msgstr "危險區域"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "務必小心，在這裡的任何操作都無法撤銷。"
+
+msgid "Delete your account"
+msgstr "刪除您的帳號"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr "抱歉，身為管理員，您不能離開自己的實例。"
+
+msgid "Your Dashboard"
+msgstr "您的儀表板"
+
+msgid "Your Blogs"
+msgstr "您的部落格"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr "您尚未有任何部落格。創建您自己的，或者請求加入一個部落格。"
+
+msgid "Start a new blog"
+msgstr "創建新的部落格"
+
+msgid "Your Drafts"
+msgstr "您的草稿"
+
+msgid "Go to your gallery"
+msgstr "前往您的圖片集"
+
+msgid "Articles"
+msgstr "文章"
+
+msgid "Subscribers"
+msgstr "訂閱者"
+
+msgid "Subscriptions"
+msgstr "訂閱"
+
+msgid "Latest articles"
+msgstr "最新文章"
+
+msgid "Atom feed"
+msgstr "Atom 源"
+
+msgid "Recently boosted"
+msgstr "最近助推的"
+
+msgid "Follow {}"
+msgstr "跟隨 {}"
+
+msgid "Log in to follow"
+msgstr "登入以跟隨"
+
+msgid "Enter your full username handle to follow"
+msgstr "輸入您的「帳號@實例」以跟隨"
+
+msgid "{0}'s subscriptions"
+msgstr "{0} 的訂閱"
+
+msgid "{0}'s subscribers"
+msgstr "{0} 位訂閱者"
+
+msgid "It is you"
+msgstr "是你"
+
+msgid "Edit your profile"
+msgstr "編輯您的個人資料"
+
+msgid "Open on {0}"
+msgstr "開啟於 {0}"
+
+msgid "Edit \"{}\""
+msgstr "編輯「{}」"
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr "您可以將圖片上傳到您的圖片庫，用作部落格標誌或橫幅。"
+
+msgid "Upload images"
+msgstr "上傳圖片"
+
+msgid "Blog icon"
+msgstr "部落格標誌"
+
+msgid "Blog banner"
+msgstr "部落格橫幅"
+
+msgid "Custom theme"
+msgstr "自訂佈景主題"
+
+msgid "Update blog"
+msgstr "更新部落格"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "務必小心，在這裡的任何操作都無法撤銷。"
+
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr "您確定要永久刪除這個部落格嗎？"
+
+msgid "Permanently delete this blog"
+msgstr "永久刪除這個部落格"
+
+msgid "New Blog"
+msgstr "新增部落格"
+
+msgid "Create a blog"
+msgstr "創建部落格"
+
+msgid "Create blog"
+msgstr "創建部落格"
+
+msgid "{}'s icon"
+msgstr "{} 的標誌"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "這個部落格上有 {0} 位作者： "
+
+msgid "No posts to see here yet."
+msgstr "這裡還沒有文章。"
+
+msgid "I'm from this instance"
+msgstr "我來自此實例"
+
+msgid "I'm from another instance"
+msgstr "我來自其他實例"
+
+msgid "Continue to your instance"
+msgstr "到您的實例繼續操作"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "選單"
+
+msgid "Dashboard"
+msgstr "儀表板"
+
+msgid "Log Out"
+msgstr "登出"
+
+msgid "My account"
+msgstr "我的帳號"
+
+msgid "Log In"
+msgstr "登入"
+
+msgid "Register"
+msgstr "註冊"
+
+msgid "About this instance"
+msgstr "關於本實例"
+
+msgid "Administration"
+msgstr "管理"
+
+msgid "Documentation"
+msgstr "說明文件"
+
+msgid "Source code"
+msgstr "原始碼"
+
+msgid "Matrix room"
+msgstr "Matrix 聊天室"
+
+#~ msgid "Home"
+#~ msgstr "主頁"
+
+#~ msgid "View all"
+#~ msgstr "顯示全部"

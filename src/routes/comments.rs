@@ -1,7 +1,7 @@
 use crate::template_utils::Ructe;
 use activitystreams::object::Note;
 use rocket::{
-    request::LenientForm,
+    form::Form,
     response::{Flash, Redirect},
 };
 use validator::Validate;
@@ -29,18 +29,18 @@ pub struct NewCommentForm {
 }
 
 #[post("/~/<blog_name>/<slug>/comment", data = "<form>")]
-pub fn create(
-    blog_name: String,
-    slug: String,
-    form: LenientForm<NewCommentForm>,
+pub async fn create(
+    blog_name: &str,
+    slug: &str,
+    form: Form<NewCommentForm>,
     user: User,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, Ructe> {
-    let blog = Blog::find_by_fqn(&conn, &blog_name).expect("comments::create: blog error");
-    let post = Post::find_by_slug(&conn, &slug, blog.id).expect("comments::create: post error");
-    form.validate()
-        .map(|_| {
+    let blog = Blog::find_by_fqn(&mut conn, blog_name).await.expect("comments::create: blog error");
+    let post = Post::find_by_slug(&mut conn, slug, blog.id).expect("comments::create: post error");
+    match form.validate() {
+        Ok(_) => {
             let (html, mentions, _hashtags) = utils::md_to_html(
                 form.content.as_ref(),
                 Some(
@@ -49,10 +49,10 @@ pub fn create(
                         .public_domain,
                 ),
                 true,
-                Some(Media::get_media_processor(&conn, vec![&user])),
+                Some(Media::get_media_processor(&mut conn, vec![&user])),
             );
             let comm = Comment::insert(
-                &conn,
+                &mut conn,
                 NewComment {
                     content: SafeString::new(html.as_ref()),
                     in_response_to_id: form.responding_to,
@@ -66,15 +66,18 @@ pub fn create(
             )
             .expect("comments::create: insert error");
             let new_comment = comm
-                .create_activity(&conn)
+                .create_activity(&mut conn)
+                .await
                 .expect("comments::create: activity error");
 
             // save mentions
             for ment in mentions {
+                let activity = &Mention::build_activity(&mut conn, &ment).await
+                    .expect("comments::create: build mention error");
+
                 Mention::from_activity(
-                    &conn,
-                    &Mention::build_activity(&conn, &ment)
-                        .expect("comments::create: build mention error"),
+                    &mut conn,
+                    activity,
                     comm.id,
                     false,
                     true,
@@ -82,79 +85,80 @@ pub fn create(
                 .expect("comments::create: mention save error");
             }
 
-            comm.notify(&conn).expect("comments::create: notify error");
+            comm.notify(&mut conn).expect("comments::create: notify error");
 
             // federate
-            let dest = User::one_by_instance(&conn).expect("comments::create: dest error");
+            let dest = User::one_by_instance(&mut conn).expect("comments::create: dest error");
             let user_clone = user.clone();
             rockets.worker.execute(move || {
                 broadcast(&user_clone, new_comment, dest, CONFIG.proxy().cloned())
             });
 
-            Flash::success(
+            Ok(Flash::success(
                 Redirect::to(uri!(
-                    super::posts::details: blog = blog_name,
-                    slug = slug,
-                    responding_to = _
+                    super::posts::details(blog = blog_name,slug = slug,responding_to = _)
                 )),
                 i18n!(&rockets.intl.catalog, "Your comment has been posted."),
-            )
-        })
-        .map_err(|errors| {
+            ))
+        },
+        Err(errors) => {
             // TODO: de-duplicate this code
-            let comments = CommentTree::from_post(&conn, &post, Some(&user))
+            let comments = CommentTree::from_post(&mut conn, &post, Some(&user))
                 .expect("comments::create: comments error");
 
-            let previous = form.responding_to.and_then(|r| Comment::get(&conn, r).ok());
+            let cover_url = post.cover_url(&mut conn).unwrap_or_default();
+            let tags = Tag::for_post(&mut conn, post.id).expect("comments::create: tags error");
+            let previous = form.responding_to.and_then(|r| Comment::get(&mut conn, r).ok());
+            let likes = post.count_likes(&mut conn).expect("comments::create: count likes error");
+            let counts = post.count_reshares(&mut conn).expect("comments::create: count reshares error");
+            let liked = user.has_liked(&mut conn, &post).expect("comments::create: liked error");
+            let reshared = user.has_reshared(&mut conn, &post).expect("comments::create: reshared error");
 
-            render!(posts::details(
-                &(&conn, &rockets).to_context(),
-                post.clone(),
+            let author = post.get_authors(&mut conn).expect("comments::create: authors error").swap_remove(0);
+            let following = user.is_following(&mut conn, author.id).expect("comments::create: following error");
+            let author_avatar_url = author.avatar_url(&mut conn);
+            let is_author = post.is_author(&mut conn, user.id).ok().unwrap_or(false);
+
+            Err(render!(posts::details_html(
+                &(&mut conn, &rockets).to_context(),
+                post,
+                cover_url,
                 blog,
                 &*form,
                 errors,
-                Tag::for_post(&conn, post.id).expect("comments::create: tags error"),
+                tags,
                 comments,
                 previous,
-                post.count_likes(&conn)
-                    .expect("comments::create: count likes error"),
-                post.count_reshares(&conn)
-                    .expect("comments::create: count reshares error"),
-                user.has_liked(&conn, &post)
-                    .expect("comments::create: liked error"),
-                user.has_reshared(&conn, &post)
-                    .expect("comments::create: reshared error"),
-                user.is_following(
-                    &conn,
-                    post.get_authors(&conn)
-                        .expect("comments::create: authors error")[0]
-                        .id
-                )
-                .expect("comments::create: following error"),
-                post.get_authors(&conn)
-                    .expect("comments::create: authors error")[0]
-                    .clone()
-            ))
-        })
+                likes,
+                counts,
+                liked,
+                reshared,
+                following,
+                author,
+                author_avatar_url,
+                is_author
+            )))
+        },
+    }
 }
 
 #[post("/~/<blog>/<slug>/comment/<id>/delete")]
-pub fn delete(
-    blog: String,
-    slug: String,
+pub async fn delete(
+    blog: &str,
+    slug: &str,
     id: i32,
     user: User,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    if let Ok(comment) = Comment::get(&conn, id) {
+    if let Ok(comment) = Comment::get(&mut conn, id) {
         if comment.author_id == user.id {
-            let dest = User::one_by_instance(&conn)?;
-            let delete_activity = comment.build_delete(&conn)?;
+            let dest = User::one_by_instance(&mut conn)?;
+            let delete_activity = comment.build_delete(&mut conn)?;
             inbox(
-                &conn,
+                &mut conn,
                 serde_json::to_value(&delete_activity).map_err(Error::from)?,
-            )?;
+            ).await?;
 
             let user_c = user.clone();
             rockets.worker.execute(move || {
@@ -163,31 +167,31 @@ pub fn delete(
             rockets
                 .worker
                 .execute_after(Duration::from_secs(10 * 60), move || {
-                    user.rotate_keypair(&conn)
+                    user.rotate_keypair(&mut conn)
                         .expect("Failed to rotate keypair");
                 });
         }
     }
     Ok(Flash::success(
         Redirect::to(uri!(
-            super::posts::details: blog = blog,
+            super::posts::details(blog = blog,
             slug = slug,
             responding_to = _
-        )),
+        ))),
         i18n!(&rockets.intl.catalog, "Your comment has been deleted."),
     ))
 }
 
 #[get("/~/<_blog>/<_slug>/comment/<id>")]
-pub fn activity_pub(
-    _blog: String,
-    _slug: String,
+pub async fn activity_pub(
+    _blog: &str,
+    _slug: &str,
     id: i32,
     _ap: ApRequest,
-    conn: DbConn,
+    mut conn: DbConn,
 ) -> Option<ActivityStream<Note>> {
-    Comment::get(&conn, id)
-        .and_then(|c| c.to_activity(&conn))
-        .ok()
-        .map(ActivityStream::new)
+    match Comment::get(&mut conn, id) {
+        Ok(c) => c.to_activity(&mut conn).await.ok().map(ActivityStream::new),
+        Err(_) => None,
+    }
 }

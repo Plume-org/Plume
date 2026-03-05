@@ -1,9 +1,9 @@
-@use crate::templates::errors::base;
+@use crate::templates::errors::base_html;
 @use crate::template_utils::*;
 
 @(ctx: BaseContext)
 
-@:base(ctx, i18n!(ctx.1, "Page not found"), {
+@:base_html(ctx, i18n!(ctx.1, "Page not found"), {
   <h1>@i18n!(ctx.1, "We couldn't find this page.")</h1>
   <p>@i18n!(ctx.1, "The link that led you here may be broken.")</p>
 })

@@ -3,15 +3,15 @@
 @use plume_models::posts::Post;
 @use std::borrow::Cow;
 @use validator::{ValidationErrors, ValidationErrorsKind};
-@use crate::templates::base;
-@use crate::templates::partials::image_select;
+@use crate::templates::base_html;
+@use crate::templates::partials::image_select_html;
 @use crate::template_utils::*;
 @use crate::routes::posts::NewPostForm;
 @use crate::routes::*;
 
 @(ctx: BaseContext, title: String, blog: Blog, editing: bool, form: &NewPostForm, is_draft: bool, article: Option<Post>, errors: ValidationErrors, medias: Vec<Media>, content_len: u64)
 
-@:base(ctx, title.clone(), {}, {}, {
+@:base_html(ctx, title.clone(), {}, {}, {
     <h1 id="plume-editor-title" dir="auto">@title</h1>
     <div id="plume-editor" style="display: none;" dir="auto">
       <header>
@@ -21,9 +21,9 @@
       </header>
     </div>
     @if let Some(article) = article {
-	    <form id="plume-fallback-editor" class="new-post" method="post" action="@uri!(posts::update: blog = blog.actor_id, slug = &article.slug)" content-size="@content_len">
+	    <form id="plume-fallback-editor" class="new-post" method="post" action="@uri!(posts::update(blog = blog.actor_id, slug = &article.slug))" content-size="@content_len">
     } else {
-	    <form id="plume-fallback-editor" class="new-post" method="post" action="@uri!(posts::new: blog = blog.actor_id)" content-size="@content_len">
+	    <form id="plume-fallback-editor" class="new-post" method="post" action="@uri!(posts::new(blog = blog.actor_id))" content-size="@content_len">
     }
         @(Input::new("title", i18n!(ctx.1, "Title"))
             .default(&form.title)
@@ -59,7 +59,7 @@
             .details("Leave it empty to reserve all rights")
             .html(ctx.1))
 
-        @:image_select(ctx, "cover", i18n!(ctx.1, "Illustration"), true, medias, form.cover)
+        @:image_select_html(ctx, "cover", i18n!(ctx.1, "Illustration"), true, medias, form.cover)
 
         @if is_draft {
             <label for="draft" dir="auto">

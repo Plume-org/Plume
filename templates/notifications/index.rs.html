@@ -1,31 +1,31 @@
-@use plume_models::notifications::Notification;
-@use crate::templates::base;
+@use plume_models::{notifications::Notification, posts::Post, users::User};
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 
-@(ctx: BaseContext, notifications: Vec<Notification>, page: i32, n_pages: i32)
+@(ctx: BaseContext, notifications: Vec<(Notification, Option<User>, Option<String>, Option<Post>, String)>, page: i32, n_pages: i32)
 
-@:base(ctx, i18n!(ctx.1, "Notifications"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Notifications"), {}, {}, {
     <h1>@i18n!(ctx.1, "Notifications")</h1>
 
     <div class="list">
-        @for notification in notifications {
+        @for (notif, actor, url, post, post_url) in notifications {
             <div class="card flex">
-                <i class="icon @notification.icon_class() left-icon"></i>
+                <i class="icon @notif.icon_class() left-icon"></i>
                 <main class="grow">
                     <h3>
-                        @if let Some(url) = notification.get_url(ctx.0) {
-                            <a href="@url">
-                                @translate_notification(ctx, notification.clone())
+                        @if let Some(u) = url {
+                            <a href="@u">
+                                @translate_notification(ctx.1, &notif, &actor)
                             </a>
                         } else {
-                            @translate_notification(ctx, notification.clone())
+                            @translate_notification(ctx.1, &notif, &actor)
                         }
                     </h3>
-                    @if let Some(post) = notification.get_post(ctx.0) {
-                        <p><a href="@post.url(ctx.0).unwrap_or_default()">@post.title</a></p>
+                    @if let Some(p) = post {
+                        <p><a href="@post_url">@p.title</a></p>
                     }
                 </main>
-                <p><small>@notification.creation_date.format("%B %e, %H:%M")</small></p>
+                <p><small>@notif.creation_date.format("%B %e, %H:%M")</small></p>
             </div>
         }
     </div>

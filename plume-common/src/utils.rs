@@ -1,7 +1,6 @@
 use openssl::rand::rand_bytes;
 use pulldown_cmark::{html, CodeBlockKind, CowStr, Event, LinkType, Options, Parser, Tag};
 use regex_syntax::is_word_character;
-use rocket::http::uri::Uri;
 use std::collections::HashSet;
 use syntect::html::{ClassStyle, ClassedHTMLGenerator};
 use syntect::parsing::SyntaxSet;
@@ -61,8 +60,7 @@ pub fn iri_percent_encode_seg_char(c: char) -> String {
             | ':'
             | '@' => c.to_string(),
             _ => {
-                let s = c.to_string();
-                Uri::percent_encode(&s).to_string()
+                rocket::http::RawStr::new(&c.to_string()).percent_encode().to_string()
             }
         }
     }
@@ -127,7 +125,7 @@ fn highlight_code<'a>(
                     ClassStyle::Spaced,
                 );
                 for line in ctx.content {
-                    html.parse_html_for_line_which_includes_newline(&line);
+                    let _ = html.parse_html_for_line_which_includes_newline(&line);
                 }
                 let q = html.finalize();
                 result.push(Event::Html(q.into()));
@@ -191,17 +189,23 @@ fn inline_tags<'a>(
     }
 }
 
-pub type MediaProcessor<'a> = Box<dyn 'a + Fn(i32) -> Option<(String, Option<String>)>>;
+pub type MediaProcessor<'a> = Box<dyn 'a + FnMut(i32) -> Option<(String, Option<String>)>>;
 
 fn process_image<'a, 'b>(
     evt: Event<'a>,
     inline: bool,
-    processor: &Option<MediaProcessor<'b>>,
+    processor: &mut Option<MediaProcessor<'b>>,
 ) -> Event<'a> {
-    if let Some(ref processor) = *processor {
+    if let Some(ref mut processor) = processor {
         match evt {
             Event::Start(Tag::Image(typ, id, title)) => {
-                if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
+                let processed = if let Some(i_id) = id.parse::<i32>().ok() {
+                    processor(i_id)
+                } else {
+                    None
+                };
+
+                if let Some((url, cw)) = processed {
                     if let (Some(cw), false) = (cw, inline) {
                         // there is a cw, and where are not inline
                         Event::Html(CowStr::Boxed(
@@ -227,7 +231,13 @@ fn process_image<'a, 'b>(
                 }
             }
             Event::End(Tag::Image(typ, id, title)) => {
-                if let Some((url, cw)) = id.parse::<i32>().ok().and_then(processor.as_ref()) {
+                let processed = if let Some(i_id) = id.parse::<i32>().ok() {
+                    processor(i_id)
+                } else {
+                    None
+                };
+
+                if let Some((url, cw)) = processed {
                     if inline || cw.is_none() {
                         Event::End(Tag::Image(typ, CowStr::Boxed(url.into()), title))
                     } else {
@@ -259,7 +269,7 @@ pub fn md_to_html<'a>(
     md: &str,
     base_url: Option<&str>,
     inline: bool,
-    media_processor: Option<MediaProcessor<'a>>,
+    mut media_processor: Option<MediaProcessor<'a>>,
 ) -> (String, HashSet<String>, HashSet<String>) {
     let base_url = if let Some(base_url) = base_url {
         format!("https://{}/", base_url)
@@ -274,7 +284,7 @@ pub fn md_to_html<'a>(
         .flatten()
         .scan(None, highlight_code)
         .flatten()
-        .map(|evt| process_image(evt, inline, &media_processor))
+        .map(|evt| process_image(evt, inline, &mut media_processor))
         // Ignore headings, images, and tables if inline = true
         .scan((vec![], inline), inline_tags)
         .scan(&mut DocumentContext::default(), |ctx, evt| match evt {
@@ -441,7 +451,7 @@ pub fn md_to_html<'a>(
     (buf, mentions.collect(), hashtags.collect())
 }
 
-pub fn escape(string: &str) -> askama_escape::Escaped<askama_escape::Html> {
+pub fn escape(string: &str) -> askama_escape::Escaped<'_, askama_escape::Html> {
     askama_escape::escape(string, askama_escape::Html)
 }
 

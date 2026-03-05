@@ -31,7 +31,7 @@ use std::sync::{Arc, Mutex};
 static BLOG_FQN_CACHE: Lazy<Mutex<HashMap<i32, String>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
 #[derive(Queryable, Identifiable, Clone, AsChangeset, Debug)]
-#[changeset_options(treat_none_as_null = "true")]
+#[diesel(treat_none_as_null = true)]
 pub struct Post {
     pub id: i32,
     pub blog_id: i32,
@@ -48,7 +48,7 @@ pub struct Post {
 }
 
 #[derive(Insertable)]
-#[table_name = "posts"]
+#[diesel(table_name = posts)]
 pub struct NewPost {
     pub blog_id: i32,
     pub slug: String,
@@ -69,7 +69,7 @@ impl Post {
     find_by!(posts, find_by_ap_url, ap_url as &str);
 
     last!(posts);
-    pub fn insert(conn: &Connection, mut new: NewPost) -> Result<Self> {
+    pub fn insert(conn: &mut Connection, mut new: NewPost) -> Result<Self> {
         if new.ap_url.is_empty() {
             let blog = Blog::get(conn, new.blog_id)?;
             new.ap_url = Self::ap_url(blog, &new.slug);
@@ -86,7 +86,7 @@ impl Post {
         Ok(post)
     }
 
-    pub fn update(&self, conn: &Connection) -> Result<Self> {
+    pub fn update(&self, conn: &mut Connection) -> Result<Self> {
         diesel::update(self).set(self).execute(conn)?;
         let post = Self::get(conn, self.id)?;
         // TODO: Call publish_published() when newly published
@@ -99,7 +99,7 @@ impl Post {
         Ok(post)
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<()> {
+    pub fn delete(&self, conn: &mut Connection) -> Result<()> {
         for m in Mention::list_for_post(conn, self.id)? {
             m.delete(conn)?;
         }
@@ -109,7 +109,7 @@ impl Post {
     }
 
     pub fn list_by_tag(
-        conn: &Connection,
+        conn: &mut Connection,
         tag: String,
         (min, max): (i32, i32),
     ) -> Result<Vec<Post>> {
@@ -126,7 +126,7 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn count_for_tag(conn: &Connection, tag: String) -> Result<i64> {
+    pub fn count_for_tag(conn: &mut Connection, tag: String) -> Result<i64> {
         use crate::schema::tags;
         let ids = tags::table.filter(tags::tag.eq(tag)).select(tags::post_id);
         posts::table
@@ -139,7 +139,7 @@ impl Post {
             .ok_or(Error::NotFound)
     }
 
-    pub fn count_local(conn: &Connection) -> Result<i64> {
+    pub fn count_local(conn: &mut Connection) -> Result<i64> {
         use crate::schema::post_authors;
         use crate::schema::users;
         let local_authors = users::table
@@ -156,7 +156,7 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn count(conn: &Connection) -> Result<i64> {
+    pub fn count(conn: &mut Connection) -> Result<i64> {
         posts::table
             .filter(posts::published.eq(true))
             .count()
@@ -165,7 +165,7 @@ impl Post {
     }
 
     pub fn list_filtered(
-        conn: &Connection,
+        conn: &mut Connection,
         title: Option<String>,
         subtitle: Option<String>,
         content: Option<String>,
@@ -185,7 +185,7 @@ impl Post {
     }
 
     pub fn get_recents_for_author(
-        conn: &Connection,
+        conn: &mut Connection,
         author: &User,
         limit: i64,
     ) -> Result<Vec<Post>> {
@@ -201,7 +201,7 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn get_recents_for_blog(conn: &Connection, blog: &Blog, limit: i64) -> Result<Vec<Post>> {
+    pub fn get_recents_for_blog(conn: &mut Connection, blog: &Blog, limit: i64) -> Result<Vec<Post>> {
         posts::table
             .filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
@@ -211,7 +211,7 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn get_for_blog(conn: &Connection, blog: &Blog) -> Result<Vec<Post>> {
+    pub fn get_for_blog(conn: &mut Connection, blog: &Blog) -> Result<Vec<Post>> {
         posts::table
             .filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
@@ -219,7 +219,7 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn count_for_blog(conn: &Connection, blog: &Blog) -> Result<i64> {
+    pub fn count_for_blog(conn: &mut Connection, blog: &Blog) -> Result<i64> {
         posts::table
             .filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
@@ -228,7 +228,7 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn blog_page(conn: &Connection, blog: &Blog, (min, max): (i32, i32)) -> Result<Vec<Post>> {
+    pub fn blog_page(conn: &mut Connection, blog: &Blog, (min, max): (i32, i32)) -> Result<Vec<Post>> {
         posts::table
             .filter(posts::blog_id.eq(blog.id))
             .filter(posts::published.eq(true))
@@ -239,7 +239,7 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn drafts_by_author(conn: &Connection, author: &User) -> Result<Vec<Post>> {
+    pub fn drafts_by_author(conn: &mut Connection, author: &User) -> Result<Vec<Post>> {
         use crate::schema::post_authors;
 
         let posts = PostAuthor::belonging_to(author).select(post_authors::post_id);
@@ -265,7 +265,7 @@ impl Post {
         title
     }
 
-    pub fn get_authors(&self, conn: &Connection) -> Result<Vec<User>> {
+    pub fn get_authors(&self, conn: &mut Connection) -> Result<Vec<User>> {
         use crate::schema::post_authors;
         use crate::schema::users;
         let author_list = PostAuthor::belonging_to(self).select(post_authors::author_id);
@@ -275,7 +275,7 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn is_author(&self, conn: &Connection, author_id: i32) -> Result<bool> {
+    pub fn is_author(&self, conn: &mut Connection, author_id: i32) -> Result<bool> {
         use crate::schema::post_authors;
         Ok(PostAuthor::belonging_to(self)
             .filter(post_authors::author_id.eq(author_id))
@@ -284,7 +284,7 @@ impl Post {
             > 0)
     }
 
-    pub fn get_blog(&self, conn: &Connection) -> Result<Blog> {
+    pub fn get_blog(&self, conn: &mut Connection) -> Result<Blog> {
         use crate::schema::blogs;
         blogs::table
             .filter(blogs::id.eq(self.blog_id))
@@ -298,7 +298,7 @@ impl Post {
     /// This caches query result. The best way to cache query result is holding it in `Post`s field
     /// but Diesel doesn't allow it currently.
     /// If sometime Diesel allow it, this method should be removed.
-    pub fn get_blog_fqn(&self, conn: &Connection) -> String {
+    pub fn get_blog_fqn(&self, conn: &mut Connection) -> String {
         if let Some(blog_fqn) = BLOG_FQN_CACHE.lock().unwrap().get(&self.blog_id) {
             return blog_fqn.to_string();
         }
@@ -310,7 +310,7 @@ impl Post {
         blog_fqn
     }
 
-    pub fn count_likes(&self, conn: &Connection) -> Result<i64> {
+    pub fn count_likes(&self, conn: &mut Connection) -> Result<i64> {
         use crate::schema::likes;
         likes::table
             .filter(likes::post_id.eq(self.id))
@@ -319,7 +319,7 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn count_reshares(&self, conn: &Connection) -> Result<i64> {
+    pub fn count_reshares(&self, conn: &mut Connection) -> Result<i64> {
         use crate::schema::reshares;
         reshares::table
             .filter(reshares::post_id.eq(self.id))
@@ -328,7 +328,7 @@ impl Post {
             .map_err(Error::from)
     }
 
-    pub fn get_receivers_urls(&self, conn: &Connection) -> Result<Vec<String>> {
+    pub fn get_receivers_urls(&self, conn: &mut Connection) -> Result<Vec<String>> {
         Ok(self
             .get_authors(conn)?
             .into_iter()
@@ -341,7 +341,7 @@ impl Post {
             }))
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<LicensedArticle> {
+    pub fn to_activity(&self, conn: &mut Connection) -> Result<LicensedArticle> {
         let cc = self.get_receivers_urls(conn)?;
         let to = vec![PUBLIC_VISIBILITY.to_string()];
 
@@ -373,8 +373,9 @@ impl Post {
         }))?;
         article.set_source(source);
         article.set_published(
-            OffsetDateTime::from_unix_timestamp_nanos(self.creation_date.timestamp_nanos().into())
-                .expect("OffsetDateTime"),
+            self.creation_date.and_utc().timestamp_nanos_opt()
+                .and_then(|cd| OffsetDateTime::from_unix_timestamp_nanos(cd.into()).ok())
+                .expect("OffsetDateTime")
         );
         article.set_summary(&*self.subtitle);
         article.set_many_tags(
@@ -414,7 +415,7 @@ impl Post {
         Ok(LicensedArticle::new(article, license))
     }
 
-    pub fn create_activity(&self, conn: &Connection) -> Result<Create> {
+    pub fn create_activity(&self, conn: &mut Connection) -> Result<Create> {
         let article = self.to_activity(conn)?;
         let to = article.to().ok_or(Error::MissingApProperty)?.clone();
         let cc = article.cc().ok_or(Error::MissingApProperty)?.clone();
@@ -428,7 +429,7 @@ impl Post {
         Ok(act)
     }
 
-    pub fn update_activity(&self, conn: &Connection) -> Result<Update> {
+    pub fn update_activity(&self, conn: &mut Connection) -> Result<Update> {
         let article = self.to_activity(conn)?;
         let to = article.to().ok_or(Error::MissingApProperty)?.clone();
         let cc = article.cc().ok_or(Error::MissingApProperty)?.clone();
@@ -444,7 +445,7 @@ impl Post {
         Ok(act)
     }
 
-    pub fn update_mentions(&self, conn: &Connection, mentions: Vec<link::Mention>) -> Result<()> {
+    pub fn update_mentions(&self, conn: &mut Connection, mentions: Vec<link::Mention>) -> Result<()> {
         let mentions = mentions
             .into_iter()
             .map(|m| {
@@ -482,7 +483,7 @@ impl Post {
         Ok(())
     }
 
-    pub fn update_tags(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
+    pub fn update_tags(&self, conn: &mut Connection, tags: Vec<Hashtag>) -> Result<()> {
         let tags_name = tags
             .iter()
             .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
@@ -519,7 +520,7 @@ impl Post {
         Ok(())
     }
 
-    pub fn update_hashtags(&self, conn: &Connection, tags: Vec<Hashtag>) -> Result<()> {
+    pub fn update_hashtags(&self, conn: &mut Connection, tags: Vec<Hashtag>) -> Result<()> {
         let tags_name = tags
             .iter()
             .filter_map(|t| t.name.as_ref().map(|name| name.as_str().to_string()))
@@ -556,18 +557,18 @@ impl Post {
         Ok(())
     }
 
-    pub fn url(&self, conn: &Connection) -> Result<String> {
+    pub fn url(&self, conn: &mut Connection) -> Result<String> {
         let blog = self.get_blog(conn)?;
         Ok(format!("/~/{}/{}", blog.fqn, self.slug))
     }
 
-    pub fn cover_url(&self, conn: &Connection) -> Option<String> {
+    pub fn cover_url(&self, conn: &mut Connection) -> Option<String> {
         self.cover_id
             .and_then(|i| Media::get(conn, i).ok())
             .and_then(|c| c.url().ok())
     }
 
-    pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
+    pub fn build_delete(&self, conn: &mut Connection) -> Result<Delete> {
         let mut tombstone = Tombstone::new();
         tombstone.set_id(self.ap_url.parse()?);
 
@@ -619,45 +620,31 @@ impl FromId<Connection> for Post {
     type Error = Error;
     type Object = LicensedArticle;
 
-    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
+    fn from_db(conn: &mut Connection, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &Connection, article: LicensedArticle) -> Result<Self> {
+    async fn from_activity(conn: &mut Connection, article: LicensedArticle) -> Result<Self> {
         let license = article.ext_one.license.unwrap_or_default();
         let article = article.inner;
 
-        let (blog, authors) = article
-            .ap_object_ref()
-            .attributed_to()
-            .ok_or(Error::MissingApProperty)?
-            .iter()
-            .fold((None, vec![]), |(blog, mut authors), link| {
-                if let Some(url) = link.id() {
-                    match User::from_id(conn, url.as_str(), None, CONFIG.proxy()) {
-                        Ok(u) => {
-                            authors.push(u);
-                            (blog, authors)
-                        }
-                        Err(_) => (
-                            blog.or_else(|| {
-                                Blog::from_id(conn, url.as_str(), None, CONFIG.proxy()).ok()
-                            }),
-                            authors,
-                        ),
-                    }
-                } else {
-                    // logically, url possible to be an object without id proprty like {"type":"Person", "name":"Sally"} but we ignore the case
-                    (blog, authors)
-                }
-            });
+        let mut authors: Vec<User> = vec![];
+        let mut blog: Option<Blog> = None;
+        for link in article.ap_object_ref().attributed_to().ok_or(Error::MissingApProperty)? {
+            if let Some(url) = link.id() {
+                match User::from_id(conn, url.as_str(), None, CONFIG.proxy()).await {
+                    Ok(u) => authors.push(u),
+                    Err(_) => blog = Blog::from_id(conn, url.as_str(), None, CONFIG.proxy()).await.ok(),
+                };
+            }
+        }
 
-        let cover = article.icon().and_then(|icon| {
-            icon.iter().next().and_then(|img| {
-                let image = img.to_owned().extend::<Image, ImageType>().ok()??;
-                Media::from_activity(conn, &image).ok().map(|m| m.id)
-            })
-        });
+        let cover = match article.icon()
+                .and_then(|icon| icon.iter().next() )
+                .and_then(|icon| icon.to_owned().extend::<Image, ImageType>().ok().flatten() ) {
+            Some(image) => Media::from_activity(conn, &image).await.ok().map(|m| m.id),
+            None => None,
+        };
 
         let title = article
             .name()
@@ -754,13 +741,14 @@ impl FromId<Connection> for Post {
                         ap_url,
                         creation_date: article.published().map(|published| {
                             let timestamp_secs = published.unix_timestamp();
-                            let timestamp_nanos = published.unix_timestamp_nanos()
-                                - (timestamp_secs as i128) * 1000i128 * 1000i128 * 1000i128;
-                            NaiveDateTime::from_timestamp_opt(
+                            let timestamp_nanos = published.unix_timestamp_nanos() - (timestamp_secs as i128) * 1000i128 * 1000i128 * 1000i128;
+
+                            chrono::DateTime::from_timestamp(
                                 timestamp_secs,
                                 timestamp_nanos as u32,
                             )
-                            .unwrap()
+                            .expect("invalid timestamp")
+                            .naive_utc()
                         }),
                         subtitle: article
                             .summary()
@@ -811,7 +799,7 @@ impl FromId<Connection> for Post {
             }
         }
 
-        Timeline::add_to_all_timelines(conn, &post, Kind::Original)?;
+        Timeline::add_to_all_timelines(conn, &post, &Kind::Original).await?;
 
         Ok(post)
     }
@@ -821,21 +809,21 @@ impl FromId<Connection> for Post {
     }
 }
 
-impl AsObject<User, Create, &Connection> for Post {
+impl AsObject<User, Create, &mut Connection> for Post {
     type Error = Error;
     type Output = Self;
 
-    fn activity(self, _conn: &Connection, _actor: User, _id: &str) -> Result<Self::Output> {
+    async fn activity(self, _conn: &mut Connection, _actor: User, _id: &str) -> Result<Self::Output> {
         // TODO: check that _actor is actually one of the author?
         Ok(self)
     }
 }
 
-impl AsObject<User, Delete, &Connection> for Post {
+impl AsObject<User, Delete, &mut Connection> for Post {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<Self::Output> {
+    async fn activity(self, conn: &mut Connection, actor: User, _id: &str) -> Result<Self::Output> {
         let can_delete = self
             .get_authors(conn)?
             .into_iter()
@@ -863,12 +851,12 @@ impl FromId<Connection> for PostUpdate {
     type Error = Error;
     type Object = LicensedArticle;
 
-    fn from_db(_: &Connection, _: &str) -> Result<Self> {
+    fn from_db(_: &mut Connection, _: &str) -> Result<Self> {
         // Always fail because we always want to deserialize the AP object
         Err(Error::NotFound)
     }
 
-    fn from_activity(conn: &Connection, updated: Self::Object) -> Result<Self> {
+    async fn from_activity(conn: &mut Connection, updated: Self::Object) -> Result<Self> {
         let mut post_update = PostUpdate {
             ap_url: updated
                 .ap_object_ref()
@@ -902,17 +890,13 @@ impl FromId<Connection> for PostUpdate {
                 .tag()
                 .and_then(|tags| serde_json::to_value(tags).ok()),
         };
-        post_update.cover = updated.ap_object_ref().icon().and_then(|img| {
-            img.iter()
-                .next()
-                .and_then(|img| {
-                    img.clone()
-                        .extend::<Image, ImageType>()
-                        .map(|img| img.and_then(|img| Media::from_activity(conn, &img).ok()))
-                        .ok()
-                })
-                .and_then(|m| m.map(|m| m.id))
-        });
+        let cover = match updated.ap_object_ref().icon()
+                .and_then(|img| img.iter().next())
+                .and_then(|img| img.clone().extend::<Image, ImageType>().ok().flatten() ) {
+            Some(img) => Media::from_activity(conn, &img).await.ok().map(|m| m.id),
+            None => None,
+        };
+        post_update.cover = cover;
         post_update.license = updated.ext_one.license;
 
         Ok(post_update)
@@ -923,13 +907,13 @@ impl FromId<Connection> for PostUpdate {
     }
 }
 
-impl AsObject<User, Update, &Connection> for PostUpdate {
+impl AsObject<User, Update, &mut Connection> for PostUpdate {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
+    async fn activity(self, conn: &mut Connection, actor: User, _id: &str) -> Result<()> {
         let mut post =
-            Post::from_id(conn, &self.ap_url, None, CONFIG.proxy()).map_err(|(_, e)| e)?;
+            Post::from_id(conn, &self.ap_url, None, CONFIG.proxy()).await.map_err(|(_, e)| e)?;
 
         if !post.is_author(conn, actor.id)? {
             // TODO: maybe the author was added in the meantime

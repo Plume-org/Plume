@@ -1,9 +1,9 @@
-@use crate::templates::errors::base;
+@use crate::templates::errors::base_html;
 @use crate::template_utils::*;
 
 @(ctx: BaseContext)
 
-@:base(ctx, i18n!(ctx.1, "Internal server error"), {
+@:base_html(ctx, i18n!(ctx.1, "Internal server error"), {
   <h1>@i18n!(ctx.1, "Something broke on our side.")</h1>
   <p>@i18n!(ctx.1, "Sorry about that. If you think this is a bug, please report it.")</p>
 })

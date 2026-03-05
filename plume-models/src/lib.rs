@@ -1,13 +1,7 @@
-#![feature(never_type)]
-#![feature(proc_macro_hygiene)]
-#![feature(box_patterns)]
-
 #[macro_use]
 extern crate diesel;
 #[macro_use]
 extern crate lazy_static;
-#[macro_use]
-extern crate plume_macro;
 #[macro_use]
 extern crate rocket;
 extern crate serde_derive;
@@ -17,8 +11,6 @@ extern crate serde_json;
 extern crate tantivy;
 
 use activitystreams::iri_string;
-pub use lettre;
-pub use lettre::smtp;
 use once_cell::sync::Lazy;
 use plume_common::activity_pub::{inbox::InboxError, request, sign};
 use posts::PostEvent;
@@ -197,7 +189,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 macro_rules! find_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ty),+) => {
         /// Try to find a $table with a given $col
-        pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Result<Self> {
+        pub fn $fn(conn: &mut crate::Connection, $($col: $type),+) -> Result<Self> {
             $table::table
                 $(.filter($table::$col.eq($col)))+
                 .first(conn)
@@ -221,7 +213,7 @@ macro_rules! find_by {
 macro_rules! list_by {
     ($table:ident, $fn:ident, $($col:ident as $type:ty),+) => {
         /// Try to find a $table with a given $col
-        pub fn $fn(conn: &crate::Connection, $($col: $type),+) -> Result<Vec<Self>> {
+        pub fn $fn(conn: &mut crate::Connection, $($col: $type),+) -> Result<Vec<Self>> {
             $table::table
                 $(.filter($table::$col.eq($col)))+
                 .load::<Self>(conn)
@@ -244,7 +236,7 @@ macro_rules! list_by {
 /// ```
 macro_rules! get {
     ($table:ident) => {
-        pub fn get(conn: &crate::Connection, id: i32) -> Result<Self> {
+        pub fn get(conn: &mut crate::Connection, id: i32) -> Result<Self> {
             $table::table
                 .filter($table::id.eq(id))
                 .first(conn)
@@ -273,7 +265,7 @@ macro_rules! insert {
         last!($table);
 
         #[allow(dead_code)]
-        pub fn insert(conn: &crate::Connection, new: $from) -> Result<Self> {
+        pub fn insert(conn: &mut crate::Connection, new: $from) -> Result<Self> {
             diesel::insert_into($table::table)
                 .values(new)
                 .execute(conn)?;
@@ -300,7 +292,7 @@ macro_rules! insert {
 macro_rules! last {
     ($table:ident) => {
         #[allow(dead_code)]
-        pub fn last(conn: &crate::Connection) -> Result<Self> {
+        pub fn last(conn: &mut crate::Connection) -> Result<Self> {
             $table::table
                 .order_by($table::id.desc())
                 .first(conn)
@@ -314,33 +306,6 @@ pub use config::CONFIG;
 
 pub fn ap_url(url: &str) -> String {
     format!("https://{}", url)
-}
-
-pub trait SmtpNewWithAddr {
-    fn new_with_addr(
-        addr: (&str, u16),
-    ) -> std::result::Result<smtp::SmtpClient, smtp::error::Error>;
-}
-
-impl SmtpNewWithAddr for smtp::SmtpClient {
-    // Stolen from lettre::smtp::SmtpClient::new_simple()
-    fn new_with_addr(addr: (&str, u16)) -> std::result::Result<Self, smtp::error::Error> {
-        use native_tls::TlsConnector;
-        use smtp::{
-            client::net::{ClientTlsParameters, DEFAULT_TLS_PROTOCOLS},
-            ClientSecurity, SmtpClient,
-        };
-
-        let (domain, port) = addr;
-
-        let mut tls_builder = TlsConnector::builder();
-        tls_builder.min_protocol_version(Some(DEFAULT_TLS_PROTOCOLS[0]));
-
-        let tls_parameters =
-            ClientTlsParameters::new(domain.to_string(), tls_builder.build().unwrap());
-
-        SmtpClient::new((domain, port), ClientSecurity::Wrapper(tls_parameters))
-    }
 }
 
 #[cfg(test)]
@@ -373,9 +338,7 @@ mod tests {
                 .connection_customizer(Box::new(db_conn::tests::TestConnectionCustomizer))
                 .build(ConnectionManager::<Conn>::new(CONFIG.database_url.as_str()))
                 .unwrap();
-            let dir = temp_dir().join(format!("plume-test-{}", random_hex()));
-            IMPORTED_MIGRATIONS
-                .run_pending_migrations(&pool.get().unwrap(), &dir)
+            plume_models::migrations::run_pending_migrations(&pool.get().unwrap())
                 .expect("Migrations error");
             pool
         };

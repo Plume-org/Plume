@@ -1,53 +1,52 @@
-@use plume_models::posts::Post;
 @use crate::template_utils::*;
 @use crate::routes::*;
 
-@(ctx: BaseContext, article: Post)
+@(ctx: BaseContext, pc: PostCard)
 
 <div class="card h-entry">
-    @if article.cover_id.is_some() {
-    <a class="cover-link" href="@uri!(posts::details: blog = article.get_blog_fqn(ctx.0), slug = &article.slug, responding_to = _)">
-      <div class="cover" style="background-image: url('@Html(article.cover_url(ctx.0).unwrap_or_default())')"></div>
+    @if pc.post.cover_id.is_some() {
+    <a class="cover-link" href="@uri!(posts::details(blog = &pc.blog_fqn, slug = &pc.post.slug, responding_to = _))">
+      <div class="cover" style="background-image: url('@Html(pc.cover_url)')"></div>
     </a>
     }
     <header dir="auto">
         <h3 class="p-name">
-            <a class="u-url" href="@uri!(posts::details: blog = article.get_blog_fqn(ctx.0), slug = &article.slug, responding_to = _)">
-                @article.title
+            <a class="u-url" href="@uri!(posts::details(blog = &pc.blog_fqn, slug = &pc.post.slug, responding_to = _))">
+                @pc.post.title
             </a>
         </h3>
-        @if ctx.2.clone().and_then(|u| article.is_author(ctx.0, u.id).ok()).unwrap_or(false) {
+        @if pc.is_author {
             <div class="controls">
-                <a class="button" href="@uri!(posts::edit: blog = &article.get_blog_fqn(ctx.0), slug = &article.slug)">@i18n!(ctx.1, "Edit")</a>
+                <a class="button" href="@uri!(posts::edit(blog = &pc.blog_fqn, slug = &pc.post.slug))">@i18n!(ctx.1, "Edit")</a>
             </div>
         }
     </header>
     <main>
-        <p class="p-summary" dir="auto">@article.subtitle</p>
+        <p class="p-summary" dir="auto">@pc.post.subtitle</p>
     </main>
     <footer class="authors">
         <div>
             @Html(i18n!(ctx.1, "By {0}"; format!(
                 "<a class=\"p-author h-card\" href=\"{}\">{}</a>",
-                uri!(user::details: name = &article.get_authors(ctx.0).unwrap_or_default()[0].fqn),
-                escape(&article.get_authors(ctx.0).unwrap_or_default()[0].name())
+                uri!(user::details(name = &pc.author.fqn)),
+                escape(&pc.author.name())
             )))
-            @if article.published {
-                ⋅ <span class="dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span>
+            @if pc.post.published {
+                ⋅ <span class="dt-published" datetime="@pc.post.creation_date.format("%F %T")">@pc.post.creation_date.format("%B %e, %Y")</span>
             }
-            ⋅ <a href="@uri!(blogs::details: name = &article.get_blog_fqn(ctx.0), page = _)">@article.get_blog(ctx.0).unwrap().title</a>
+            ⋅ <a href="@uri!(blogs::details(name = &pc.blog_fqn, page = _))">@pc.blog.title</a>
             ⋅
         </div>
-        @if !article.published {
+        @if !pc.post.published {
             <div>⋅ @i18n!(ctx.1, "Draft")</div>
         } else {
             <div>
-                <span class="likes" aria-label="@i18n!(ctx.1, "One like", "{0} likes"; article.count_likes(ctx.0).unwrap_or_default())" title="@i18n!(ctx.1, "One like", "{0} likes"; article.count_likes(ctx.0).unwrap_or_default())">
-                    @icon!("heart") @article.count_likes(ctx.0).unwrap_or_default()
+                <span class="likes" aria-label="@i18n!(ctx.1, "One like", "{0} likes"; pc.count_likes)" title="@i18n!(ctx.1, "One like", "{0} likes"; pc.count_likes)">
+                    @icon!("heart") @pc.count_likes
                 </span>
                 ⋅
-                <span class="reshares" aria-label="@i18n!(ctx.1, "One like", "{0} boost"; article.count_reshares(ctx.0).unwrap_or_default())" title="@i18n!(ctx.1, "One boost", "{0} boosts"; article.count_reshares(ctx.0).unwrap_or_default())">
-                    @icon!("repeat") @article.count_reshares(ctx.0).unwrap_or_default()
+                <span class="reshares" aria-label="@i18n!(ctx.1, "One like", "{0} boost"; pc.count_reshares)" title="@i18n!(ctx.1, "One boost", "{0} boosts"; pc.count_reshares)">
+                    @icon!("repeat") @pc.count_reshares
                 </span>
             </div>
         }

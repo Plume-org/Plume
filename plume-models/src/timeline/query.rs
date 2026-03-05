@@ -19,11 +19,11 @@ pub enum QueryError {
 
 pub type QueryResult<T> = std::result::Result<T, QueryError>;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Kind<'a> {
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Kind {
     Original,
-    Reshare(&'a User),
-    Like(&'a User),
+    Reshare(User),
+    Like(User),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -152,21 +152,37 @@ enum TQ<'a> {
 }
 
 impl<'a> TQ<'a> {
-    fn matches(
+
+    #[async_recursion::async_recursion]
+    async fn matches(
         &self,
-        conn: &Connection,
+        conn: &mut Connection,
         timeline: &Timeline,
         post: &Post,
-        kind: Kind<'_>,
+        kind: &Kind,
     ) -> Result<bool> {
         match self {
-            TQ::Or(inner) => inner.iter().try_fold(false, |s, e| {
-                e.matches(conn, timeline, post, kind).map(|r| s || r)
-            }),
-            TQ::And(inner) => inner.iter().try_fold(true, |s, e| {
-                e.matches(conn, timeline, post, kind).map(|r| s && r)
-            }),
-            TQ::Arg(inner, invert) => Ok(inner.matches(conn, timeline, post, kind)? ^ invert),
+            TQ::Or(inner) =>  {
+                let mut res = false;
+                for e in inner {
+                    res = e.matches(conn, timeline, post, kind).await?;
+                    if res {
+                        break;
+                    }
+                }
+                Ok(res)
+            },
+            TQ::And(inner) => {
+                let mut res = true;
+                for e in inner {
+                    res = res && e.matches(conn, timeline, post, kind).await?;
+                    if !res {
+                        break;
+                    }
+                }
+                Ok(res)
+            },
+            TQ::Arg(inner, invert) => Ok(inner.matches(conn, timeline, post, kind).await? ^ invert),
         }
     }
 
@@ -197,15 +213,15 @@ enum Arg<'a> {
 }
 
 impl<'a> Arg<'a> {
-    pub fn matches(
+    pub async fn matches(
         &self,
-        conn: &Connection,
+        conn: &mut Connection,
         timeline: &Timeline,
         post: &Post,
-        kind: Kind<'_>,
+        kind: &Kind,
     ) -> Result<bool> {
         match self {
-            Arg::In(t, l) => t.matches(conn, timeline, post, l, kind),
+            Arg::In(t, l) => t.matches(conn, timeline, post, l, kind).await,
             Arg::Contains(t, v) => t.matches(post, v),
             Arg::Boolean(t) => t.matches(conn, timeline, post, kind),
         }
@@ -222,13 +238,13 @@ enum WithList {
 }
 
 impl WithList {
-    pub fn matches(
+    pub async fn matches(
         &self,
-        conn: &Connection,
+        conn: &mut Connection,
         timeline: &Timeline,
         post: &Post,
         list: &List<'_>,
-        kind: Kind<'_>,
+        kind: &Kind,
     ) -> Result<bool> {
         match list {
             List::List(name) => {
@@ -284,15 +300,31 @@ impl WithList {
                 }
             }
             List::Array(list) => match self {
-                WithList::Blog => Ok(list
-                    .iter()
-                    .filter_map(|b| Blog::find_by_fqn(conn, b).ok())
-                    .any(|b| b.id == post.blog_id)),
+                WithList::Blog => {
+                    let mut res = false;
+                    for l in list {
+                        if let Ok(b) = Blog::find_by_fqn(conn, l).await {
+                            if b.id == post.blog_id {
+                                res = true;
+                                break;
+                            }
+                        };
+                    }
+                    Ok(res)
+                },
                 WithList::Author { boosts, likes } => match kind {
-                    Kind::Original => Ok(list
-                        .iter()
-                        .filter_map(|a| User::find_by_fqn(conn, a).ok())
-                        .any(|a| post.is_author(conn, a.id).unwrap_or(false))),
+                    Kind::Original => {
+                        let mut res = false;
+                        for l in list {
+                            if let Ok(u) = User::find_by_fqn(conn, l).await {
+                                if post.is_author(conn, u.id).unwrap_or(false) {
+                                    res = true;
+                                    break;
+                                }
+                            };
+                        }
+                        Ok(res)
+                    },
                     Kind::Reshare(u) => {
                         if *boosts {
                             Ok(list.iter().any(|user| &u.fqn == user))
@@ -360,10 +392,10 @@ enum Bool {
 impl Bool {
     pub fn matches(
         &self,
-        conn: &Connection,
+        conn: &mut Connection,
         timeline: &Timeline,
         post: &Post,
-        kind: Kind<'_>,
+        kind: &Kind,
     ) -> Result<bool> {
         match self {
             Bool::Followed { boosts, likes } => {
@@ -393,8 +425,8 @@ impl Bool {
                 }
             }
             Bool::HasCover => Ok(post.cover_id.is_some()),
-            Bool::Local => Ok(post.get_blog(conn)?.is_local() && kind == Kind::Original),
-            Bool::All => Ok(kind == Kind::Original),
+            Bool::Local => Ok(post.get_blog(conn)?.is_local() && *kind == Kind::Original),
+            Bool::All => Ok(*kind == Kind::Original),
         }
     }
 }
@@ -651,14 +683,14 @@ impl<'a> TimelineQuery<'a> {
             .map(TimelineQuery)
     }
 
-    pub fn matches(
+    pub async fn matches(
         &self,
-        conn: &Connection,
+        conn: &mut Connection,
         timeline: &Timeline,
         post: &Post,
-        kind: Kind<'_>,
+        kind: &Kind,
     ) -> Result<bool> {
-        self.0.matches(conn, timeline, post, kind)
+        self.0.matches(conn, timeline, post, kind).await
     }
 
     pub fn list_used_lists(&self) -> Vec<(String, ListType)> {

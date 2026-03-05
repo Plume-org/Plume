@@ -1,5 +1,6 @@
 use crate::{
     blocklisted_emails::BlocklistedEmail,
+    Connection,
     db_conn::DbConn,
     schema::email_signups,
     users::{NewUser, Role, User},
@@ -52,7 +53,7 @@ pub struct EmailSignup {
 }
 
 #[derive(Insertable)]
-#[table_name = "email_signups"]
+#[diesel(table_name = email_signups)]
 pub struct NewEmailSignup<'a> {
     pub email: &'a str,
     pub token: &'a str,
@@ -60,10 +61,10 @@ pub struct NewEmailSignup<'a> {
 }
 
 impl EmailSignup {
-    pub fn start(conn: &DbConn, email: &str) -> Result<Token> {
+    pub fn start(conn: &mut DbConn, email: &str) -> Result<Token> {
         Self::ensure_email_not_blocked(conn, email)?;
 
-        conn.transaction(|| {
+        conn.transaction(|conn| {
             Self::ensure_user_not_exist_by_email(conn, email)?;
             let _rows = Self::delete_existings_by_email(conn, email)?;
             let token = Token::generate();
@@ -78,24 +79,24 @@ impl EmailSignup {
             };
             let _rows = diesel::insert_into(email_signups::table)
                 .values(new_signup)
-                .execute(&**conn)?;
+                .execute(conn)?;
 
             Ok(token)
         })
     }
 
-    pub fn find_by_token(conn: &DbConn, token: Token) -> Result<Self> {
+    pub fn find_by_token(conn: &mut DbConn, token: Token) -> Result<Self> {
         let signup = email_signups::table
             .filter(email_signups::token.eq(token.as_str()))
-            .first::<Self>(&**conn)
+            .first::<Self>(&mut **conn)
             .map_err(Error::from)?;
         Ok(signup)
     }
 
-    pub fn confirm(&self, conn: &DbConn) -> Result<()> {
+    pub fn confirm(&self, conn: &mut DbConn) -> Result<()> {
         Self::ensure_email_not_blocked(conn, &self.email)?;
 
-        conn.transaction(|| {
+        conn.transaction(|conn| {
             Self::ensure_user_not_exist_by_email(conn, &self.email)?;
             if self.expired() {
                 Self::delete_existings_by_email(conn, &self.email)?;
@@ -105,10 +106,10 @@ impl EmailSignup {
         })
     }
 
-    pub fn complete(&self, conn: &DbConn, username: String, password: String) -> Result<User> {
+    pub fn complete(&self, conn: &mut DbConn, username: String, password: String) -> Result<User> {
         Self::ensure_email_not_blocked(conn, &self.email)?;
 
-        conn.transaction(|| {
+        conn.transaction(|conn| {
             Self::ensure_user_not_exist_by_email(conn, &self.email)?;
             let user = NewUser::new_local(
                 conn,
@@ -124,12 +125,12 @@ impl EmailSignup {
         })
     }
 
-    fn delete(&self, conn: &DbConn) -> Result<()> {
-        let _rows = diesel::delete(self).execute(&**conn).map_err(Error::from)?;
+    fn delete(&self, conn: &mut Connection) -> Result<()> {
+        let _rows = diesel::delete(self).execute(conn).map_err(Error::from)?;
         Ok(())
     }
 
-    fn ensure_email_not_blocked(conn: &DbConn, email: &str) -> Result<()> {
+    fn ensure_email_not_blocked(conn: &mut DbConn, email: &str) -> Result<()> {
         if let Some(x) = BlocklistedEmail::matches_blocklist(conn, email)? {
             Err(Error::Blocklisted(x.notify_user, x.notification_text))
         } else {
@@ -137,7 +138,7 @@ impl EmailSignup {
         }
     }
 
-    fn ensure_user_not_exist_by_email(conn: &DbConn, email: &str) -> Result<()> {
+    fn ensure_user_not_exist_by_email(conn: &mut Connection, email: &str) -> Result<()> {
         if User::email_used(conn, email)? {
             let _rows = Self::delete_existings_by_email(conn, email)?;
             return Err(Error::UserAlreadyExists);
@@ -145,10 +146,10 @@ impl EmailSignup {
         Ok(())
     }
 
-    fn delete_existings_by_email(conn: &DbConn, email: &str) -> Result<usize> {
+    fn delete_existings_by_email(conn: &mut Connection, email: &str) -> Result<usize> {
         let existing_signups = email_signups::table.filter(email_signups::email.eq(email));
         diesel::delete(existing_signups)
-            .execute(&**conn)
+            .execute(conn)
             .map_err(Error::from)
     }
 

@@ -11,7 +11,7 @@ pub struct PasswordResetRequest {
 }
 
 #[derive(Insertable)]
-#[table_name = "password_reset_requests"]
+#[diesel(table_name = password_reset_requests)]
 pub struct NewPasswordResetRequest {
     pub email: String,
     pub token: String,
@@ -21,7 +21,7 @@ pub struct NewPasswordResetRequest {
 const TOKEN_VALIDITY_HOURS: i64 = 2;
 
 impl PasswordResetRequest {
-    pub fn insert(conn: &Connection, email: &str) -> Result<String> {
+    pub fn insert(conn: &mut Connection, email: &str) -> Result<String> {
         // first, delete other password reset tokens associated with this email:
         let existing_requests =
             password_reset_requests::table.filter(password_reset_requests::email.eq(email));
@@ -47,7 +47,7 @@ impl PasswordResetRequest {
         Ok(token)
     }
 
-    pub fn find_by_token(conn: &Connection, token: &str) -> Result<Self> {
+    pub fn find_by_token(conn: &mut Connection, token: &str) -> Result<Self> {
         let token = password_reset_requests::table
             .filter(password_reset_requests::token.eq(token))
             .first::<Self>(conn)
@@ -60,7 +60,7 @@ impl PasswordResetRequest {
         Ok(token)
     }
 
-    pub fn find_and_delete_by_token(conn: &Connection, token: &str) -> Result<Self> {
+    pub fn find_and_delete_by_token(conn: &mut Connection, token: &str) -> Result<Self> {
         let request = Self::find_by_token(conn, token)?;
 
         let filter =

@@ -5,30 +5,30 @@ authors = ["Plume contributors"]
 edition = "2018"
 
 [dependencies]
-array_tool = "1.0"
-base64 = "0.13"
-hex = "0.4"
-openssl = "0.10.40"
-rocket = "0.4.11"
-reqwest = { version = "0.11.11", features = ["blocking", "json", "socks"] }
-serde = "1.0.137"
-serde_derive = "1.0"
-serde_json = "1.0.81"
+array_tool = "1.0.3"
+base64 = "0.22.1"
+hex = "0.4.3"
+openssl = "0.10.75"
+rocket = { version = "0.5.1", features = ["json"], default-features = false }
+reqwest = { version = "0.13.2", features = ["blocking", "json", "socks"] }
+serde = "1.0.228"
+serde_derive = "1.0.228"
+serde_json = "1.0.149"
 shrinkwraprs = "0.3.0"
-syntect = "4.5.0"
-regex-syntax = { version = "0.6.26", default-features = false, features = ["unicode-perl"] }
-tracing = "0.1.35"
-askama_escape = "0.10.3"
-activitystreams = "=0.7.0-alpha.20"
-activitystreams-ext = "0.1.0-alpha.2"
-url = "2.2.2"
-flume = "0.10.13"
-tokio = { version = "1.19.2", features = ["full"] }
-futures = "0.3.25"
+syntect = "5.3.0"
+regex-syntax = { version = "0.8.10", default-features = false, features = ["unicode-perl"] }
+tracing = "0.1.44"
+askama_escape = "0.15.4"
+activitystreams = "=0.7.0-alpha.25"
+activitystreams-ext = "0.1.0-alpha.3"
+url = "2.5.8"
+flume = "0.12.0"
+tokio = { version = "1.50.0", features = ["full"] }
+futures = "0.3.32"
 
 [dependencies.chrono]
 features = ["serde"]
-version = "0.4"
+version = "0.4.44"
 
 [dependencies.pulldown-cmark]
 default-features = false
@@ -36,7 +36,7 @@ git = "https://git.joinplu.me/Plume/pulldown-cmark"
 branch = "bidi-plume"
 
 [dev-dependencies]
-assert-json-diff = "2.0.1"
-once_cell = "1.12.0"
+assert-json-diff = "2.0.2"
+once_cell = "1.21.3"
 
 [features]

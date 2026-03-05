@@ -1,8 +1,9 @@
 use rocket::{
-    request::{Form, FormItems, FromForm, LenientForm},
+    FromForm,
+    form::Form,
     response::{status, Flash, Redirect},
 };
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 use rocket_i18n::I18n;
 use scheduled_thread_pool::ScheduledThreadPool;
 use std::str::FromStr;
@@ -10,7 +11,7 @@ use validator::{Validate, ValidationErrors};
 
 use crate::inbox;
 use crate::routes::{errors::ErrorPage, rocket_uri_macro_static_files, Page, RespondOrRedirect};
-use crate::template_utils::{IntoContext, Ructe};
+use crate::template_utils::{IntoContext, PostCard, Ructe};
 use plume_common::activity_pub::{broadcast, inbox::FromId};
 use plume_models::{
     admin::*,
@@ -27,21 +28,26 @@ use plume_models::{
 };
 
 #[get("/")]
-pub fn index(conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    let all_tl = Timeline::list_all_for_user(&conn, rockets.user.clone().map(|u| u.id))?;
+pub fn index(mut conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let all_tl = Timeline::list_all_for_user(&mut conn, rockets.user.clone().map(|u| u.id))?;
     if all_tl.is_empty() {
         Err(Error::NotFound.into())
     } else {
         let inst = Instance::get_local()?;
         let page = Page::default();
         let tl = &all_tl[0];
-        let posts = tl.get_page(&conn, page.limits())?;
-        let total_posts = tl.count_posts(&conn)?;
-        Ok(render!(instance::index(
-            &(&conn, &rockets).to_context(),
+        let total_posts = tl.count_posts(&mut conn)?;
+        let user_count = User::count_local(&mut conn)?;
+        let post_count = Post::count_local(&mut conn)?;
+
+        let pages = tl.get_page(&mut conn, page.limits())?;
+        let posts = PostCard::from_posts(&mut conn, pages, &rockets.user);
+
+        Ok(render!(instance::index_html(
+            &(&mut conn, &rockets).to_context(),
             inst,
-            User::count_local(&conn)?,
-            Post::count_local(&conn)?,
+            user_count,
+            post_count,
             tl.id,
             posts,
             all_tl,
@@ -51,10 +57,10 @@ pub fn index(conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
 }
 
 #[get("/admin")]
-pub fn admin(_admin: InclusiveAdmin, conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+pub fn admin(_admin: InclusiveAdmin, mut conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
     let local_inst = Instance::get_local()?;
-    Ok(render!(instance::admin(
-        &(&conn, &rockets).to_context(),
+    Ok(render!(instance::admin_html(
+        &(&mut conn, &rockets).to_context(),
         local_inst.clone(),
         InstanceSettingsForm {
             name: local_inst.name.clone(),
@@ -68,8 +74,8 @@ pub fn admin(_admin: InclusiveAdmin, conn: DbConn, rockets: PlumeRocket) -> Resu
 }
 
 #[get("/admin", rank = 2)]
-pub fn admin_mod(_mod: Moderator, conn: DbConn, rockets: PlumeRocket) -> Ructe {
-    render!(instance::admin_mod(&(&conn, &rockets).to_context()))
+pub fn admin_mod(_mod: Moderator, mut conn: DbConn, rockets: PlumeRocket) -> Ructe {
+    render!(instance::admin_mod_html(&(&mut conn, &rockets).to_context()))
 }
 
 #[derive(Clone, FromForm, Validate)]
@@ -86,15 +92,15 @@ pub struct InstanceSettingsForm {
 #[post("/admin", data = "<form>")]
 pub fn update_settings(
     _admin: Admin,
-    form: LenientForm<InstanceSettingsForm>,
-    conn: DbConn,
+    form: Form<InstanceSettingsForm>,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
     if let Err(e) = form.validate() {
         let local_inst =
             Instance::get_local().expect("instance::update_settings: local instance error");
-        render!(instance::admin(
-            &(&conn, &rockets).to_context(),
+        render!(instance::admin_html(
+            &(&mut conn, &rockets).to_context(),
             local_inst,
             form.clone(),
             e
@@ -105,7 +111,7 @@ pub fn update_settings(
             Instance::get_local().expect("instance::update_settings: local instance error");
         instance
             .update(
-                &conn,
+                &mut conn,
                 form.name.clone(),
                 form.open_registrations,
                 form.short_description.clone(),
@@ -125,37 +131,38 @@ pub fn update_settings(
 pub fn admin_instances(
     _mod: Moderator,
     page: Option<Page>,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let instances = Instance::page(&conn, page.limits())?;
-    Ok(render!(instance::list(
-        &(&conn, &rockets).to_context(),
+    let instances = Instance::page(&mut conn, page.limits())?;
+    let page_total = Page::total(Instance::count(&mut conn)? as i32);
+    Ok(render!(instance::list_html(
+        &(&mut conn, &rockets).to_context(),
         Instance::get_local()?,
         instances,
         page.0,
-        Page::total(Instance::count(&conn)? as i32)
+        page_total
     )))
 }
 
 #[post("/admin/instances/<id>/block")]
 pub fn toggle_block(
     _mod: Moderator,
-    conn: DbConn,
+    mut conn: DbConn,
     id: i32,
     intl: I18n,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    let inst = Instance::get(&conn, id)?;
+    let inst = Instance::get(&mut conn, id)?;
     let message = if inst.blocked {
         i18n!(intl.catalog, "{} has been unblocked."; &inst.name)
     } else {
         i18n!(intl.catalog, "{} has been blocked."; &inst.name)
     };
 
-    inst.toggle_block(&conn)?;
+    inst.toggle_block(&mut conn)?;
     Ok(Flash::success(
-        Redirect::to(uri!(admin_instances: page = _)),
+        Redirect::to(uri!(admin_instances(page = _))),
         message,
     ))
 }
@@ -164,67 +171,73 @@ pub fn toggle_block(
 pub fn admin_users(
     _mod: Moderator,
     page: Option<Page>,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    Ok(render!(instance::users(
-        &(&conn, &rockets).to_context(),
-        User::get_local_page(&conn, page.limits())?,
+    let page_total = Page::total(User::count_local(&mut conn)? as i32);
+
+    let users = User::get_local_page(&mut conn, page.limits())?
+        .into_iter()
+        .map(|u| {
+            let avatar_url = u.avatar_url(&mut conn);
+            (u, avatar_url)
+        })
+        .collect();
+
+    Ok(render!(instance::users_html(
+        &(&mut conn, &rockets).to_context(),
+        users,
         None,
         page.0,
-        Page::total(User::count_local(&conn)? as i32)
+        page_total
     )))
 }
 #[get("/admin/users?<user>&<page>", rank = 1)]
 pub fn admin_search_users(
     _mod: Moderator,
-    user: String,
+    user: &str,
     page: Option<Page>,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    let users = if user.is_empty() {
-        User::get_local_page(&conn, page.limits())?
-    } else {
-        User::search_local_by_name(&conn, &user, page.limits())?
-    };
+    let page_total = Page::total(User::count_local(&mut conn)? as i32);
 
-    Ok(render!(instance::users(
-        &(&conn, &rockets).to_context(),
+    let users = (if user.is_empty() {
+        User::get_local_page(&mut conn, page.limits())?
+    } else {
+        User::search_local_by_name(&mut conn, user, page.limits())?
+    }).into_iter()
+        .map(|u| {
+            let avatar_url = u.avatar_url(&mut conn);
+            (u, avatar_url)
+        })
+        .collect();
+
+    Ok(render!(instance::users_html(
+        &(&mut conn, &rockets).to_context(),
         users,
-        Some(user.as_str()),
+        Some(user),
         page.0,
-        Page::total(User::count_local(&conn)? as i32)
+        page_total
     )))
 }
+
+#[derive(FromForm)]
 pub struct BlocklistEmailDeletion {
     ids: Vec<i32>,
-}
-impl<'f> FromForm<'f> for BlocklistEmailDeletion {
-    type Error = ();
-    fn from_form(items: &mut FormItems<'f>, _strict: bool) -> Result<BlocklistEmailDeletion, ()> {
-        let mut c: BlocklistEmailDeletion = BlocklistEmailDeletion { ids: Vec::new() };
-        for item in items {
-            let key = item.key.parse::<i32>();
-            if let Ok(i) = key {
-                c.ids.push(i);
-            }
-        }
-        Ok(c)
-    }
 }
 #[post("/admin/emails/delete", data = "<form>")]
 pub fn delete_email_blocklist(
     _mod: Moderator,
     form: Form<BlocklistEmailDeletion>,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    BlocklistedEmail::delete_entries(&conn, form.0.ids)?;
+    BlocklistedEmail::delete_entries(&mut conn, &form.ids)?;
     Ok(Flash::success(
-        Redirect::to(uri!(admin_email_blocklist: page = None)),
+        Redirect::to(uri!(admin_email_blocklist(page = _))),
         i18n!(rockets.intl.catalog, "Blocks deleted"),
     ))
 }
@@ -232,20 +245,20 @@ pub fn delete_email_blocklist(
 #[post("/admin/emails/new", data = "<form>")]
 pub fn add_email_blocklist(
     _mod: Moderator,
-    form: LenientForm<NewBlocklistedEmail>,
-    conn: DbConn,
+    form: Form<NewBlocklistedEmail>,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    let result = BlocklistedEmail::insert(&conn, form.0);
+    let result = BlocklistedEmail::insert(&mut conn, form.into_inner());
 
     if let Err(Error::Db(_)) = result {
         Ok(Flash::error(
-            Redirect::to(uri!(admin_email_blocklist: page = None)),
+            Redirect::to(uri!(admin_email_blocklist(page = _))),
             i18n!(rockets.intl.catalog, "Email already blocked"),
         ))
     } else {
         Ok(Flash::success(
-            Redirect::to(uri!(admin_email_blocklist: page = None)),
+            Redirect::to(uri!(admin_email_blocklist(page = _))),
             i18n!(rockets.intl.catalog, "Email Blocked"),
         ))
     }
@@ -254,57 +267,30 @@ pub fn add_email_blocklist(
 pub fn admin_email_blocklist(
     _mod: Moderator,
     page: Option<Page>,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let page = page.unwrap_or_default();
-    Ok(render!(instance::emailblocklist(
-        &(&conn, &rockets).to_context(),
-        BlocklistedEmail::page(&conn, page.limits())?,
+    let page_total = Page::total(User::count_local(&mut conn)? as i32);
+    let block_page = BlocklistedEmail::page(&mut conn, page.limits())?;
+
+    Ok(render!(instance::emailblocklist_html(
+        &(&mut conn, &rockets).to_context(),
+        block_page,
         page.0,
-        Page::total(BlocklistedEmail::count(&conn)? as i32)
+        page_total
     )))
 }
 
 /// A structure to handle forms that are a list of items on which actions are applied.
-///
 /// This is for instance the case of the user list in the administration.
-pub struct MultiAction<T>
-where
-    T: FromStr,
-{
+#[derive(FromForm)]
+pub struct MultiAction {
     ids: Vec<i32>,
-    action: T,
+    action: UserActions,
 }
 
-impl<'f, T> FromForm<'f> for MultiAction<T>
-where
-    T: FromStr,
-{
-    type Error = ();
-
-    fn from_form(items: &mut FormItems<'_>, _strict: bool) -> Result<Self, Self::Error> {
-        let (ids, act) = items.fold((vec![], None), |(mut ids, act), item| {
-            let (name, val) = item.key_value_decoded();
-
-            if name == "action" {
-                (ids, T::from_str(&val).ok())
-            } else if let Ok(id) = name.parse::<i32>() {
-                ids.push(id);
-                (ids, act)
-            } else {
-                (ids, act)
-            }
-        });
-
-        if let Some(act) = act {
-            Ok(MultiAction { ids, action: act })
-        } else {
-            Err(())
-        }
-    }
-}
-
+#[derive(FromFormField)]
 pub enum UserActions {
     Admin,
     RevokeAdmin,
@@ -329,16 +315,16 @@ impl FromStr for UserActions {
 }
 
 #[post("/admin/users/edit", data = "<form>")]
-pub fn edit_users(
+pub async fn edit_users(
     moderator: Moderator,
-    form: LenientForm<MultiAction<UserActions>>,
-    conn: DbConn,
+    form: Form<MultiAction>,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Flash<Redirect>, ErrorPage> {
     // you can't change your own rights
     if form.ids.contains(&moderator.0.id) {
         return Ok(Flash::error(
-            Redirect::to(uri!(admin_users: page = _)),
+            Redirect::to(uri!(admin_users(page = _))),
             i18n!(rockets.intl.catalog, "You can't change your own rights."),
         ));
     }
@@ -348,7 +334,7 @@ pub fn edit_users(
         match form.action {
             UserActions::Admin | UserActions::RevokeAdmin => {
                 return Ok(Flash::error(
-                    Redirect::to(uri!(admin_users: page = _)),
+                    Redirect::to(uri!(admin_users(page = _))),
                     i18n!(
                         rockets.intl.catalog,
                         "You are not allowed to take this action."
@@ -363,35 +349,35 @@ pub fn edit_users(
     match form.action {
         UserActions::Admin => {
             for u in form.ids.clone() {
-                User::get(&conn, u)?.set_role(&conn, Role::Admin)?;
+                User::get(&mut conn, u)?.set_role(&mut conn, Role::Admin)?;
             }
         }
         UserActions::Moderator => {
             for u in form.ids.clone() {
-                User::get(&conn, u)?.set_role(&conn, Role::Moderator)?;
+                User::get(&mut conn, u)?.set_role(&mut conn, Role::Moderator)?;
             }
         }
         UserActions::RevokeAdmin | UserActions::RevokeModerator => {
             for u in form.ids.clone() {
-                User::get(&conn, u)?.set_role(&conn, Role::Normal)?;
+                User::get(&mut conn, u)?.set_role(&mut conn, Role::Normal)?;
             }
         }
         UserActions::Ban => {
             for u in form.ids.clone() {
-                ban(u, &conn, worker)?;
+                ban(u, &mut conn, worker).await?;
             }
         }
     }
 
     Ok(Flash::success(
-        Redirect::to(uri!(admin_users: page = _)),
+        Redirect::to(uri!(admin_users(page = _))),
         i18n!(rockets.intl.catalog, "Done."),
     ))
 }
 
-fn ban(id: i32, conn: &Connection, worker: &ScheduledThreadPool) -> Result<(), ErrorPage> {
+async fn ban(id: i32, conn: &mut Connection, worker: &ScheduledThreadPool) -> Result<(), ErrorPage> {
     let u = User::get(conn, id)?;
-    u.delete(conn)?;
+    u.delete(conn).await?;
     if Instance::get_local()
         .map(|i| u.instance_id == i.id)
         .unwrap_or(false)
@@ -415,44 +401,44 @@ fn ban(id: i32, conn: &Connection, worker: &ScheduledThreadPool) -> Result<(), E
 }
 
 #[post("/inbox", data = "<data>")]
-pub fn shared_inbox(
+pub async fn shared_inbox(
     conn: DbConn,
     data: inbox::SignedJson<serde_json::Value>,
     headers: Headers<'_>,
 ) -> Result<String, status::BadRequest<&'static str>> {
-    inbox::handle_incoming(conn, data, headers)
+    inbox::handle_incoming(conn, data, headers).await
 }
 
 #[get("/remote_interact?<target>")]
-pub fn interact(conn: DbConn, user: Option<User>, target: String) -> Option<Redirect> {
-    if User::find_by_fqn(&conn, &target).is_ok() {
-        return Some(Redirect::to(uri!(super::user::details: name = target)));
+pub async fn interact(mut conn: DbConn, user: Option<User>, target: String) -> Option<Redirect> {
+    if User::find_by_fqn(&mut conn, &target).await.is_ok() {
+        return Some(Redirect::to(uri!(super::user::details(name = target))));
     }
 
-    if let Ok(post) = Post::from_id(&conn, &target, None, CONFIG.proxy()) {
+    if let Ok(post) = Post::from_id(&mut conn, &target, None, CONFIG.proxy()).await {
         return Some(Redirect::to(uri!(
-            super::posts::details: blog = post.get_blog(&conn).expect("Can't retrieve blog").fqn,
+            super::posts::details(blog = post.get_blog(&mut conn).expect("Can't retrieve blog").fqn,
             slug = &post.slug,
             responding_to = _
-        )));
+        ))));
     }
 
-    if let Ok(comment) = Comment::from_id(&conn, &target, None, CONFIG.proxy()) {
-        if comment.can_see(&conn, user.as_ref()) {
-            let post = comment.get_post(&conn).expect("Can't retrieve post");
+    if let Ok(comment) = Comment::from_id(&mut conn, &target, None, CONFIG.proxy()).await {
+        if comment.can_see(&mut conn, user.as_ref()) {
+            let post = comment.get_post(&mut conn).expect("Can't retrieve post");
             return Some(Redirect::to(uri!(
-                super::posts::details: blog =
-                    post.get_blog(&conn).expect("Can't retrieve blog").fqn,
+                super::posts::details(blog =
+                    post.get_blog(&mut conn).expect("Can't retrieve blog").fqn,
                 slug = &post.slug,
-                responding_to = comment.id
-            )));
+                responding_to = Some(comment.id)
+            ))));
         }
     }
     None
 }
 
 #[get("/nodeinfo/<version>")]
-pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>, ErrorPage> {
+pub fn nodeinfo(mut conn: DbConn, version: String) -> Result<Json<serde_json::Value>, ErrorPage> {
     if version != "2.0" && version != "2.1" {
         return Err(ErrorPage::from(Error::NotFound));
     }
@@ -472,10 +458,10 @@ pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>
         "openRegistrations": local_inst.open_registrations,
         "usage": {
             "users": {
-                "total": User::count_local(&conn)?
+                "total": User::count_local(&mut conn)?
             },
-            "localPosts": Post::count_local(&conn)?,
-            "localComments": Comment::count_local(&conn)?
+            "localPosts": Post::count_local(&mut conn)?,
+            "localComments": Comment::count_local(&mut conn)?
         },
         "metadata": {
             "nodeName": local_inst.name,
@@ -491,20 +477,27 @@ pub fn nodeinfo(conn: DbConn, version: String) -> Result<Json<serde_json::Value>
 }
 
 #[get("/about")]
-pub fn about(conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
-    Ok(render!(instance::about(
-        &(&conn, &rockets).to_context(),
+pub fn about(mut conn: DbConn, rockets: PlumeRocket) -> Result<Ructe, ErrorPage> {
+    let admin = Instance::get_local()?.main_admin(&mut conn)?;
+    let count_user = User::count_local(&mut conn)?;
+    let count_post = Post::count_local(&mut conn)?;
+    let instance_count = Instance::count(&mut conn)? - 1;
+    let avatar_url = admin.avatar_url(&mut conn);
+
+    Ok(render!(instance::about_html(
+        &(&mut conn, &rockets).to_context(),
         Instance::get_local()?,
-        Instance::get_local()?.main_admin(&conn)?,
-        User::count_local(&conn)?,
-        Post::count_local(&conn)?,
-        Instance::count(&conn)? - 1
+        admin,
+        avatar_url,
+        count_user,
+        count_post,
+        instance_count
     )))
 }
 
 #[get("/privacy")]
-pub fn privacy(conn: DbConn, rockets: PlumeRocket) -> Ructe {
-    render!(instance::privacy(&(&conn, &rockets).to_context()))
+pub fn privacy(mut conn: DbConn, rockets: PlumeRocket) -> Ructe {
+    render!(instance::privacy_html(&(&mut conn, &rockets).to_context()))
 }
 
 #[get("/manifest.json")]
@@ -520,7 +513,7 @@ pub fn web_manifest() -> Result<Json<serde_json::Value>, ErrorPage> {
         "theme_color": String::from("#7765e3"),
         "categories": [String::from("social")],
         "icons": CONFIG.logo.other.iter()
-            .map(|i| i.with_prefix(&uri!(static_files: file = "").to_string()))
+            .map(|i| i.with_prefix(&uri!(static_files(file = "")).to_string()))
             .collect::<Vec<_>>()
     })))
 }

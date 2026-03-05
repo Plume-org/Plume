@@ -10,7 +10,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
 "X-Crowdin-Project: plume\n"
 "X-Crowdin-Project-ID: 352097\n"
 "X-Crowdin-Language: ar\n"
@@ -43,6 +44,11 @@ msgstr "{0} دعمو مقالك."
 
 # src/template_utils.rs:118
 msgid "Your feed"
+msgstr "خيطك"
+
+# src/template_utils.rs:118
+#, fuzzy
+msgid "My feed"
 msgstr "خيطك"
 
 # src/template_utils.rs:119
@@ -126,7 +132,9 @@ msgid "Here is the link for registration: {0}"
 msgstr ""
 
 # src/routes/email_signups.rs:219
-msgid "Your account has been created. Now you just need to log in, before you can use it."
+msgid ""
+"Your account has been created. Now you just need to log in, before you can "
+"use it."
 msgstr "لقد تم إنشاء حسابك. ما عليك إلّا الولوج الآن للتمكّن مِن استعماله."
 
 # src/routes/instance.rs:117
@@ -234,11 +242,15 @@ msgid "Your article has been deleted."
 msgstr "تم حذف مقالك."
 
 # src/routes/posts.rs:631
-msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
 msgstr "لم يتم العثور على المقال الذي تحاول حذفه. ربما سبق حذفه؟"
 
 # src/routes/posts.rs:673
-msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
 msgstr "تعذر العثور عن معلومات حسابك. المرجو التحقق من صحة إسم المستخدم."
 
 # src/routes/reshares.rs:58
@@ -297,29 +309,21 @@ msgstr "تم حذف حسابك."
 msgid "You can't delete someone else's account."
 msgstr "لا يمكنك حذف حساب شخص آخر."
 
-msgid "Create your account"
-msgstr "انشئ حسابك"
-
-msgid "Create an account"
-msgstr "انشئ حسابا"
-
-msgid "Email"
-msgstr "البريد الالكتروني"
-
-msgid "Email confirmation"
-msgstr ""
-
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr "المعذرة، لاكن التسجيل مغلق في هذا المثيل بالدات. يمكنك إجاد مثيل آخر للتسجيل."
-
 msgid "Registration"
 msgstr ""
 
 msgid "Check your inbox!"
 msgstr "تحقق من علبة الوارد الخاصة بك!"
 
-msgid "We sent a mail to the address you gave us, with a link for registration."
+msgid ""
+"We sent a mail to the address you gave us, with a link for registration."
 msgstr ""
+
+msgid "Create your account"
+msgstr "انشئ حسابك"
+
+msgid "Create an account"
+msgstr "انشئ حسابا"
 
 msgid "Username"
 msgstr "اسم المستخدم"
@@ -330,245 +334,33 @@ msgstr "كلمة السر"
 msgid "Password confirmation"
 msgstr ""
 
-msgid "Media upload"
-msgstr "إرسال الوسائط"
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+"المعذرة، لاكن التسجيل مغلق في هذا المثيل بالدات. يمكنك إجاد مثيل آخر للتسجيل."
 
-msgid "Description"
-msgstr "الوصف"
+msgid "Email"
+msgstr "البريد الالكتروني"
 
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "مفيدة للأشخاص المعاقين بصريا، فضلا عن معلومات الترخيص"
-
-msgid "Content warning"
-msgstr "تحذير عن المحتوى"
-
-msgid "Leave it empty, if none is needed"
-msgstr "إتركه فارغا إن لم تكن في الحاجة"
-
-msgid "File"
-msgstr "الملف"
-
-msgid "Send"
-msgstr "أرسل"
-
-msgid "Your media"
-msgstr "وسائطك"
-
-msgid "Upload"
-msgstr "إرسال"
-
-msgid "You don't have any media yet."
-msgstr "ليس لديك أية وسائط بعد."
-
-msgid "Content warning: {0}"
-msgstr "تحذير عن المحتوى: {0}"
-
-msgid "Delete"
-msgstr "حذف"
-
-msgid "Details"
-msgstr "التفاصيل"
-
-msgid "Media details"
-msgstr "تفاصيل الصورة"
-
-msgid "Go back to the gallery"
-msgstr "العودة إلى المعرض"
-
-msgid "Markdown syntax"
-msgstr "صياغت ماركداون"
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr "قم بنسخه في مقالاتك منأجل إدراج الوسائط:"
-
-msgid "Use as an avatar"
-msgstr "استخدمها كصورة رمزية"
-
-msgid "Plume"
-msgstr "Plume"
-
-msgid "Menu"
-msgstr "القائمة"
-
-msgid "Search"
-msgstr "البحث"
-
-msgid "Dashboard"
-msgstr "لوح المراقبة"
-
-msgid "Notifications"
-msgstr "الإشعارات"
-
-msgid "Log Out"
-msgstr "الخروج"
-
-msgid "My account"
-msgstr "حسابي"
-
-msgid "Log In"
-msgstr "تسجيل الدخول"
-
-msgid "Register"
-msgstr "إنشاء حساب"
-
-msgid "About this instance"
-msgstr "عن مثيل الخادوم هذا"
-
-msgid "Privacy policy"
-msgstr "سياسة الخصوصية"
-
-msgid "Administration"
-msgstr "الإدارة"
-
-msgid "Documentation"
-msgstr "الدليل"
-
-msgid "Source code"
-msgstr "الشيفرة المصدرية"
-
-msgid "Matrix room"
-msgstr "غرفة المحادثة على ماتريكس"
-
-msgid "Admin"
-msgstr "المدير"
-
-msgid "It is you"
-msgstr "هو أنت"
-
-msgid "Edit your profile"
-msgstr "تعديل ملفك الشخصي"
-
-msgid "Open on {0}"
-msgstr "افتح على {0}"
-
-msgid "Unsubscribe"
-msgstr "إلغاء الاشتراك"
-
-msgid "Subscribe"
-msgstr "إشترِك"
-
-msgid "Follow {}"
-msgstr "تابِع {}"
-
-msgid "Log in to follow"
-msgstr "قم بتسجيل الدخول للمتابعة"
-
-msgid "Enter your full username handle to follow"
-msgstr "اخل اسم مستخدمك كاملا للمتابعة"
-
-msgid "{0}'s subscribers"
-msgstr "{0} مشتركين"
-
-msgid "Articles"
-msgstr "المقالات"
-
-msgid "Subscribers"
-msgstr "المشترِكون"
-
-msgid "Subscriptions"
-msgstr "الاشتراكات"
-
-msgid "{0}'s subscriptions"
-msgstr "{0} اشتراكات"
-
-msgid "Your Dashboard"
-msgstr "لوح المراقبة"
-
-msgid "Your Blogs"
-msgstr "مدوناتك"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "ليس لديك أيت مدونة. قم بإنشاء مدونتك أو أطلب الإنظمام لواحدة."
-
-msgid "Start a new blog"
-msgstr "انشئ مدونة جديدة"
-
-msgid "Your Drafts"
-msgstr "مسوداتك"
-
-msgid "Go to your gallery"
-msgstr "الانتقال إلى معرضك"
-
-msgid "Edit your account"
-msgstr "تعديل حسابك"
-
-msgid "Your Profile"
-msgstr "ملفك الشخصي"
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr "لتغير الصورة التشخيصية قم أولا برفعها إلى الألبوم ثم قم بتعينها من هنالك."
-
-msgid "Upload an avatar"
-msgstr "تحميل صورة رمزية"
-
-msgid "Display name"
+msgid "Email confirmation"
 msgstr ""
 
-msgid "Summary"
-msgstr "الملخص"
-
-msgid "Theme"
+msgid ""
+"An email will be sent to provided email. You can continue signing-up via the "
+"email."
 msgstr ""
-
-msgid "Default theme"
-msgstr ""
-
-msgid "Error while loading theme selector."
-msgstr ""
-
-msgid "Never load blogs custom themes"
-msgstr ""
-
-msgid "Update account"
-msgstr "تحديث الحساب"
-
-msgid "Danger zone"
-msgstr "منطقة الخطر"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "نوخى الحذر هنا، فكل إجراء تأخذه هنا لا يمكن الغاؤه."
-
-msgid "Delete your account"
-msgstr "احذف حسابك"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "المعذرة ولاكن كمدير لايمكنك مغادرة مثيلك الخاص."
-
-msgid "Latest articles"
-msgstr "آخر المقالات"
-
-msgid "Atom feed"
-msgstr "تدفق أتوم"
-
-msgid "Recently boosted"
-msgstr "تم ترقيتها حديثا"
-
-msgid "Articles tagged \"{0}\""
-msgstr "المقالات الموسومة بـ \"{0}\""
-
-msgid "There are currently no articles with such a tag"
-msgstr "لا يوجد حالي أي مقال بهذا الوسام"
-
-msgid "The content you sent can't be processed."
-msgstr "لا يمكن معالجة المحتوى الذي قمت بإرساله."
-
-msgid "Maybe it was too long."
-msgstr "ربما كان طويلا جدا."
-
-msgid "Internal server error"
-msgstr "خطأ داخلي في الخادم"
-
-msgid "Something broke on our side."
-msgstr "حصل خطأ ما مِن جهتنا."
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "نعتذر عن الإزعاج. إن كنت تضن أن هذه مشكلة، يرجى إبلاغنا."
 
 msgid "Invalid CSRF token"
 msgstr "الرمز المميز CSRF غير صالح"
 
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "هناكخطأم ما في رمز CSRF. تحقق أن الكوكيز مفعل في متصفحك وأعد تحميل الصفحة. إذا واجهتهذا الخطأ منجديد يرجى التبليغ."
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"هناكخطأم ما في رمز CSRF. تحقق أن الكوكيز مفعل في متصفحك وأعد تحميل الصفحة. "
+"إذا واجهتهذا الخطأ منجديد يرجى التبليغ."
 
 msgid "You are not authorized."
 msgstr "ليست لديك التصريحات اللازمة للقيام بذلك."
@@ -582,53 +374,23 @@ msgstr "تعذر العثور على هذه الصفحة."
 msgid "The link that led you here may be broken."
 msgstr "مِن المشتبه أنك قد قمت باتباع رابط غير صالح."
 
-msgid "Users"
-msgstr "المستخدمون"
+msgid "Internal server error"
+msgstr "خطأ داخلي في الخادم"
 
-msgid "Configuration"
-msgstr "الإعدادات"
+msgid "Something broke on our side."
+msgstr "حصل خطأ ما مِن جهتنا."
 
-msgid "Instances"
-msgstr "مثيلات الخوادم"
+msgid "Sorry about that. If you think this is a bug, please report it."
+msgstr "نعتذر عن الإزعاج. إن كنت تضن أن هذه مشكلة، يرجى إبلاغنا."
 
-msgid "Email blocklist"
-msgstr "قائمة حظر عناوين البريد الإلكتروني"
+msgid "The content you sent can't be processed."
+msgstr "لا يمكن معالجة المحتوى الذي قمت بإرساله."
 
-msgid "Grant admin rights"
-msgstr "منحه صلاحيات المدير"
-
-msgid "Revoke admin rights"
-msgstr "سحب صلاحيات المدير منه"
-
-msgid "Grant moderator rights"
-msgstr "منحه صلاحيات المشرف"
-
-msgid "Revoke moderator rights"
-msgstr "سحب صلاحيات المشرف منه"
-
-msgid "Ban"
-msgstr "اطرد"
-
-msgid "Run on selected users"
-msgstr "نفّذ الإجراء على المستخدمين الذين تم اختيارهم"
-
-msgid "Moderator"
-msgstr "مُشرف"
-
-msgid "Moderation"
-msgstr ""
-
-msgid "Home"
-msgstr ""
+msgid "Maybe it was too long."
+msgstr "ربما كان طويلا جدا."
 
 msgid "Administration of {0}"
 msgstr "إدارة {0}"
-
-msgid "Unblock"
-msgstr "الغاء الحظر"
-
-msgid "Block"
-msgstr "حظر"
 
 msgid "Name"
 msgstr "الاسم"
@@ -651,13 +413,19 @@ msgstr "الرخصة الافتراضية للمقال"
 msgid "Save these settings"
 msgstr "احفظ هذه الإعدادات"
 
-msgid "If you are browsing this site as a visitor, no data about you is collected."
-msgstr "إذا كنت تصفح هذا الموقع كزائر ، لا يتم تجميع أي بيانات عنك."
+msgid "Configuration"
+msgstr "الإعدادات"
 
-msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
-msgstr ""
+msgid "Instances"
+msgstr "مثيلات الخوادم"
 
-msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
+msgid "Users"
+msgstr "المستخدمون"
+
+msgid "Email blocklist"
+msgstr "قائمة حظر عناوين البريد الإلكتروني"
+
+msgid "Moderation"
 msgstr ""
 
 msgid "Blocklisted Emails"
@@ -666,7 +434,10 @@ msgstr ""
 msgid "Email address"
 msgstr ""
 
-msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
+msgid ""
+"The email address you wish to block. In order to block domains, you can use "
+"globbing syntax, for example '*@example.com' blocks all addresses from "
+"example.com"
 msgstr ""
 
 msgid "Note"
@@ -675,13 +446,17 @@ msgstr ""
 msgid "Notify the user?"
 msgstr ""
 
-msgid "Optional, shows a message to the user when they attempt to create an account with that address"
+msgid ""
+"Optional, shows a message to the user when they attempt to create an account "
+"with that address"
 msgstr ""
 
 msgid "Blocklisting notification"
 msgstr ""
 
-msgid "The message to be shown when the user attempts to create an account with this email address"
+msgid ""
+"The message to be shown when the user attempts to create an account with "
+"this email address"
 msgstr ""
 
 msgid "Add blocklisted address"
@@ -705,11 +480,31 @@ msgstr ""
 msgid "The user will be silently prevented from making an account"
 msgstr ""
 
-msgid "Welcome to {}"
-msgstr "مرحبا بكم في {0}"
+msgid "Unblock"
+msgstr "الغاء الحظر"
 
-msgid "View all"
-msgstr "عرضها كافة"
+msgid "Block"
+msgstr "حظر"
+
+msgid "Privacy policy"
+msgstr "سياسة الخصوصية"
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr "إذا كنت تصفح هذا الموقع كزائر ، لا يتم تجميع أي بيانات عنك."
+
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
 
 msgid "About {0}"
 msgstr "عن {0}"
@@ -729,14 +524,157 @@ msgstr "ومتصل بـ <em>{0}</em> مثيلات خوادم أخرى"
 msgid "Administred by"
 msgstr "يديره"
 
-msgid "Interact with {}"
-msgstr "التفاعل مع {}"
+msgid "Welcome to {}"
+msgstr "مرحبا بكم في {0}"
 
-msgid "Log in to interact"
-msgstr "قم بتسجيل الدخول قصد التفاعل"
+msgid "Nothing to see here yet."
+msgstr ""
 
-msgid "Enter your full username to interact"
-msgstr "أدخل إسم المستخدم الخاص بك كاملا للتفاعل"
+#, fuzzy
+msgid "Search users"
+msgstr "البحث"
+
+msgid "Grant admin rights"
+msgstr "منحه صلاحيات المدير"
+
+msgid "Revoke admin rights"
+msgstr "سحب صلاحيات المدير منه"
+
+msgid "Grant moderator rights"
+msgstr "منحه صلاحيات المشرف"
+
+msgid "Revoke moderator rights"
+msgstr "سحب صلاحيات المشرف منه"
+
+msgid "Ban"
+msgstr "اطرد"
+
+msgid "Run on selected users"
+msgstr "نفّذ الإجراء على المستخدمين الذين تم اختيارهم"
+
+msgid "Admin"
+msgstr "المدير"
+
+msgid "Moderator"
+msgstr "مُشرف"
+
+msgid "Media details"
+msgstr "تفاصيل الصورة"
+
+msgid "Go back to the gallery"
+msgstr "العودة إلى المعرض"
+
+msgid "Markdown syntax"
+msgstr "صياغت ماركداون"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr "قم بنسخه في مقالاتك منأجل إدراج الوسائط:"
+
+msgid "Use as an avatar"
+msgstr "استخدمها كصورة رمزية"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Your media"
+msgstr "وسائطك"
+
+msgid "Upload"
+msgstr "إرسال"
+
+msgid "You don't have any media yet."
+msgstr "ليس لديك أية وسائط بعد."
+
+msgid "Content warning: {0}"
+msgstr "تحذير عن المحتوى: {0}"
+
+msgid "Details"
+msgstr "التفاصيل"
+
+msgid "Media upload"
+msgstr "إرسال الوسائط"
+
+msgid "Description"
+msgstr "الوصف"
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "مفيدة للأشخاص المعاقين بصريا، فضلا عن معلومات الترخيص"
+
+msgid "Content warning"
+msgstr "تحذير عن المحتوى"
+
+msgid "Leave it empty, if none is needed"
+msgstr "إتركه فارغا إن لم تكن في الحاجة"
+
+msgid "File"
+msgstr "الملف"
+
+msgid "Send"
+msgstr "أرسل"
+
+msgid "Notifications"
+msgstr "الإشعارات"
+
+msgid "None"
+msgstr "لا شيء"
+
+msgid "No description"
+msgstr "مِن دون وصف"
+
+msgid "What is Plume?"
+msgstr "ما هو بلوم Plume؟"
+
+msgid "Plume is a decentralized blogging engine."
+msgstr "بلوم محرك لامركزي للمدونات."
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr "يمكن للمحررين أن يديرو العديد من المدونات كل واحدة كموقع منفرد."
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+"ستكون المقالات معروضة على مواقع بلومالأخرى حيث يمكنكم التفاعل معها مباشرة "
+"عبر أية منصة أخرى مثل ماستدون."
+
+msgid "Read the detailed rules"
+msgstr "إقرأ القواعد بالتفصيل"
+
+msgid "Edit"
+msgstr "تعديل"
+
+msgid "By {0}"
+msgstr "مِن طرف {0}"
+
+msgid "Draft"
+msgstr "مسودة"
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "بدون اعجاب"
+msgstr[1] "إعجاب واحد"
+msgstr[2] "إعجابَين"
+msgstr[3] "{0} إعجاب"
+msgstr[4] "{0} إعجابات"
+msgstr[5] "{0} إعجابات"
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] "لم يدعم"
+msgstr[1] "دُعِّم مرة واحدة"
+msgstr[2] "دُعِم مرتين إثنتين"
+msgstr[3] "دُعِّم {0} مرات"
+msgstr[4] "دُعِّم {0} مرة"
+msgstr[5] "دُعِّم {0} مرة"
+
+msgid "Respond"
+msgstr "رد"
+
+msgid "Are you sure?"
+msgstr "هل أنت واثق؟"
+
+msgid "Delete this comment"
+msgstr "احذف هذا التعليق"
 
 msgid "Publish"
 msgstr "انشر"
@@ -753,8 +691,11 @@ msgstr "العنوان الثانوي"
 msgid "Content"
 msgstr "المحتوى"
 
-msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr "يكنك رفع الوسائط للألبوم ومن ثم نسخ شفرة الماركداون في مقالاتك لإدراجها."
+msgid ""
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
+msgstr ""
+"يكنك رفع الوسائط للألبوم ومن ثم نسخ شفرة الماركداون في مقالاتك لإدراجها."
 
 msgid "Upload media"
 msgstr "تحميل وسائط"
@@ -780,6 +721,15 @@ msgstr "تحديث أو نشر"
 msgid "Publish your post"
 msgstr "انشر منشورك"
 
+msgid "Interact with {}"
+msgstr "التفاعل مع {}"
+
+msgid "Log in to interact"
+msgstr "قم بتسجيل الدخول قصد التفاعل"
+
+msgid "Enter your full username to interact"
+msgstr "أدخل إسم المستخدم الخاص بك كاملا للتفاعل"
+
 msgid "Written by {0}"
 msgstr "كتبه {0}"
 
@@ -789,29 +739,11 @@ msgstr "جميع الحقوق محفوظة."
 msgid "This article is under the {0} license."
 msgstr "تم نشر هذا المقال تحت رخصة {0}."
 
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] "بدون اعجاب"
-msgstr[1] "إعجاب واحد"
-msgstr[2] "إعجابَين"
-msgstr[3] "{0} إعجاب"
-msgstr[4] "{0} إعجابات"
-msgstr[5] "{0} إعجابات"
-
 msgid "I don't like this anymore"
 msgstr "لم يعد يعجبني هذا"
 
 msgid "Add yours"
 msgstr "أعجبني"
-
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] "لم يدعم"
-msgstr[1] "دُعِّم مرة واحدة"
-msgstr[2] "دُعِم مرتين إثنتين"
-msgstr[3] "دُعِّم {0} مرات"
-msgstr[4] "دُعِّم {0} مرة"
-msgstr[5] "دُعِّم {0} مرة"
 
 msgid "I don't want to boost this anymore"
 msgstr "لم أعد أرغب في دعم هذا"
@@ -819,8 +751,18 @@ msgstr "لم أعد أرغب في دعم هذا"
 msgid "Boost"
 msgstr "رقّي"
 
-msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr "{0}قم بتسجيل الدخول{1} أو {2}استخدم حسابك على الفديفرس{3} إن كنت ترغب في التفاعل مع هذا المقال"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
+msgstr ""
+"{0}قم بتسجيل الدخول{1} أو {2}استخدم حسابك على الفديفرس{3} إن كنت ترغب في "
+"التفاعل مع هذا المقال"
+
+msgid "Unsubscribe"
+msgstr "إلغاء الاشتراك"
+
+msgid "Subscribe"
+msgstr "إشترِك"
 
 msgid "Comments"
 msgstr "التعليقات"
@@ -834,158 +776,14 @@ msgstr "ارسال التعليق"
 msgid "No comments yet. Be the first to react!"
 msgstr "لا توجد هناك تعليقات بعد. كن أول مَن يتفاعل معه!"
 
-msgid "Are you sure?"
-msgstr "هل أنت واثق؟"
-
 msgid "This article is still a draft. Only you and other authors can see it."
 msgstr "لا يزال هذا المقال مجرّد مسودّة. إلّا أنت والمحررون الآخرون يمكنهم رؤيته."
 
 msgid "Only you and other authors can edit this article."
 msgstr "إلّا أنت والمحرّرون الآخرون يمكنهم تعديل هذا المقال."
 
-msgid "Edit"
-msgstr "تعديل"
-
-msgid "I'm from this instance"
-msgstr "أنا أنتمي إلى مثيل الخادم هذا"
-
-msgid "Username, or email"
-msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
-
-msgid "Log in"
-msgstr "تسجيل الدخول"
-
-msgid "I'm from another instance"
-msgstr "أنا أنتمي إلى مثيل خادم آخر"
-
-msgid "Continue to your instance"
-msgstr "واصل إلى مثيل خادمك"
-
-msgid "Reset your password"
-msgstr "أعد تعيين كلمتك السرية"
-
-msgid "New password"
-msgstr "كلمة السر الجديدة"
-
-msgid "Confirmation"
-msgstr "تأكيد"
-
-msgid "Update password"
-msgstr "تحديث الكلمة السرية"
-
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr "لقد أرسلنا رسالة للعنوان الذي توصلنا به من طرفك تضمنرابط لإعادت تحديد كلمة المرور."
-
-msgid "Send password reset link"
-msgstr "أرسل رابط إعادة تعيين الكلمة السرية"
-
-msgid "This token has expired"
-msgstr ""
-
-msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
-msgstr ""
-
-msgid "New Blog"
-msgstr "مدونة جديدة"
-
-msgid "Create a blog"
-msgstr "انشئ مدونة"
-
-msgid "Create blog"
-msgstr "انشاء مدونة"
-
-msgid "Edit \"{}\""
-msgstr "تعديل \"{}\""
-
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr "يمكن رفع الصور إلى ألبومك من أجل إستعمالها كأيقونة المدونة أو الشعار."
-
-msgid "Upload images"
-msgstr "رفع صور"
-
-msgid "Blog icon"
-msgstr "أيقونة المدونة"
-
-msgid "Blog banner"
-msgstr "شعار المدونة"
-
-msgid "Custom theme"
-msgstr ""
-
-msgid "Update blog"
-msgstr "تحديث المدونة"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "توخى الحذر هنا، فأي إجراء تأخذه هنا لا يمكن الغاؤه."
-
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr ""
-
-msgid "Permanently delete this blog"
-msgstr "احذف هذه المدونة نهائيا"
-
-msgid "{}'s icon"
-msgstr "أيقونة {}"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "ليس هنالك مؤلف في هذه المدونة : "
-msgstr[1] "هنالك مؤلف واحد في هذه المدونة :"
-msgstr[2] "هنالك مؤلفين إثنين في هءه المدونة :"
-msgstr[3] "هنالك {0} مؤلفين في هذه المدونة :"
-msgstr[4] "هنالك {0} مؤلفون في هذه المدونة :"
-msgstr[5] "هنلك {0} مؤلفون في هذه المدونة: "
-
-msgid "No posts to see here yet."
-msgstr "في الوقت الراهن لا توجد أية منشورات هنا."
-
-msgid "Nothing to see here yet."
-msgstr ""
-
-msgid "None"
-msgstr "لا شيء"
-
-msgid "No description"
-msgstr "مِن دون وصف"
-
-msgid "Respond"
-msgstr "رد"
-
-msgid "Delete this comment"
-msgstr "احذف هذا التعليق"
-
-msgid "What is Plume?"
-msgstr "ما هو بلوم Plume؟"
-
-msgid "Plume is a decentralized blogging engine."
-msgstr "بلوم محرك لامركزي للمدونات."
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr "يمكن للمحررين أن يديرو العديد من المدونات كل واحدة كموقع منفرد."
-
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr "ستكون المقالات معروضة على مواقع بلومالأخرى حيث يمكنكم التفاعل معها مباشرة عبر أية منصة أخرى مثل ماستدون."
-
-msgid "Read the detailed rules"
-msgstr "إقرأ القواعد بالتفصيل"
-
-msgid "By {0}"
-msgstr "مِن طرف {0}"
-
-msgid "Draft"
-msgstr "مسودة"
-
-msgid "Search result(s) for \"{0}\""
-msgstr "نتائج البحث عن \"{0}\""
-
-msgid "Search result(s)"
-msgstr "نتائج البحث"
-
-msgid "No results for your query"
-msgstr "لا توجد نتيجة لطلبك"
-
-msgid "No more results for your query"
-msgstr "لم تتبقى نتائج لطلبك"
+msgid "Search"
+msgstr "البحث"
 
 msgid "Advanced search"
 msgstr "البحث المتقدم"
@@ -1044,3 +842,266 @@ msgstr "نشرتحت هذا الترخيص"
 msgid "Article license"
 msgstr "رخصة المقال"
 
+msgid "Search result(s) for \"{0}\""
+msgstr "نتائج البحث عن \"{0}\""
+
+msgid "Search result(s)"
+msgstr "نتائج البحث"
+
+msgid "No results for your query"
+msgstr "لا توجد نتيجة لطلبك"
+
+msgid "No more results for your query"
+msgstr "لم تتبقى نتائج لطلبك"
+
+msgid "Log in"
+msgstr "تسجيل الدخول"
+
+msgid "Username, or email"
+msgstr "اسم المستخدم أو عنوان البريد الالكتروني"
+
+msgid "Reset your password"
+msgstr "أعد تعيين كلمتك السرية"
+
+msgid "New password"
+msgstr "كلمة السر الجديدة"
+
+msgid "Confirmation"
+msgstr "تأكيد"
+
+msgid "Update password"
+msgstr "تحديث الكلمة السرية"
+
+msgid "Send password reset link"
+msgstr "أرسل رابط إعادة تعيين الكلمة السرية"
+
+msgid "This token has expired"
+msgstr ""
+
+msgid ""
+"Please start the process again by clicking <a href=\"/password-reset\">here</"
+"a>."
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+"لقد أرسلنا رسالة للعنوان الذي توصلنا به من طرفك تضمنرابط لإعادت تحديد كلمة "
+"المرور."
+
+msgid "Articles tagged \"{0}\""
+msgstr "المقالات الموسومة بـ \"{0}\""
+
+msgid "There are currently no articles with such a tag"
+msgstr "لا يوجد حالي أي مقال بهذا الوسام"
+
+msgid "Edit your account"
+msgstr "تعديل حسابك"
+
+msgid "Your Profile"
+msgstr "ملفك الشخصي"
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+"لتغير الصورة التشخيصية قم أولا برفعها إلى الألبوم ثم قم بتعينها من هنالك."
+
+msgid "Upload an avatar"
+msgstr "تحميل صورة رمزية"
+
+msgid "Display name"
+msgstr ""
+
+msgid "Summary"
+msgstr "الملخص"
+
+msgid "Theme"
+msgstr ""
+
+msgid "Default theme"
+msgstr ""
+
+msgid "Error while loading theme selector."
+msgstr ""
+
+msgid "Never load blogs custom themes"
+msgstr ""
+
+msgid "Update account"
+msgstr "تحديث الحساب"
+
+msgid "Danger zone"
+msgstr "منطقة الخطر"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "نوخى الحذر هنا، فكل إجراء تأخذه هنا لا يمكن الغاؤه."
+
+msgid "Delete your account"
+msgstr "احذف حسابك"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr "المعذرة ولاكن كمدير لايمكنك مغادرة مثيلك الخاص."
+
+msgid "Your Dashboard"
+msgstr "لوح المراقبة"
+
+msgid "Your Blogs"
+msgstr "مدوناتك"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr "ليس لديك أيت مدونة. قم بإنشاء مدونتك أو أطلب الإنظمام لواحدة."
+
+msgid "Start a new blog"
+msgstr "انشئ مدونة جديدة"
+
+msgid "Your Drafts"
+msgstr "مسوداتك"
+
+msgid "Go to your gallery"
+msgstr "الانتقال إلى معرضك"
+
+msgid "Articles"
+msgstr "المقالات"
+
+msgid "Subscribers"
+msgstr "المشترِكون"
+
+msgid "Subscriptions"
+msgstr "الاشتراكات"
+
+msgid "Latest articles"
+msgstr "آخر المقالات"
+
+msgid "Atom feed"
+msgstr "تدفق أتوم"
+
+msgid "Recently boosted"
+msgstr "تم ترقيتها حديثا"
+
+msgid "Follow {}"
+msgstr "تابِع {}"
+
+msgid "Log in to follow"
+msgstr "قم بتسجيل الدخول للمتابعة"
+
+msgid "Enter your full username handle to follow"
+msgstr "اخل اسم مستخدمك كاملا للمتابعة"
+
+msgid "{0}'s subscriptions"
+msgstr "{0} اشتراكات"
+
+msgid "{0}'s subscribers"
+msgstr "{0} مشتركين"
+
+msgid "It is you"
+msgstr "هو أنت"
+
+msgid "Edit your profile"
+msgstr "تعديل ملفك الشخصي"
+
+msgid "Open on {0}"
+msgstr "افتح على {0}"
+
+msgid "Edit \"{}\""
+msgstr "تعديل \"{}\""
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr "يمكن رفع الصور إلى ألبومك من أجل إستعمالها كأيقونة المدونة أو الشعار."
+
+msgid "Upload images"
+msgstr "رفع صور"
+
+msgid "Blog icon"
+msgstr "أيقونة المدونة"
+
+msgid "Blog banner"
+msgstr "شعار المدونة"
+
+msgid "Custom theme"
+msgstr ""
+
+msgid "Update blog"
+msgstr "تحديث المدونة"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "توخى الحذر هنا، فأي إجراء تأخذه هنا لا يمكن الغاؤه."
+
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr "احذف هذه المدونة نهائيا"
+
+msgid "New Blog"
+msgstr "مدونة جديدة"
+
+msgid "Create a blog"
+msgstr "انشئ مدونة"
+
+msgid "Create blog"
+msgstr "انشاء مدونة"
+
+msgid "{}'s icon"
+msgstr "أيقونة {}"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "ليس هنالك مؤلف في هذه المدونة : "
+msgstr[1] "هنالك مؤلف واحد في هذه المدونة :"
+msgstr[2] "هنالك مؤلفين إثنين في هءه المدونة :"
+msgstr[3] "هنالك {0} مؤلفين في هذه المدونة :"
+msgstr[4] "هنالك {0} مؤلفون في هذه المدونة :"
+msgstr[5] "هنلك {0} مؤلفون في هذه المدونة: "
+
+msgid "No posts to see here yet."
+msgstr "في الوقت الراهن لا توجد أية منشورات هنا."
+
+msgid "I'm from this instance"
+msgstr "أنا أنتمي إلى مثيل الخادم هذا"
+
+msgid "I'm from another instance"
+msgstr "أنا أنتمي إلى مثيل خادم آخر"
+
+msgid "Continue to your instance"
+msgstr "واصل إلى مثيل خادمك"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "القائمة"
+
+msgid "Dashboard"
+msgstr "لوح المراقبة"
+
+msgid "Log Out"
+msgstr "الخروج"
+
+msgid "My account"
+msgstr "حسابي"
+
+msgid "Log In"
+msgstr "تسجيل الدخول"
+
+msgid "Register"
+msgstr "إنشاء حساب"
+
+msgid "About this instance"
+msgstr "عن مثيل الخادوم هذا"
+
+msgid "Administration"
+msgstr "الإدارة"
+
+msgid "Documentation"
+msgstr "الدليل"
+
+msgid "Source code"
+msgstr "الشيفرة المصدرية"
+
+msgid "Matrix room"
+msgstr "غرفة المحادثة على ماتريكس"
+
+#~ msgid "View all"
+#~ msgstr "عرضها كافة"

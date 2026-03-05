@@ -1,9 +1,9 @@
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 
 @(ctx: BaseContext, now: &str)
 
-@:base(ctx, i18n!(ctx.1, "Search"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Search"), {}, {}, {
   <h1>@i18n!(ctx.1, "Search")</h1>
   <form method="get" id="form">
     @(Input::new("q", "Your query")

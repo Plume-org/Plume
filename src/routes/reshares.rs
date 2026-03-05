@@ -10,52 +10,52 @@ use plume_models::{
 };
 
 #[post("/~/<blog>/<slug>/reshare")]
-pub fn create(
-    blog: String,
-    slug: String,
+pub async fn create(
+    blog: &str,
+    slug: &str,
     user: User,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Redirect, ErrorPage> {
-    let b = Blog::find_by_fqn(&conn, &blog)?;
-    let post = Post::find_by_slug(&conn, &slug, b.id)?;
+    let b = Blog::find_by_fqn(&mut conn, blog).await?;
+    let post = Post::find_by_slug(&mut conn, slug, b.id)?;
 
-    if !user.has_reshared(&conn, &post)? {
-        let reshare = Reshare::insert(&conn, NewReshare::new(&post, &user))?;
-        reshare.notify(&conn)?;
+    if !user.has_reshared(&mut conn, &post)? {
+        let reshare = Reshare::insert(&mut conn, NewReshare::new(&post, &user))?;
+        reshare.notify(&mut conn)?;
 
-        Timeline::add_to_all_timelines(&conn, &post, Kind::Reshare(&user))?;
+        Timeline::add_to_all_timelines(&mut conn, &post, &Kind::Reshare(user.clone())).await?;
 
-        let dest = User::one_by_instance(&conn)?;
-        let act = reshare.to_activity(&conn)?;
+        let dest = User::one_by_instance(&mut conn)?;
+        let act = reshare.to_activity(&mut conn)?;
         rockets
             .worker
             .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
     } else {
-        let reshare = Reshare::find_by_user_on_post(&conn, user.id, post.id)?;
-        let delete_act = reshare.build_undo(&conn)?;
+        let reshare = Reshare::find_by_user_on_post(&mut conn, user.id, post.id)?;
+        let delete_act = reshare.build_undo(&mut conn)?;
         inbox(
-            &conn,
+            &mut conn,
             serde_json::to_value(&delete_act).map_err(Error::from)?,
-        )?;
+        ).await?;
 
-        let dest = User::one_by_instance(&conn)?;
+        let dest = User::one_by_instance(&mut conn)?;
         rockets
             .worker
             .execute(move || broadcast(&user, delete_act, dest, CONFIG.proxy().cloned()));
     }
 
     Ok(Redirect::to(uri!(
-        super::posts::details: blog = blog,
+        super::posts::details(blog = blog,
         slug = slug,
         responding_to = _
-    )))
+    ))))
 }
 
 #[post("/~/<blog>/<slug>/reshare", rank = 1)]
-pub fn create_auth(blog: String, slug: String, i18n: I18n) -> Flash<Redirect> {
+pub fn create_auth(blog: String, slug: &str, i18n: I18n) -> Flash<Redirect> {
     requires_login(
         &i18n!(i18n.catalog, "To reshare a post, you need to be logged in"),
-        uri!(create: blog = blog, slug = slug),
+        uri!(create(blog = blog, slug = slug)),
     )
 }

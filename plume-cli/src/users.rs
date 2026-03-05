@@ -1,107 +1,107 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::{Arg, ArgMatches, Command};
 
 use plume_models::{instance::Instance, users::*, Connection};
 use std::io::{self, Write};
 
-pub fn command<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("users")
+pub fn command() -> Command {
+    Command::new("users")
         .about("Manage users")
         .subcommand(
-            SubCommand::with_name("new")
+            Command::new("new")
                 .arg(
-                    Arg::with_name("name")
-                        .short("n")
+                    Arg::new("name")
+                        .short('n')
                         .long("name")
                         .alias("username")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The username of the new user"),
                 )
                 .arg(
-                    Arg::with_name("display-name")
-                        .short("N")
+                    Arg::new("display-name")
+                        .short('N')
                         .long("display-name")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The display name of the new user"),
                 )
                 .arg(
-                    Arg::with_name("biography")
-                        .short("b")
+                    Arg::new("biography")
+                        .short('b')
                         .long("bio")
                         .alias("biography")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The biography of the new user"),
                 )
                 .arg(
-                    Arg::with_name("email")
-                        .short("e")
+                    Arg::new("email")
+                        .short('e')
                         .long("email")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("Email address of the new user"),
                 )
                 .arg(
-                    Arg::with_name("password")
-                        .short("p")
+                    Arg::new("password")
+                        .short('p')
                         .long("password")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The password of the new user"),
                 )
                 .arg(
-                    Arg::with_name("admin")
-                        .short("a")
+                    Arg::new("admin")
+                        .short('a')
                         .long("admin")
+                        .action(clap::ArgAction::SetTrue)
                         .help("Makes the user an administrator of the instance"),
                 )
                 .arg(
-                    Arg::with_name("moderator")
-                        .short("m")
+                    Arg::new("moderator")
+                        .short('m')
                         .long("moderator")
+                        .action(clap::ArgAction::SetTrue)
                         .help("Makes the user a moderator of the instance"),
                 )
                 .about("Create a new user on this instance"),
         )
         .subcommand(
-            SubCommand::with_name("reset-password")
+            Command::new("reset-password")
                 .arg(
-                    Arg::with_name("name")
-                        .short("u")
+                    Arg::new("name")
+                        .short('u')
                         .long("user")
                         .alias("username")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The username of the user to reset password to"),
                 )
                 .arg(
-                    Arg::with_name("password")
-                        .short("p")
+                    Arg::new("password")
+                        .short('p')
                         .long("password")
-                        .takes_value(true)
+                        .action(clap::ArgAction::Set)
                         .help("The password new for the user"),
                 )
                 .about("Reset user password"),
         )
 }
 
-pub fn run<'a>(args: &ArgMatches<'a>, conn: &Connection) {
-    let conn = conn;
-    match args.subcommand() {
-        ("new", Some(x)) => new(x, conn),
-        ("reset-password", Some(x)) => reset_password(x, conn),
-        ("", None) => command().print_help().unwrap(),
-        _ => println!("Unknown subcommand"),
-    }
+pub fn run(mut args: ArgMatches, conn: &mut Connection) {
+    args.remove_subcommand().map(|(c, a)| {
+        match c.as_str() {
+            "new" => new(a, conn),
+            "reset-password" => reset_password(a, conn),
+            _ => command().print_help().unwrap(),
+        }
+    }).unwrap_or_else(|| println!("Unknown subcommand") )
 }
 
-fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
+fn new(mut args: ArgMatches, conn: &mut Connection) {
     let username = args
-        .value_of("name")
-        .map(String::from)
+        .remove_one::<String>("name")
         .unwrap_or_else(|| super::ask_for("Username"));
     let display_name = args
-        .value_of("display-name")
-        .map(String::from)
+        .remove_one::<String>("display-name")
         .unwrap_or_else(|| super::ask_for("Display name"));
 
-    let admin = args.is_present("admin");
-    let moderator = args.is_present("moderator");
+    let admin = args.contains_id("admin");
+    let moderator = args.contains_id("moderator");
     let role = if admin {
         Role::Admin
     } else if moderator {
@@ -110,14 +110,12 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
         Role::Normal
     };
 
-    let bio = args.value_of("biography").unwrap_or("").to_string();
+    let bio = args.remove_one::<String>("biography").unwrap_or(String::new());
     let email = args
-        .value_of("email")
-        .map(String::from)
+        .remove_one::<String>("email")
         .unwrap_or_else(|| super::ask_for("Email address"));
     let password = args
-        .value_of("password")
-        .map(String::from)
+        .remove_one::<String>("password")
         .unwrap_or_else(|| {
             print!("Password: ");
             io::stdout().flush().expect("Couldn't flush STDOUT");
@@ -136,10 +134,9 @@ fn new<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     .expect("Couldn't save new user");
 }
 
-fn reset_password<'a>(args: &ArgMatches<'a>, conn: &Connection) {
+fn reset_password(mut args: ArgMatches, conn: &mut Connection) {
     let username = args
-        .value_of("name")
-        .map(String::from)
+        .remove_one::<String>("name")
         .unwrap_or_else(|| super::ask_for("Username"));
     let user = User::find_by_name(
         conn,
@@ -150,8 +147,7 @@ fn reset_password<'a>(args: &ArgMatches<'a>, conn: &Connection) {
     )
     .expect("Failed to get user");
     let password = args
-        .value_of("password")
-        .map(String::from)
+        .remove_one::<String>("password")
         .unwrap_or_else(|| {
             print!("Password: ");
             io::stdout().flush().expect("Couldn't flush STDOUT");

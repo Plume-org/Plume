@@ -45,6 +45,11 @@ msgstr "{0} har fremhevet artikkelen din."
 msgid "Your feed"
 msgstr "Din tidslinje"
 
+# src/template_utils.rs:118
+#, fuzzy
+msgid "My feed"
+msgstr "Din tidslinje"
+
 # src/template_utils.rs:119
 msgid "Local feed"
 msgstr "Lokal tidslinje"
@@ -126,7 +131,9 @@ msgid "Here is the link for registration: {0}"
 msgstr ""
 
 # src/routes/email_signups.rs:219
-msgid "Your account has been created. Now you just need to log in, before you can use it."
+msgid ""
+"Your account has been created. Now you just need to log in, before you can "
+"use it."
 msgstr "Kontoen din er opprettet. Du må logge inn for å bruke den."
 
 # src/routes/instance.rs:117
@@ -234,12 +241,20 @@ msgid "Your article has been deleted."
 msgstr "Artikkelen er slettet."
 
 # src/routes/posts.rs:631
-msgid "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?"
-msgstr "Det ser ut som arikkelen du prøvde allerede er slettet; Kanskje den allerede er fjernet?"
+msgid ""
+"It looks like the article you tried to delete doesn't exist. Maybe it is "
+"already gone?"
+msgstr ""
+"Det ser ut som arikkelen du prøvde allerede er slettet; Kanskje den allerede "
+"er fjernet?"
 
 # src/routes/posts.rs:673
-msgid "Couldn't obtain enough information about your account. Please make sure your username is correct."
-msgstr "Klarte ikke å hente informasjon om kontoen din. Vennligst sjekk at brukernavnet er korrekt."
+msgid ""
+"Couldn't obtain enough information about your account. Please make sure your "
+"username is correct."
+msgstr ""
+"Klarte ikke å hente informasjon om kontoen din. Vennligst sjekk at "
+"brukernavnet er korrekt."
 
 # src/routes/reshares.rs:58
 msgid "To reshare a post, you need to be logged in"
@@ -297,29 +312,21 @@ msgstr "Kontoen din er slettet."
 msgid "You can't delete someone else's account."
 msgstr "Du kan ikke slette andres kontoer."
 
-msgid "Create your account"
-msgstr "Opprett kontoen din"
-
-msgid "Create an account"
-msgstr "Opprett en konto"
-
-msgid "Email"
-msgstr "E-post"
-
-msgid "Email confirmation"
-msgstr ""
-
-msgid "Apologies, but registrations are closed on this particular instance. You can, however, find a different one."
-msgstr "Beklager, nyregistreringer er lukket på denne instansen. Du kan istedet finne en annen instans."
-
 msgid "Registration"
 msgstr ""
 
 msgid "Check your inbox!"
 msgstr ""
 
-msgid "We sent a mail to the address you gave us, with a link for registration."
+msgid ""
+"We sent a mail to the address you gave us, with a link for registration."
 msgstr ""
+
+msgid "Create your account"
+msgstr "Opprett kontoen din"
+
+msgid "Create an account"
+msgstr "Opprett en konto"
 
 msgid "Username"
 msgstr "Brukernavn"
@@ -330,245 +337,35 @@ msgstr "Passord"
 msgid "Password confirmation"
 msgstr ""
 
-msgid "Media upload"
-msgstr "Last opp medie"
+msgid ""
+"Apologies, but registrations are closed on this particular instance. You "
+"can, however, find a different one."
+msgstr ""
+"Beklager, nyregistreringer er lukket på denne instansen. Du kan istedet "
+"finne en annen instans."
 
-msgid "Description"
-msgstr "Beskrivelse"
+msgid "Email"
+msgstr "E-post"
 
-msgid "Useful for visually impaired people, as well as licensing information"
-msgstr "Anvendelig for synshemmede, samt for lisensinformasjon"
-
-msgid "Content warning"
-msgstr "Varsel om følsomt innhold"
-
-msgid "Leave it empty, if none is needed"
-msgstr "La være tomt, hvis ingen trengs"
-
-msgid "File"
-msgstr "Fil"
-
-msgid "Send"
-msgstr "Send"
-
-msgid "Your media"
-msgstr "Dine medier"
-
-msgid "Upload"
-msgstr "Last opp"
-
-msgid "You don't have any media yet."
-msgstr "Du har ingen medier enda."
-
-msgid "Content warning: {0}"
-msgstr "Varsel om følsomt innhold: {0}"
-
-msgid "Delete"
-msgstr "Slett"
-
-msgid "Details"
-msgstr "Detaljer"
-
-msgid "Media details"
-msgstr "Mediedetaljer"
-
-msgid "Go back to the gallery"
-msgstr "Gå tilbake til galleriet"
-
-msgid "Markdown syntax"
-msgstr "Markdown syntaks"
-
-msgid "Copy it into your articles, to insert this media:"
-msgstr "Kopier inn i artikkelen, for å sette inn dette mediet:"
-
-msgid "Use as an avatar"
-msgstr "Bruk som avatar"
-
-msgid "Plume"
-msgstr "Plume"
-
-msgid "Menu"
-msgstr "Meny"
-
-msgid "Search"
-msgstr "Søk"
-
-msgid "Dashboard"
-msgstr "Skrivebord"
-
-msgid "Notifications"
-msgstr "Varsler"
-
-msgid "Log Out"
-msgstr "Logg ut"
-
-msgid "My account"
-msgstr "Min konto"
-
-msgid "Log In"
-msgstr "Logg inn"
-
-msgid "Register"
-msgstr "Registrer deg"
-
-msgid "About this instance"
-msgstr "Om denne instansen"
-
-msgid "Privacy policy"
-msgstr "Retningslinjer for personvern"
-
-msgid "Administration"
-msgstr "Administrasjon"
-
-msgid "Documentation"
-msgstr "Dokumentasjon"
-
-msgid "Source code"
-msgstr "Kildekode"
-
-msgid "Matrix room"
-msgstr "Matrix rom"
-
-msgid "Admin"
-msgstr "Administrator"
-
-msgid "It is you"
-msgstr "Det er deg"
-
-msgid "Edit your profile"
-msgstr "Rediger din profil"
-
-msgid "Open on {0}"
+msgid "Email confirmation"
 msgstr ""
 
-msgid "Unsubscribe"
+msgid ""
+"An email will be sent to provided email. You can continue signing-up via the "
+"email."
 msgstr ""
-
-msgid "Subscribe"
-msgstr ""
-
-msgid "Follow {}"
-msgstr "Følg {}"
-
-msgid "Log in to follow"
-msgstr "Logg inn for å følge"
-
-msgid "Enter your full username handle to follow"
-msgstr "Skriv inn hele brukernavnet ditt for å følge"
-
-msgid "{0}'s subscribers"
-msgstr ""
-
-msgid "Articles"
-msgstr "Artikler"
-
-msgid "Subscribers"
-msgstr "Abonnenter"
-
-msgid "Subscriptions"
-msgstr "Abonnenter"
-
-msgid "{0}'s subscriptions"
-msgstr ""
-
-msgid "Your Dashboard"
-msgstr "Skrivebordet ditt"
-
-msgid "Your Blogs"
-msgstr "Dine Blogger"
-
-msgid "You don't have any blog yet. Create your own, or ask to join one."
-msgstr "Du har ikke en blogg enda. Lag din egen, eller spør om å bli med i en."
-
-msgid "Start a new blog"
-msgstr "Opprett en ny blogg"
-
-msgid "Your Drafts"
-msgstr "Dine Utkast"
-
-msgid "Go to your gallery"
-msgstr "Gå til galleriet ditt"
-
-msgid "Edit your account"
-msgstr "Endre kontoen din"
-
-msgid "Your Profile"
-msgstr "Din profil"
-
-msgid "To change your avatar, upload it to your gallery and then select from there."
-msgstr "For å endre avataren din må du legge den til galleriet og velge den der."
-
-msgid "Upload an avatar"
-msgstr "Last opp en avatar"
-
-msgid "Display name"
-msgstr ""
-
-msgid "Summary"
-msgstr "Sammendrag"
-
-msgid "Theme"
-msgstr ""
-
-msgid "Default theme"
-msgstr ""
-
-msgid "Error while loading theme selector."
-msgstr ""
-
-msgid "Never load blogs custom themes"
-msgstr ""
-
-msgid "Update account"
-msgstr "Oppdater konto"
-
-msgid "Danger zone"
-msgstr "Faresone"
-
-msgid "Be very careful, any action taken here can't be cancelled."
-msgstr "Vær forsiktig. Endringer her kan ikke avbrytes."
-
-msgid "Delete your account"
-msgstr "Slett kontoen din"
-
-msgid "Sorry, but as an admin, you can't leave your own instance."
-msgstr "Beklager, en administrator kan ikke forlate sin egen instans."
-
-msgid "Latest articles"
-msgstr "Siste artikler"
-
-msgid "Atom feed"
-msgstr "Atom strøm"
-
-msgid "Recently boosted"
-msgstr "Nylig fremhveet"
-
-msgid "Articles tagged \"{0}\""
-msgstr "Artikler med emneknaggen \"{0}\""
-
-msgid "There are currently no articles with such a tag"
-msgstr "Det er ingen artikler med den emneknaggen"
-
-msgid "The content you sent can't be processed."
-msgstr "Innholdet du sendte inn kan ikke bearbeides."
-
-msgid "Maybe it was too long."
-msgstr "Kanskje det var for langt."
-
-msgid "Internal server error"
-msgstr "Intern feil"
-
-msgid "Something broke on our side."
-msgstr "Noe brakk hos oss."
-
-msgid "Sorry about that. If you think this is a bug, please report it."
-msgstr "Beklager! Hvis du tror at dette er en programfeil, setter vi pris på at du sier ifra."
 
 msgid "Invalid CSRF token"
 msgstr "Ugyldig CSRF token"
 
-msgid "Something is wrong with your CSRF token. Make sure cookies are enabled in you browser, and try reloading this page. If you continue to see this error message, please report it."
-msgstr "Noe er galt med CSRF token. Påse at informasjonskapsler er aktivert i nettleseren, prøv så å hente nettsiden på nytt. Hvis du fortsatt ser denne feilen, setter vi pris på om du sier ifra."
+msgid ""
+"Something is wrong with your CSRF token. Make sure cookies are enabled in "
+"you browser, and try reloading this page. If you continue to see this error "
+"message, please report it."
+msgstr ""
+"Noe er galt med CSRF token. Påse at informasjonskapsler er aktivert i "
+"nettleseren, prøv så å hente nettsiden på nytt. Hvis du fortsatt ser denne "
+"feilen, setter vi pris på om du sier ifra."
 
 msgid "You are not authorized."
 msgstr "Du har ikke tilgang."
@@ -582,53 +379,25 @@ msgstr "Vi fant desverre ikke denne siden."
 msgid "The link that led you here may be broken."
 msgstr "Lenken som ledet deg hit kan være utdatert."
 
-msgid "Users"
-msgstr "Brukere"
+msgid "Internal server error"
+msgstr "Intern feil"
 
-msgid "Configuration"
-msgstr "Innstillinger"
+msgid "Something broke on our side."
+msgstr "Noe brakk hos oss."
 
-msgid "Instances"
-msgstr "Instanser"
-
-msgid "Email blocklist"
+msgid "Sorry about that. If you think this is a bug, please report it."
 msgstr ""
+"Beklager! Hvis du tror at dette er en programfeil, setter vi pris på at du "
+"sier ifra."
 
-msgid "Grant admin rights"
-msgstr ""
+msgid "The content you sent can't be processed."
+msgstr "Innholdet du sendte inn kan ikke bearbeides."
 
-msgid "Revoke admin rights"
-msgstr ""
-
-msgid "Grant moderator rights"
-msgstr ""
-
-msgid "Revoke moderator rights"
-msgstr ""
-
-msgid "Ban"
-msgstr "Bannlys"
-
-msgid "Run on selected users"
-msgstr ""
-
-msgid "Moderator"
-msgstr ""
-
-msgid "Moderation"
-msgstr ""
-
-msgid "Home"
-msgstr ""
+msgid "Maybe it was too long."
+msgstr "Kanskje det var for langt."
 
 msgid "Administration of {0}"
 msgstr "Administrasjon av {0}"
-
-msgid "Unblock"
-msgstr "Fjern blokkering"
-
-msgid "Block"
-msgstr "Blokker"
 
 msgid "Name"
 msgstr "Navn"
@@ -651,14 +420,20 @@ msgstr "Standardlisens for artikler"
 msgid "Save these settings"
 msgstr "Lagre innstillingene"
 
-msgid "If you are browsing this site as a visitor, no data about you is collected."
-msgstr "Hvis du besøker denne siden som gjest, lagres ingen informasjon om deg."
+msgid "Configuration"
+msgstr "Innstillinger"
 
-msgid "As a registered user, you have to provide your username (which does not have to be your real name), your functional email address and a password, in order to be able to log in, write articles and comment. The content you submit is stored until you delete it."
-msgstr "For å registrere deg må du oppgi ett brukernavn (dette behøver ikke å samsvare med ditt ekte navn), en fungerende epost-adresse og ett passord. Dette gjør at du kan logge inn, skrive artikler og kommentarer. Innholdet du legger inn blir lagret inntil du sletter det."
+msgid "Instances"
+msgstr "Instanser"
 
-msgid "When you log in, we store two cookies, one to keep your session open, the second to prevent other people to act on your behalf. We don't store any other cookies."
-msgstr "Når du logger inn lagrer vi to informasjonskapsler. Den har informasjon om sesjonen din, den andre beskytter identiteten din. Vi lagrer ingen andre informasjonskapsler."
+msgid "Users"
+msgstr "Brukere"
+
+msgid "Email blocklist"
+msgstr ""
+
+msgid "Moderation"
+msgstr ""
 
 msgid "Blocklisted Emails"
 msgstr ""
@@ -666,7 +441,10 @@ msgstr ""
 msgid "Email address"
 msgstr ""
 
-msgid "The email address you wish to block. In order to block domains, you can use globbing syntax, for example '*@example.com' blocks all addresses from example.com"
+msgid ""
+"The email address you wish to block. In order to block domains, you can use "
+"globbing syntax, for example '*@example.com' blocks all addresses from "
+"example.com"
 msgstr ""
 
 msgid "Note"
@@ -675,13 +453,17 @@ msgstr ""
 msgid "Notify the user?"
 msgstr ""
 
-msgid "Optional, shows a message to the user when they attempt to create an account with that address"
+msgid ""
+"Optional, shows a message to the user when they attempt to create an account "
+"with that address"
 msgstr ""
 
 msgid "Blocklisting notification"
 msgstr ""
 
-msgid "The message to be shown when the user attempts to create an account with this email address"
+msgid ""
+"The message to be shown when the user attempts to create an account with "
+"this email address"
 msgstr ""
 
 msgid "Add blocklisted address"
@@ -705,11 +487,39 @@ msgstr ""
 msgid "The user will be silently prevented from making an account"
 msgstr ""
 
-msgid "Welcome to {}"
-msgstr "Velkommen til {}"
+msgid "Unblock"
+msgstr "Fjern blokkering"
 
-msgid "View all"
-msgstr "Vis alle"
+msgid "Block"
+msgstr "Blokker"
+
+msgid "Privacy policy"
+msgstr "Retningslinjer for personvern"
+
+msgid ""
+"If you are browsing this site as a visitor, no data about you is collected."
+msgstr ""
+"Hvis du besøker denne siden som gjest, lagres ingen informasjon om deg."
+
+msgid ""
+"As a registered user, you have to provide your username (which does not have "
+"to be your real name), your functional email address and a password, in "
+"order to be able to log in, write articles and comment. The content you "
+"submit is stored until you delete it."
+msgstr ""
+"For å registrere deg må du oppgi ett brukernavn (dette behøver ikke å "
+"samsvare med ditt ekte navn), en fungerende epost-adresse og ett passord. "
+"Dette gjør at du kan logge inn, skrive artikler og kommentarer. Innholdet du "
+"legger inn blir lagret inntil du sletter det."
+
+msgid ""
+"When you log in, we store two cookies, one to keep your session open, the "
+"second to prevent other people to act on your behalf. We don't store any "
+"other cookies."
+msgstr ""
+"Når du logger inn lagrer vi to informasjonskapsler. Den har informasjon om "
+"sesjonen din, den andre beskytter identiteten din. Vi lagrer ingen andre "
+"informasjonskapsler."
 
 msgid "About {0}"
 msgstr "Om {0}"
@@ -729,14 +539,147 @@ msgstr "Og er koblet til <em>{0}</em> andre instanser"
 msgid "Administred by"
 msgstr "Administrert av"
 
-msgid "Interact with {}"
-msgstr "Interakter med {}"
+msgid "Welcome to {}"
+msgstr "Velkommen til {}"
 
-msgid "Log in to interact"
-msgstr "Logg inn for å interaktere"
+msgid "Nothing to see here yet."
+msgstr ""
 
-msgid "Enter your full username to interact"
-msgstr "Skriv inn ditt fulle brukernavn for å interaktere"
+#, fuzzy
+msgid "Search users"
+msgstr "Søk"
+
+msgid "Grant admin rights"
+msgstr ""
+
+msgid "Revoke admin rights"
+msgstr ""
+
+msgid "Grant moderator rights"
+msgstr ""
+
+msgid "Revoke moderator rights"
+msgstr ""
+
+msgid "Ban"
+msgstr "Bannlys"
+
+msgid "Run on selected users"
+msgstr ""
+
+msgid "Admin"
+msgstr "Administrator"
+
+msgid "Moderator"
+msgstr ""
+
+msgid "Media details"
+msgstr "Mediedetaljer"
+
+msgid "Go back to the gallery"
+msgstr "Gå tilbake til galleriet"
+
+msgid "Markdown syntax"
+msgstr "Markdown syntaks"
+
+msgid "Copy it into your articles, to insert this media:"
+msgstr "Kopier inn i artikkelen, for å sette inn dette mediet:"
+
+msgid "Use as an avatar"
+msgstr "Bruk som avatar"
+
+msgid "Delete"
+msgstr "Slett"
+
+msgid "Your media"
+msgstr "Dine medier"
+
+msgid "Upload"
+msgstr "Last opp"
+
+msgid "You don't have any media yet."
+msgstr "Du har ingen medier enda."
+
+msgid "Content warning: {0}"
+msgstr "Varsel om følsomt innhold: {0}"
+
+msgid "Details"
+msgstr "Detaljer"
+
+msgid "Media upload"
+msgstr "Last opp medie"
+
+msgid "Description"
+msgstr "Beskrivelse"
+
+msgid "Useful for visually impaired people, as well as licensing information"
+msgstr "Anvendelig for synshemmede, samt for lisensinformasjon"
+
+msgid "Content warning"
+msgstr "Varsel om følsomt innhold"
+
+msgid "Leave it empty, if none is needed"
+msgstr "La være tomt, hvis ingen trengs"
+
+msgid "File"
+msgstr "Fil"
+
+msgid "Send"
+msgstr "Send"
+
+msgid "Notifications"
+msgstr "Varsler"
+
+msgid "None"
+msgstr ""
+
+msgid "No description"
+msgstr ""
+
+msgid "What is Plume?"
+msgstr ""
+
+msgid "Plume is a decentralized blogging engine."
+msgstr ""
+
+msgid "Authors can manage multiple blogs, each as its own website."
+msgstr ""
+
+msgid ""
+"Articles are also visible on other Plume instances, and you can interact "
+"with them directly from other platforms like Mastodon."
+msgstr ""
+
+msgid "Read the detailed rules"
+msgstr ""
+
+msgid "Edit"
+msgstr "Rediger"
+
+msgid "By {0}"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+msgid "One like"
+msgid_plural "{0} likes"
+msgstr[0] "En like"
+msgstr[1] "{0} likes"
+
+msgid "One boost"
+msgid_plural "{0} boosts"
+msgstr[0] "Fremhevet en gang"
+msgstr[1] "{0} fremhevinger"
+
+msgid "Respond"
+msgstr ""
+
+msgid "Are you sure?"
+msgstr ""
+
+msgid "Delete this comment"
+msgstr ""
 
 msgid "Publish"
 msgstr "Publiser"
@@ -753,8 +696,12 @@ msgstr ""
 msgid "Content"
 msgstr "Innhold"
 
-msgid "You can upload media to your gallery, and then copy their Markdown code into your articles to insert them."
-msgstr "Du kan laste opp medier til galleriet, og så lime inn Markdown syntaksen inn i artiklen for å bruke dem."
+msgid ""
+"You can upload media to your gallery, and then copy their Markdown code into "
+"your articles to insert them."
+msgstr ""
+"Du kan laste opp medier til galleriet, og så lime inn Markdown syntaksen inn "
+"i artiklen for å bruke dem."
 
 msgid "Upload media"
 msgstr "Last opp medie"
@@ -780,6 +727,15 @@ msgstr "Oppdater eller publiser"
 msgid "Publish your post"
 msgstr "Publiser innlegget"
 
+msgid "Interact with {}"
+msgstr "Interakter med {}"
+
+msgid "Log in to interact"
+msgstr "Logg inn for å interaktere"
+
+msgid "Enter your full username to interact"
+msgstr "Skriv inn ditt fulle brukernavn for å interaktere"
+
 msgid "Written by {0}"
 msgstr "Skrevet av {0}"
 
@@ -789,21 +745,11 @@ msgstr "Alt innhold er opphavsrettslig beskyttet."
 msgid "This article is under the {0} license."
 msgstr "Denne artikkelen er lisensiert under {0}."
 
-msgid "One like"
-msgid_plural "{0} likes"
-msgstr[0] "En like"
-msgstr[1] "{0} likes"
-
 msgid "I don't like this anymore"
 msgstr "Jeg liker ikke dette lenger"
 
 msgid "Add yours"
 msgstr "Legg inn din egen"
-
-msgid "One boost"
-msgid_plural "{0} boosts"
-msgstr[0] "Fremhevet en gang"
-msgstr[1] "{0} fremhevinger"
 
 msgid "I don't want to boost this anymore"
 msgstr "Jeg vil ikke fremheve dette lenger"
@@ -811,8 +757,18 @@ msgstr "Jeg vil ikke fremheve dette lenger"
 msgid "Boost"
 msgstr "Fremhev"
 
-msgid "{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this article"
-msgstr "{0}Logg inn{1} eller {2}bruk din Fediverse konto{3} for å interaktere med denne artikkelen"
+msgid ""
+"{0}Log in{1}, or {2}use your Fediverse account{3} to interact with this "
+"article"
+msgstr ""
+"{0}Logg inn{1} eller {2}bruk din Fediverse konto{3} for å interaktere med "
+"denne artikkelen"
+
+msgid "Unsubscribe"
+msgstr ""
+
+msgid "Subscribe"
+msgstr ""
 
 msgid "Comments"
 msgstr "Kommentarer"
@@ -826,154 +782,15 @@ msgstr "Send kommentar"
 msgid "No comments yet. Be the first to react!"
 msgstr "Ingen kommentarer enda. Bli den første!"
 
-msgid "Are you sure?"
-msgstr ""
-
 msgid "This article is still a draft. Only you and other authors can see it."
-msgstr "Denne artikkelen er ett utkast. Bare du og andre forfattere kan se den."
+msgstr ""
+"Denne artikkelen er ett utkast. Bare du og andre forfattere kan se den."
 
 msgid "Only you and other authors can edit this article."
 msgstr "Bare du og andre forfattere kan endre denne artikkelen."
 
-msgid "Edit"
-msgstr "Rediger"
-
-msgid "I'm from this instance"
-msgstr "Jeg er fra denne instansen"
-
-msgid "Username, or email"
-msgstr "Brukernavn eller e-post"
-
-msgid "Log in"
-msgstr "Logg Inn"
-
-msgid "I'm from another instance"
-msgstr "Jeg er fra en annen instans"
-
-msgid "Continue to your instance"
-msgstr "Gå til din instans"
-
-msgid "Reset your password"
-msgstr ""
-
-msgid "New password"
-msgstr ""
-
-msgid "Confirmation"
-msgstr ""
-
-msgid "Update password"
-msgstr ""
-
-msgid "We sent a mail to the address you gave us, with a link to reset your password."
-msgstr ""
-
-msgid "Send password reset link"
-msgstr "Send lenke for tilbakestilling av passord"
-
-msgid "This token has expired"
-msgstr ""
-
-msgid "Please start the process again by clicking <a href=\"/password-reset\">here</a>."
-msgstr ""
-
-msgid "New Blog"
-msgstr "Ny Blogg"
-
-msgid "Create a blog"
-msgstr "Opprett en blogg"
-
-msgid "Create blog"
-msgstr "Opprett blogg"
-
-msgid "Edit \"{}\""
-msgstr "Rediger \"{}\""
-
-msgid "You can upload images to your gallery, to use them as blog icons, or banners."
-msgstr "Du kan legge opp bilder til galleriet ditt for å bruke den som bloggikoner eller bannere."
-
-msgid "Upload images"
-msgstr "Last opp bilder"
-
-msgid "Blog icon"
-msgstr "Bloggikon"
-
-msgid "Blog banner"
-msgstr "Bloggbanner"
-
-msgid "Custom theme"
-msgstr ""
-
-msgid "Update blog"
-msgstr "Oppdater blogg"
-
-msgid "Be very careful, any action taken here can't be reversed."
-msgstr "Vær forsiktig. Endringer her kan ikke reverteres."
-
-msgid "Are you sure that you want to permanently delete this blog?"
-msgstr ""
-
-msgid "Permanently delete this blog"
-msgstr "Slett denne bloggen permanent"
-
-msgid "{}'s icon"
-msgstr "{}s ikon"
-
-msgid "There's one author on this blog: "
-msgid_plural "There are {0} authors on this blog: "
-msgstr[0] "Det er en forfatter av denne bloggen: "
-msgstr[1] "Det er {0} forfattere av denne bloggen: "
-
-msgid "No posts to see here yet."
-msgstr "Det er ingen artikler her enda."
-
-msgid "Nothing to see here yet."
-msgstr ""
-
-msgid "None"
-msgstr ""
-
-msgid "No description"
-msgstr ""
-
-msgid "Respond"
-msgstr ""
-
-msgid "Delete this comment"
-msgstr ""
-
-msgid "What is Plume?"
-msgstr ""
-
-msgid "Plume is a decentralized blogging engine."
-msgstr ""
-
-msgid "Authors can manage multiple blogs, each as its own website."
-msgstr ""
-
-msgid "Articles are also visible on other Plume instances, and you can interact with them directly from other platforms like Mastodon."
-msgstr ""
-
-msgid "Read the detailed rules"
-msgstr ""
-
-msgid "By {0}"
-msgstr ""
-
-msgid "Draft"
-msgstr ""
-
-msgid "Search result(s) for \"{0}\""
-msgstr ""
-
-msgid "Search result(s)"
-msgstr ""
-
-msgid "No results for your query"
-msgstr ""
-
-msgid "No more results for your query"
-msgstr ""
+msgid "Search"
+msgstr "Søk"
 
 msgid "Advanced search"
 msgstr ""
@@ -1032,3 +849,262 @@ msgstr ""
 msgid "Article license"
 msgstr ""
 
+msgid "Search result(s) for \"{0}\""
+msgstr ""
+
+msgid "Search result(s)"
+msgstr ""
+
+msgid "No results for your query"
+msgstr ""
+
+msgid "No more results for your query"
+msgstr ""
+
+msgid "Log in"
+msgstr "Logg Inn"
+
+msgid "Username, or email"
+msgstr "Brukernavn eller e-post"
+
+msgid "Reset your password"
+msgstr ""
+
+msgid "New password"
+msgstr ""
+
+msgid "Confirmation"
+msgstr ""
+
+msgid "Update password"
+msgstr ""
+
+msgid "Send password reset link"
+msgstr "Send lenke for tilbakestilling av passord"
+
+msgid "This token has expired"
+msgstr ""
+
+msgid ""
+"Please start the process again by clicking <a href=\"/password-reset\">here</"
+"a>."
+msgstr ""
+
+msgid ""
+"We sent a mail to the address you gave us, with a link to reset your "
+"password."
+msgstr ""
+
+msgid "Articles tagged \"{0}\""
+msgstr "Artikler med emneknaggen \"{0}\""
+
+msgid "There are currently no articles with such a tag"
+msgstr "Det er ingen artikler med den emneknaggen"
+
+msgid "Edit your account"
+msgstr "Endre kontoen din"
+
+msgid "Your Profile"
+msgstr "Din profil"
+
+msgid ""
+"To change your avatar, upload it to your gallery and then select from there."
+msgstr ""
+"For å endre avataren din må du legge den til galleriet og velge den der."
+
+msgid "Upload an avatar"
+msgstr "Last opp en avatar"
+
+msgid "Display name"
+msgstr ""
+
+msgid "Summary"
+msgstr "Sammendrag"
+
+msgid "Theme"
+msgstr ""
+
+msgid "Default theme"
+msgstr ""
+
+msgid "Error while loading theme selector."
+msgstr ""
+
+msgid "Never load blogs custom themes"
+msgstr ""
+
+msgid "Update account"
+msgstr "Oppdater konto"
+
+msgid "Danger zone"
+msgstr "Faresone"
+
+msgid "Be very careful, any action taken here can't be cancelled."
+msgstr "Vær forsiktig. Endringer her kan ikke avbrytes."
+
+msgid "Delete your account"
+msgstr "Slett kontoen din"
+
+msgid "Sorry, but as an admin, you can't leave your own instance."
+msgstr "Beklager, en administrator kan ikke forlate sin egen instans."
+
+msgid "Your Dashboard"
+msgstr "Skrivebordet ditt"
+
+msgid "Your Blogs"
+msgstr "Dine Blogger"
+
+msgid "You don't have any blog yet. Create your own, or ask to join one."
+msgstr "Du har ikke en blogg enda. Lag din egen, eller spør om å bli med i en."
+
+msgid "Start a new blog"
+msgstr "Opprett en ny blogg"
+
+msgid "Your Drafts"
+msgstr "Dine Utkast"
+
+msgid "Go to your gallery"
+msgstr "Gå til galleriet ditt"
+
+msgid "Articles"
+msgstr "Artikler"
+
+msgid "Subscribers"
+msgstr "Abonnenter"
+
+msgid "Subscriptions"
+msgstr "Abonnenter"
+
+msgid "Latest articles"
+msgstr "Siste artikler"
+
+msgid "Atom feed"
+msgstr "Atom strøm"
+
+msgid "Recently boosted"
+msgstr "Nylig fremhveet"
+
+msgid "Follow {}"
+msgstr "Følg {}"
+
+msgid "Log in to follow"
+msgstr "Logg inn for å følge"
+
+msgid "Enter your full username handle to follow"
+msgstr "Skriv inn hele brukernavnet ditt for å følge"
+
+msgid "{0}'s subscriptions"
+msgstr ""
+
+msgid "{0}'s subscribers"
+msgstr ""
+
+msgid "It is you"
+msgstr "Det er deg"
+
+msgid "Edit your profile"
+msgstr "Rediger din profil"
+
+msgid "Open on {0}"
+msgstr ""
+
+msgid "Edit \"{}\""
+msgstr "Rediger \"{}\""
+
+msgid ""
+"You can upload images to your gallery, to use them as blog icons, or banners."
+msgstr ""
+"Du kan legge opp bilder til galleriet ditt for å bruke den som bloggikoner "
+"eller bannere."
+
+msgid "Upload images"
+msgstr "Last opp bilder"
+
+msgid "Blog icon"
+msgstr "Bloggikon"
+
+msgid "Blog banner"
+msgstr "Bloggbanner"
+
+msgid "Custom theme"
+msgstr ""
+
+msgid "Update blog"
+msgstr "Oppdater blogg"
+
+msgid "Be very careful, any action taken here can't be reversed."
+msgstr "Vær forsiktig. Endringer her kan ikke reverteres."
+
+msgid "Are you sure that you want to permanently delete this blog?"
+msgstr ""
+
+msgid "Permanently delete this blog"
+msgstr "Slett denne bloggen permanent"
+
+msgid "New Blog"
+msgstr "Ny Blogg"
+
+msgid "Create a blog"
+msgstr "Opprett en blogg"
+
+msgid "Create blog"
+msgstr "Opprett blogg"
+
+msgid "{}'s icon"
+msgstr "{}s ikon"
+
+msgid "There's one author on this blog: "
+msgid_plural "There are {0} authors on this blog: "
+msgstr[0] "Det er en forfatter av denne bloggen: "
+msgstr[1] "Det er {0} forfattere av denne bloggen: "
+
+msgid "No posts to see here yet."
+msgstr "Det er ingen artikler her enda."
+
+msgid "I'm from this instance"
+msgstr "Jeg er fra denne instansen"
+
+msgid "I'm from another instance"
+msgstr "Jeg er fra en annen instans"
+
+msgid "Continue to your instance"
+msgstr "Gå til din instans"
+
+msgid "Plume"
+msgstr "Plume"
+
+msgid "Menu"
+msgstr "Meny"
+
+msgid "Dashboard"
+msgstr "Skrivebord"
+
+msgid "Log Out"
+msgstr "Logg ut"
+
+msgid "My account"
+msgstr "Min konto"
+
+msgid "Log In"
+msgstr "Logg inn"
+
+msgid "Register"
+msgstr "Registrer deg"
+
+msgid "About this instance"
+msgstr "Om denne instansen"
+
+msgid "Administration"
+msgstr "Administrasjon"
+
+msgid "Documentation"
+msgstr "Dokumentasjon"
+
+msgid "Source code"
+msgstr "Kildekode"
+
+msgid "Matrix room"
+msgstr "Matrix rom"
+
+#~ msgid "View all"
+#~ msgstr "Vis alle"

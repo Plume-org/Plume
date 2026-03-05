@@ -1,0 +1,14 @@
+[package]
+authors = ["Baptiste Gelez <baptiste@gelez.xyz>"]
+description = "Rocket fairing for easy internationalization with gettext (also supports Actix web)"
+license = "GPL-3.0"
+name = "rocket_i18n"
+readme = "README.md"
+version = "0.5.1"
+
+edition = "2021"
+rust-version = "1.90.0"
+
+[dependencies]
+gettext = "0.4"
+rocket = { version = "0.5.1", default-features = false }

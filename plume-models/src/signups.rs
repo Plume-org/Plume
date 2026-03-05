@@ -1,5 +1,8 @@
 use crate::CONFIG;
-use rocket::request::{FromRequest, Outcome, Request};
+use rocket::{
+    http::Status,
+    request::{FromRequest, Outcome, Request},
+};
 use std::fmt;
 use std::str::FromStr;
 
@@ -49,24 +52,26 @@ impl std::error::Error for StrategyError {}
 pub struct Password();
 pub struct Email();
 
-impl<'a, 'r> FromRequest<'a, 'r> for Password {
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for Password {
     type Error = ();
 
-    fn from_request(_request: &'a Request<'r>) -> Outcome<Self, ()> {
+    async fn from_request(_request: &'r Request<'_>) -> Outcome<Password, Self::Error> {
         match matches!(CONFIG.signup, Strategy::Password) {
             true => Outcome::Success(Self()),
-            false => Outcome::Forward(()),
+            false => Outcome::Forward(Status::Unauthorized),
         }
     }
 }
 
-impl<'a, 'r> FromRequest<'a, 'r> for Email {
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for Email {
     type Error = ();
 
-    fn from_request(_request: &'a Request<'r>) -> Outcome<Self, ()> {
+    async fn from_request(_request: &'r Request<'_>) -> Outcome<Email, Self::Error> {
         match matches!(CONFIG.signup, Strategy::Email) {
             true => Outcome::Success(Self()),
-            false => Outcome::Forward(()),
+            false => Outcome::Forward(Status::Unauthorized),
         }
     }
 }

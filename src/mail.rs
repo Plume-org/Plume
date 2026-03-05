@@ -1,5 +1,5 @@
 #![warn(clippy::too_many_arguments)]
-use lettre_email::Email;
+use lettre::Message;
 use std::env;
 
 pub use self::mailer::*;
@@ -46,48 +46,47 @@ mod mailer {
 
 #[cfg(not(feature = "debug-mailer"))]
 mod mailer {
-    use plume_models::smtp::{
+    use lettre::transport::smtp::{
         authentication::{Credentials, Mechanism},
         extension::ClientId,
-        ConnectionReuseParameters, SmtpClient, SmtpTransport,
+        SmtpTransport,
     };
-    use plume_models::{SmtpNewWithAddr, CONFIG};
+    use plume_models::CONFIG;
 
     pub type Mailer = Option<SmtpTransport>;
 
     pub fn init() -> Mailer {
         let config = CONFIG.mail.as_ref()?;
-        let mail = SmtpClient::new_with_addr((&config.server, config.port))
+        let mail = SmtpTransport::relay(&config.server)
             .unwrap()
+            .port(config.port)
             .hello_name(ClientId::Domain(config.helo_name.clone()))
             .credentials(Credentials::new(
                 config.username.clone(),
                 config.password.clone(),
             ))
-            .smtp_utf8(true)
-            .authentication_mechanism(Mechanism::Plain)
-            .connection_reuse(ConnectionReuseParameters::NoReuse)
-            .transport();
+            .authentication(vec![Mechanism::Plain])
+            .build();
         Some(mail)
     }
 }
 
-pub fn build_mail(dest: String, subject: String, body: String) -> Option<Email> {
-    Email::builder()
-        .from(
-            env::var("MAIL_ADDRESS")
-                .or_else(|_| {
-                    Ok(format!(
-                        "{}@{}",
-                        env::var("MAIL_USER")?,
-                        env::var("MAIL_SERVER")?
-                    )) as Result<_, env::VarError>
-                })
-                .expect("The email server is not configured correctly"),
-        )
-        .to(dest)
+pub fn build_mail(dest: String, subject: String, body: String) -> Option<Message> {
+
+    let from = env::var("MAIL_ADDRESS")
+        .or_else(|_| {
+            Ok(format!(
+                "{}@{}",
+                env::var("MAIL_USER")?,
+                env::var("MAIL_SERVER")?
+            )) as Result<_, env::VarError>
+        })
+        .expect("The email server is not configured correctly");
+
+    Message::builder()
+        .from(from.parse().ok()?)
+        .to(dest.parse().ok()?)
         .subject(subject)
-        .text(body)
-        .build()
+        .body(body)
         .ok()
 }

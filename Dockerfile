@@ -1,4 +1,4 @@
-FROM rust:1 as builder
+FROM rust:1.93.1-slim-trixie AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     make \
     openssl \
+    pkg-config \
     libssl-dev \
     clang
 
@@ -22,22 +23,21 @@ WORKDIR /app
 COPY . .
 RUN cargo install wasm-pack
 RUN chmod a+x ./script/plume-front.sh && sleep 1 && ./script/plume-front.sh
-RUN cargo install --path ./ --force --no-default-features --features postgres
-RUN cargo install --path plume-cli --force --no-default-features --features postgres
-RUN cargo clean
+RUN cargo build --release --no-default-features --features postgres
+RUN cargo build --release --package plume-cli --no-default-features --features postgres
 
-FROM debian:stable-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libpq5 \
-    libssl1.1
+    libssl3t64
 
 WORKDIR /app
 
 COPY --from=builder /app /app
-COPY --from=builder /usr/local/cargo/bin/plm /bin/
-COPY --from=builder /usr/local/cargo/bin/plume /bin/
+COPY --from=builder /app/target/release/plm /bin/
+COPY --from=builder /app/target/release/plume /bin/
 
 CMD ["plume"]
 

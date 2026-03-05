@@ -1,6 +1,5 @@
 use chrono::Utc;
-use rocket::http::uri::Uri;
-use rocket::request::LenientForm;
+use rocket::form::Form;
 use rocket::response::{Flash, Redirect};
 use rocket_i18n::I18n;
 use std::{
@@ -13,7 +12,7 @@ use validator::{Validate, ValidationError, ValidationErrors};
 use crate::routes::{
     comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm, RespondOrRedirect,
 };
-use crate::template_utils::{IntoContext, Ructe};
+use crate::template_utils::{IntoContext, PostCard, Ructe};
 use crate::utils::requires_login;
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, LicensedArticle};
 use plume_common::utils::md_to_html;
@@ -35,83 +34,99 @@ use plume_models::{
 };
 
 #[get("/~/<blog>/<slug>?<responding_to>", rank = 4)]
-pub fn details(
-    blog: String,
-    slug: String,
+pub async fn details(
+    blog: &str,
+    slug: &str,
     responding_to: Option<i32>,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let user = rockets.user.clone();
-    let blog = Blog::find_by_fqn(&conn, &blog)?;
-    let post = Post::find_by_slug(&conn, &slug, blog.id)?;
+    let blog = Blog::find_by_fqn(&mut conn, blog).await?;
+    let post = Post::find_by_slug(&mut conn, slug, blog.id)?;
     if !(post.published
         || post
-            .get_authors(&conn)?
+            .get_authors(&mut conn)?
             .into_iter()
             .any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)))
     {
-        return Ok(render!(errors::not_authorized(
-            &(&conn, &rockets).to_context(),
+        return Ok(render!(errors::not_authorized_html(
+            &(&mut conn, &rockets).to_context(),
             i18n!(rockets.intl.catalog, "This post isn't published yet.")
         )));
     }
 
-    let comments = CommentTree::from_post(&conn, &post, user.as_ref())?;
+    let comments = CommentTree::from_post(&mut conn, &post, user.as_ref())?;
 
-    let previous = responding_to.and_then(|r| Comment::get(&conn, r).ok());
+    let previous = responding_to.and_then(|r| Comment::get(&mut conn, r).ok());
+    let comment_form = NewCommentForm {
+        warning: previous.clone().map(|p| p.spoiler_text).unwrap_or_default(),
+        content: previous.clone().and_then(|p| Some(format!(
+            "@{} {}",
+            p.get_author(&mut conn).ok()?.fqn,
+            Mention::list_for_comment(&mut conn, p.id).ok()?
+                .into_iter()
+                .filter_map(|m| {
+                    let user = user.clone();
+                    if let Ok(mentioned) = m.get_mentioned(&mut conn) {
+                        if user.is_none() || mentioned.id != user.expect("posts::details_response: user error while listing mentions").id {
+                            Some(format!("@{}", mentioned.fqn))
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    }
+                }).collect::<Vec<String>>().join(" "))
+            )).unwrap_or_default(),
+        ..NewCommentForm::default()
+    };
 
-    Ok(render!(posts::details(
-            &(&conn, &rockets).to_context(),
-            post.clone(),
+    let tags = Tag::for_post(&mut conn, post.id)?;
+    let likes = post.count_likes(&mut conn)?;
+    let reshares = post.count_reshares(&mut conn)?;
+    let has_liked = user.as_ref().and_then(|u| u.has_liked(&mut conn, &post).ok()).unwrap_or(false);
+    let has_reshared = user.as_ref().and_then(|u| u.has_reshared(&mut conn, &post).ok()).unwrap_or(false);
+    let author = post.get_authors(&mut conn)?.swap_remove(0);
+    let is_following = user.as_ref().and_then(|u| u.is_following(&mut conn, author.id).ok()).unwrap_or(false);
+
+    let cover_url = post.cover_url(&mut conn).unwrap_or_default();
+    let author_avatar_url = author.avatar_url(&mut conn);
+    let is_author = user.as_ref().and_then(|u| post.is_author(&mut conn, u.id).ok()).unwrap_or(false);
+
+    Ok(render!(posts::details_html(
+            &(&mut conn, &rockets).to_context(),
+            post,
+            cover_url,
             blog,
-            &NewCommentForm {
-                warning: previous.clone().map(|p| p.spoiler_text).unwrap_or_default(),
-                content: previous.clone().and_then(|p| Some(format!(
-                    "@{} {}",
-                    p.get_author(&conn).ok()?.fqn,
-                    Mention::list_for_comment(&conn, p.id).ok()?
-                        .into_iter()
-                        .filter_map(|m| {
-                            let user = user.clone();
-                            if let Ok(mentioned) = m.get_mentioned(&conn) {
-                                if user.is_none() || mentioned.id != user.expect("posts::details_response: user error while listing mentions").id {
-                                    Some(format!("@{}", mentioned.fqn))
-                                } else {
-                                    None
-                                }
-                            } else {
-                                None
-                            }
-                        }).collect::<Vec<String>>().join(" "))
-                    )).unwrap_or_default(),
-                ..NewCommentForm::default()
-            },
+            &comment_form,
             ValidationErrors::default(),
-            Tag::for_post(&conn, post.id)?,
+            tags,
             comments,
             previous,
-            post.count_likes(&conn)?,
-            post.count_reshares(&conn)?,
-            user.clone().and_then(|u| u.has_liked(&conn, &post).ok()).unwrap_or(false),
-            user.clone().and_then(|u| u.has_reshared(&conn, &post).ok()).unwrap_or(false),
-            user.and_then(|u| u.is_following(&conn, post.get_authors(&conn).ok()?[0].id).ok()).unwrap_or(false),
-            post.get_authors(&conn)?[0].clone()
+            likes,
+            reshares,
+            has_liked,
+            has_reshared,
+            is_following,
+            author,
+            author_avatar_url,
+            is_author
         )))
 }
 
 #[get("/~/<blog>/<slug>", rank = 3)]
-pub fn activity_details(
-    blog: String,
-    slug: String,
+pub async fn activity_details(
+    blog: &str,
+    slug: &str,
     _ap: ApRequest,
-    conn: DbConn,
+    mut conn: DbConn,
 ) -> Result<ActivityStream<LicensedArticle>, Option<String>> {
-    let blog = Blog::find_by_fqn(&conn, &blog).map_err(|_| None)?;
-    let post = Post::find_by_slug(&conn, &slug, blog.id).map_err(|_| None)?;
+    let blog = Blog::find_by_fqn(&mut conn, blog).await.map_err(|_| None)?;
+    let post = Post::find_by_slug(&mut conn, slug, blog.id).map_err(|_| None)?;
     if post.published {
         Ok(ActivityStream::new(
-            post.to_activity(&conn)
+            post.to_activity(&mut conn)
                 .map_err(|_| String::from("Post serialization error"))?,
         ))
     } else {
@@ -126,31 +141,31 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
             i18n.catalog,
             "To write a new post, you need to be logged in"
         ),
-        uri!(new: blog = blog),
+        uri!(new(blog = blog)),
     )
 }
 
 #[get("/~/<blog>/new", rank = 1)]
-pub fn new(
-    blog: String,
+pub async fn new(
+    blog: &str,
     cl: ContentLen,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
-    let b = Blog::find_by_fqn(&conn, &blog)?;
+    let b = Blog::find_by_fqn(&mut conn, blog).await?;
     let user = rockets.user.clone().unwrap();
 
-    if !user.is_author_in(&conn, &b)? {
+    if !user.is_author_in(&mut conn, &b)? {
         // TODO actually return 403 error code
-        return Ok(render!(errors::not_authorized(
-            &(&conn, &rockets).to_context(),
+        return Ok(render!(errors::not_authorized_html(
+            &(&mut conn, &rockets).to_context(),
             i18n!(rockets.intl.catalog, "You are not an author of this blog.")
         )));
     }
 
-    let medias = Media::for_user(&conn, user.id)?;
-    Ok(render!(posts::new(
-        &(&conn, &rockets).to_context(),
+    let medias = Media::for_user(&mut conn, user.id)?;
+    Ok(render!(posts::new_html(
+        &(&mut conn, &rockets).to_context(),
         i18n!(rockets.intl.catalog, "New post"),
         b,
         false,
@@ -167,21 +182,21 @@ pub fn new(
 }
 
 #[get("/~/<blog>/<slug>/edit")]
-pub fn edit(
-    blog: String,
-    slug: String,
+pub async fn edit(
+    blog: &str,
+    slug: &str,
     cl: ContentLen,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let intl = &rockets.intl.catalog;
-    let b = Blog::find_by_fqn(&conn, &blog)?;
-    let post = Post::find_by_slug(&conn, &slug, b.id)?;
+    let b = Blog::find_by_fqn(&mut conn, blog).await?;
+    let post = Post::find_by_slug(&mut conn, slug, b.id)?;
     let user = rockets.user.clone().unwrap();
 
-    if !user.is_author_in(&conn, &b)? {
-        return Ok(render!(errors::not_authorized(
-            &(&conn, &rockets).to_context(),
+    if !user.is_author_in(&mut conn, &b)? {
+        return Ok(render!(errors::not_authorized_html(
+            &(&mut conn, &rockets).to_context(),
             i18n!(intl, "You are not an author of this blog.")
         )));
     }
@@ -192,26 +207,29 @@ pub fn edit(
         post.content.get().clone() // fallback to HTML if the markdown was not stored
     };
 
-    let medias = Media::for_user(&conn, user.id)?;
+    let medias = Media::for_user(&mut conn, user.id)?;
     let title = post.title.clone();
-    Ok(render!(posts::new(
-        &(&conn, &rockets).to_context(),
+
+    let post_form = NewPostForm {
+        title: post.title.clone(),
+        subtitle: post.subtitle.clone(),
+        content: source,
+        tags: Tag::for_post(&mut conn, post.id)?
+            .into_iter()
+            .filter_map(|t| if !t.is_hashtag { Some(t.tag) } else { None })
+            .collect::<Vec<String>>()
+            .join(", "),
+        license: post.license.clone(),
+        draft: true,
+        cover: post.cover_id,
+    };
+
+    Ok(render!(posts::new_html(
+        &(&mut conn, &rockets).to_context(),
         i18n!(intl, "Edit {0}"; &title),
         b,
         true,
-        &NewPostForm {
-            title: post.title.clone(),
-            subtitle: post.subtitle.clone(),
-            content: source,
-            tags: Tag::for_post(&conn, post.id)?
-                .into_iter()
-                .filter_map(|t| if !t.is_hashtag { Some(t.tag) } else { None })
-                .collect::<Vec<String>>()
-                .join(", "),
-            license: post.license.clone(),
-            draft: true,
-            cover: post.cover_id,
-        },
+        &post_form,
         !post.published,
         Some(post),
         ValidationErrors::default(),
@@ -221,17 +239,17 @@ pub fn edit(
 }
 
 #[post("/~/<blog>/<slug>/edit", data = "<form>")]
-pub fn update(
-    blog: String,
-    slug: String,
+pub async fn update(
+    blog: &str,
+    slug: &str,
     cl: ContentLen,
-    form: LenientForm<NewPostForm>,
-    conn: DbConn,
+    form: Form<NewPostForm>,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
-    let b = Blog::find_by_fqn(&conn, &blog).expect("post::update: blog error");
+    let b = Blog::find_by_fqn(&mut conn, blog).await.expect("post::update: blog error");
     let mut post =
-        Post::find_by_slug(&conn, &slug, b.id).expect("post::update: find by slug error");
+        Post::find_by_slug(&mut conn, slug, b.id).expect("post::update: find by slug error");
     let user = rockets.user.clone().unwrap();
     let intl = &rockets.intl.catalog;
 
@@ -246,7 +264,7 @@ pub fn update(
         Err(e) => e,
     };
 
-    if new_slug != slug && Post::find_by_slug(&conn, &new_slug, b.id).is_ok() {
+    if new_slug != slug && Post::find_by_slug(&mut conn, &new_slug, b.id).is_ok() {
         errors.add(
             "title",
             ValidationError {
@@ -259,16 +277,19 @@ pub fn update(
 
     if errors.is_empty() {
         if !user
-            .is_author_in(&conn, &b)
+            .is_author_in(&mut conn, &b)
             .expect("posts::update: is author in error")
         {
             // actually it's not "Ok"…
             Flash::error(
-                Redirect::to(uri!(super::blogs::details: name = blog, page = _)),
+                Redirect::to(uri!(super::blogs::details(name = blog, page = _))),
                 i18n!(&intl, "You are not allowed to publish on this blog."),
             )
             .into()
         } else {
+            let authors = b.list_authors(&mut conn)
+                .expect("Could not get author list");
+
             let (content, mentions, hashtags) = md_to_html(
                 form.content.to_string().as_ref(),
                 Some(
@@ -278,11 +299,8 @@ pub fn update(
                 ),
                 false,
                 Some(Media::get_media_processor(
-                    &conn,
-                    b.list_authors(&conn)
-                        .expect("Could not get author list")
-                        .iter()
-                        .collect(),
+                    &mut conn,
+                    authors.iter().collect(),
                 )),
             );
 
@@ -290,7 +308,7 @@ pub fn update(
             let newly_published = if !post.published && !form.draft {
                 post.published = true;
                 post.creation_date = Utc::now().naive_utc();
-                post.ap_url = Post::ap_url(post.get_blog(&conn).unwrap(), &new_slug);
+                post.ap_url = Post::ap_url(post.get_blog(&mut conn).unwrap(), &new_slug);
                 true
             } else {
                 false
@@ -303,17 +321,18 @@ pub fn update(
             post.source = form.content.clone();
             post.license = form.license.clone();
             post.cover_id = form.cover;
-            post.update(&conn).expect("post::update: update error");
+            post.update(&mut conn).expect("post::update: update error");
+
+            let mut activity = vec![];
+            for m in mentions {
+                if let Ok(mention) = Mention::build_activity(&mut conn, &m).await {
+                    activity.push(mention);
+                }
+            }
 
             if post.published {
-                post.update_mentions(
-                    &conn,
-                    mentions
-                        .into_iter()
-                        .filter_map(|m| Mention::build_activity(&conn, &m).ok())
-                        .collect(),
-                )
-                .expect("post::update: mentions error");
+                post.update_mentions(&mut conn, activity)
+                    .expect("post::update: mentions error");
             }
 
             let tags = form
@@ -325,7 +344,7 @@ pub fn update(
                 .into_iter()
                 .filter_map(|t| Tag::build_activity(t.to_string()).ok())
                 .collect::<Vec<_>>();
-            post.update_tags(&conn, tags)
+            post.update_tags(&mut conn, tags)
                 .expect("post::update: tags error");
 
             let hashtags = hashtags
@@ -334,25 +353,25 @@ pub fn update(
                 .into_iter()
                 .filter_map(|t| Tag::build_activity(t).ok())
                 .collect::<Vec<_>>();
-            post.update_hashtags(&conn, hashtags)
+            post.update_hashtags(&mut conn, hashtags)
                 .expect("post::update: hashtags error");
 
             if post.published {
                 if newly_published {
                     let act = post
-                        .create_activity(&conn)
+                        .create_activity(&mut conn)
                         .expect("post::update: act error");
-                    let dest = User::one_by_instance(&conn).expect("post::update: dest error");
+                    let dest = User::one_by_instance(&mut conn).expect("post::update: dest error");
                     rockets
                         .worker
                         .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
 
-                    Timeline::add_to_all_timelines(&conn, &post, Kind::Original).ok();
+                    Timeline::add_to_all_timelines(&mut conn, &post, &Kind::Original).await.ok();
                 } else {
                     let act = post
-                        .update_activity(&conn)
+                        .update_activity(&mut conn)
                         .expect("post::update: act error");
-                    let dest = User::one_by_instance(&conn).expect("posts::update: dest error");
+                    let dest = User::one_by_instance(&mut conn).expect("posts::update: dest error");
                     rockets
                         .worker
                         .execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
@@ -361,18 +380,18 @@ pub fn update(
 
             Flash::success(
                 Redirect::to(uri!(
-                    details: blog = blog,
+                    details(blog = blog,
                     slug = new_slug,
                     responding_to = _
-                )),
+                ))),
                 i18n!(intl, "Your article has been updated."),
             )
             .into()
         }
     } else {
-        let medias = Media::for_user(&conn, user.id).expect("posts:update: medias error");
-        render!(posts::new(
-            &(&conn, &rockets).to_context(),
+        let medias = Media::for_user(&mut conn, user.id).expect("posts:update: medias error");
+        render!(posts::new_html(
+            &(&mut conn, &rockets).to_context(),
             i18n!(intl, "Edit {0}"; &form.title),
             b,
             true,
@@ -411,14 +430,14 @@ pub fn valid_slug(title: &str) -> Result<(), ValidationError> {
 }
 
 #[post("/~/<blog_name>/new", data = "<form>")]
-pub fn create(
-    blog_name: String,
-    form: LenientForm<NewPostForm>,
+pub async fn create(
+    blog_name: &str,
+    form: Form<NewPostForm>,
     cl: ContentLen,
-    conn: DbConn,
+    mut conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<RespondOrRedirect, ErrorPage> {
-    let blog = Blog::find_by_fqn(&conn, &blog_name).expect("post::create: blog error");
+    let blog = Blog::find_by_fqn(&mut conn, blog_name).await.expect("post::create: blog error");
     let slug = Post::slug(&form.title);
     let user = rockets.user.clone().unwrap();
 
@@ -426,7 +445,7 @@ pub fn create(
         Ok(_) => ValidationErrors::new(),
         Err(e) => e,
     };
-    if Post::find_by_slug(&conn, slug, blog.id).is_ok() {
+    if Post::find_by_slug(&mut conn, slug, blog.id).is_ok() {
         errors.add(
             "title",
             ValidationError {
@@ -439,12 +458,12 @@ pub fn create(
 
     if errors.is_empty() {
         if !user
-            .is_author_in(&conn, &blog)
+            .is_author_in(&mut conn, &blog)
             .expect("post::create: is author in error")
         {
             // actually it's not "Ok"…
             return Ok(Flash::error(
-                Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)),
+                Redirect::to(uri!(super::blogs::details(name = blog_name, page = _))),
                 i18n!(
                     &rockets.intl.catalog,
                     "You are not allowed to publish on this blog."
@@ -452,6 +471,9 @@ pub fn create(
             )
             .into());
         }
+
+        let authors = blog.list_authors(&mut conn)
+            .expect("Could not get author list");
 
         let (content, mentions, hashtags) = md_to_html(
             form.content.to_string().as_ref(),
@@ -462,16 +484,13 @@ pub fn create(
             ),
             false,
             Some(Media::get_media_processor(
-                &conn,
-                blog.list_authors(&conn)
-                    .expect("Could not get author list")
-                    .iter()
-                    .collect(),
+                &mut conn,
+                authors.iter().collect(),
             )),
         );
 
         let post = Post::insert(
-            &conn,
+            &mut conn,
             NewPost {
                 blog_id: blog.id,
                 slug: slug.to_string(),
@@ -489,7 +508,7 @@ pub fn create(
         .expect("post::create: post save error");
 
         PostAuthor::insert(
-            &conn,
+            &mut conn,
             NewPostAuthor {
                 post_id: post.id,
                 author_id: user.id,
@@ -505,7 +524,7 @@ pub fn create(
             .collect::<HashSet<_>>();
         for tag in tags {
             Tag::insert(
-                &conn,
+                &mut conn,
                 NewTag {
                     tag: tag.to_string(),
                     is_hashtag: false,
@@ -516,7 +535,7 @@ pub fn create(
         }
         for hashtag in hashtags {
             Tag::insert(
-                &conn,
+                &mut conn,
                 NewTag {
                     tag: hashtag,
                     is_hashtag: true,
@@ -528,9 +547,10 @@ pub fn create(
 
         if post.published {
             for m in mentions {
+                let activity = &Mention::build_activity(&mut conn, &m).await.expect("post::create: mention build error");
                 Mention::from_activity(
-                    &conn,
-                    &Mention::build_activity(&conn, &m).expect("post::create: mention build error"),
+                    &mut conn,
+                    activity,
                     post.id,
                     true,
                     true,
@@ -539,28 +559,28 @@ pub fn create(
             }
 
             let act = post
-                .create_activity(&conn)
+                .create_activity(&mut conn)
                 .expect("posts::create: activity error");
-            let dest = User::one_by_instance(&conn).expect("posts::create: dest error");
+            let dest = User::one_by_instance(&mut conn).expect("posts::create: dest error");
             let worker = &rockets.worker;
             worker.execute(move || broadcast(&user, act, dest, CONFIG.proxy().cloned()));
 
-            Timeline::add_to_all_timelines(&conn, &post, Kind::Original)?;
+            Timeline::add_to_all_timelines(&mut conn, &post, &Kind::Original).await?;
         }
 
         Ok(Flash::success(
             Redirect::to(uri!(
-                details: blog = blog_name,
+                details(blog = blog_name,
                 slug = slug,
                 responding_to = _
-            )),
+            ))),
             i18n!(&rockets.intl.catalog, "Your article has been saved."),
         )
         .into())
     } else {
-        let medias = Media::for_user(&conn, user.id).expect("posts::create: medias error");
-        Ok(render!(posts::new(
-            &(&conn, &rockets).to_context(),
+        let medias = Media::for_user(&mut conn, user.id).expect("posts::create: medias error");
+        Ok(render!(posts::new_html(
+            &(&mut conn, &rockets).to_context(),
             i18n!(rockets.intl.catalog, "New article"),
             blog,
             false,
@@ -576,39 +596,39 @@ pub fn create(
 }
 
 #[post("/~/<blog_name>/<slug>/delete")]
-pub fn delete(
-    blog_name: String,
-    slug: String,
-    conn: DbConn,
+pub async fn delete(
+    blog_name: &str,
+    slug: &str,
+    mut conn: DbConn,
     rockets: PlumeRocket,
     intl: I18n,
 ) -> Result<Flash<Redirect>, ErrorPage> {
     let user = rockets.user.clone().unwrap();
-    let post = Blog::find_by_fqn(&conn, &blog_name)
-        .and_then(|blog| Post::find_by_slug(&conn, &slug, blog.id));
+    let post = Blog::find_by_fqn(&mut conn, blog_name).await
+        .and_then(|blog| Post::find_by_slug(&mut conn, slug, blog.id));
 
     if let Ok(post) = post {
         if !post
-            .get_authors(&conn)?
+            .get_authors(&mut conn)?
             .into_iter()
             .any(|a| a.id == user.id)
         {
             return Ok(Flash::error(
                 Redirect::to(uri!(
-                    details: blog = blog_name,
+                    details(blog = blog_name,
                     slug = slug,
                     responding_to = _
-                )),
+                ))),
                 i18n!(intl.catalog, "You are not allowed to delete this article."),
             ));
         }
 
-        let dest = User::one_by_instance(&conn)?;
-        let delete_activity = post.build_delete(&conn)?;
+        let dest = User::one_by_instance(&mut conn)?;
+        let delete_activity = post.build_delete(&mut conn)?;
         inbox(
-            &conn,
+            &mut conn,
             serde_json::to_value(&delete_activity).map_err(Error::from)?,
-        )?;
+        ).await?;
 
         let user_c = user.clone();
         rockets
@@ -617,33 +637,35 @@ pub fn delete(
         rockets
             .worker
             .execute_after(Duration::from_secs(10 * 60), move || {
-                user.rotate_keypair(&conn)
+                user.rotate_keypair(&mut conn)
                     .expect("Failed to rotate keypair");
             });
 
         Ok(Flash::success(
-            Redirect::to(uri!(super::blogs::details: name = blog_name, page = _)),
+            Redirect::to(uri!(super::blogs::details(name = blog_name, page = _))),
             i18n!(intl.catalog, "Your article has been deleted."),
         ))
     } else {
         Ok(Flash::error(Redirect::to(
-            uri!(super::blogs::details: name = blog_name, page = _),
+            uri!(super::blogs::details(name = blog_name, page = _)),
         ), i18n!(intl.catalog, "It looks like the article you tried to delete doesn't exist. Maybe it is already gone?")))
     }
 }
 
 #[get("/~/<blog_name>/<slug>/remote_interact")]
-pub fn remote_interact(
-    conn: DbConn,
+pub async fn remote_interact(
+    mut conn: DbConn,
     rockets: PlumeRocket,
-    blog_name: String,
-    slug: String,
+    blog_name: &str,
+    slug: &str,
 ) -> Result<Ructe, ErrorPage> {
-    let target = Blog::find_by_fqn(&conn, &blog_name)
-        .and_then(|blog| Post::find_by_slug(&conn, &slug, blog.id))?;
-    Ok(render!(posts::remote_interact(
-        &(&conn, &rockets).to_context(),
-        target,
+    let target = Blog::find_by_fqn(&mut conn, blog_name).await
+        .and_then(|blog| Post::find_by_slug(&mut conn, slug, blog.id))?;
+    let pc = PostCard::from(&mut conn, target, &rockets.user);
+
+    Ok(render!(posts::remote_interact_html(
+        &(&mut conn, &rockets).to_context(),
+        pc,
         super::session::LoginForm::default(),
         ValidationErrors::default(),
         RemoteForm::default(),
@@ -652,18 +674,22 @@ pub fn remote_interact(
 }
 
 #[post("/~/<blog_name>/<slug>/remote_interact", data = "<remote>")]
-pub fn remote_interact_post(
-    conn: DbConn,
+pub async fn remote_interact_post(
+    mut conn: DbConn,
     rockets: PlumeRocket,
-    blog_name: String,
-    slug: String,
-    remote: LenientForm<RemoteForm>,
+    blog_name: &str,
+    slug: &str,
+    remote: Form<RemoteForm>,
 ) -> Result<RespondOrRedirect, ErrorPage> {
-    let target = Blog::find_by_fqn(&conn, &blog_name)
-        .and_then(|blog| Post::find_by_slug(&conn, &slug, blog.id))?;
-    if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
+    let target = Blog::find_by_fqn(&mut conn, blog_name).await
+        .and_then(|blog| Post::find_by_slug(&mut conn, slug, blog.id))?;
+
+    if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote).await
         .ok()
-        .map(|uri| uri.replace("{uri}", &Uri::percent_encode(&target.ap_url)))
+        .map(|uri| {
+            let encoded = rocket::http::RawStr::new(&target.ap_url).percent_encode().to_string();
+            uri.replace("{uri}", &encoded)
+        })
     {
         Ok(Redirect::to(uri).into())
     } else {
@@ -673,10 +699,13 @@ pub fn remote_interact_post(
             message: Some(Cow::from(i18n!(rockets.intl.catalog, "Couldn't obtain enough information about your account. Please make sure your username is correct."))),
             params: HashMap::new(),
         });
+
+        let pc = PostCard::from(&mut conn, target, &rockets.user);
+
         //could not get your remote url?
-        Ok(render!(posts::remote_interact(
-            &(&conn, &rockets).to_context(),
-            target,
+        Ok(render!(posts::remote_interact_html(
+            &(&mut conn, &rockets).to_context(),
+            pc,
             super::session::LoginForm::default(),
             ValidationErrors::default(),
             remote.clone(),

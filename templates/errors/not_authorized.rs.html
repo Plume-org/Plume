@@ -1,8 +1,8 @@
-@use crate::templates::errors::base;
+@use crate::templates::errors::base_html;
 @use crate::template_utils::*;
 
 @(ctx: BaseContext, error_message: String)
 
-@:base(ctx, error_message, {
+@:base_html(ctx, error_message, {
     <h1>@i18n!(ctx.1, "You are not authorized.")</h1>
 })

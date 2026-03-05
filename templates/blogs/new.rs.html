@@ -1,12 +1,12 @@
 @use validator::ValidationErrors;
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::template_utils::*;
 @use crate::routes::blogs::NewBlogForm;
 @use crate::routes::*;
 
 @(ctx: BaseContext, form: &NewBlogForm, errors: ValidationErrors)
 
-@:base(ctx, i18n!(ctx.1, "New Blog"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "New Blog"), {}, {}, {
   <h1 dir="auto">@i18n!(ctx.1, "Create a blog")</h1>
   <form method="post" action="@uri!(blogs::create)">
       @(Input::new("title", i18n!(ctx.1, "Title"))

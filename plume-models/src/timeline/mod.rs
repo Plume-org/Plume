@@ -6,7 +6,6 @@ use crate::{
 };
 use diesel::{self, BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 use std::cmp::Ordering;
-use std::ops::Deref;
 
 pub(crate) mod query;
 
@@ -14,7 +13,7 @@ pub use self::query::Kind;
 pub use self::query::{QueryError, TimelineQuery};
 
 #[derive(Clone, Debug, PartialEq, Eq, Queryable, Identifiable, AsChangeset)]
-#[table_name = "timeline_definition"]
+#[diesel(table_name = timeline_definition)]
 pub struct Timeline {
     pub id: i32,
     pub user_id: Option<i32>,
@@ -23,7 +22,7 @@ pub struct Timeline {
 }
 
 #[derive(Default, Insertable)]
-#[table_name = "timeline_definition"]
+#[diesel(table_name = timeline_definition)]
 pub struct NewTimeline {
     user_id: Option<i32>,
     name: String,
@@ -31,7 +30,7 @@ pub struct NewTimeline {
 }
 
 #[derive(Default, Insertable)]
-#[table_name = "timeline"]
+#[diesel(table_name = timeline)]
 struct TimelineEntry {
     pub post_id: i32,
     pub timeline_id: i32,
@@ -42,7 +41,7 @@ impl Timeline {
     get!(timeline_definition);
 
     pub fn find_for_user_by_name(
-        conn: &Connection,
+        conn: &mut Connection,
         user_id: Option<i32>,
         name: &str,
     ) -> Result<Self> {
@@ -61,7 +60,7 @@ impl Timeline {
         }
     }
 
-    pub fn list_for_user(conn: &Connection, user_id: Option<i32>) -> Result<Vec<Self>> {
+    pub fn list_for_user(conn: &mut Connection, user_id: Option<i32>) -> Result<Vec<Self>> {
         if let Some(user_id) = user_id {
             timeline_definition::table
                 .filter(timeline_definition::user_id.eq(user_id))
@@ -76,7 +75,7 @@ impl Timeline {
     }
 
     /// Same as `list_for_user`, but also includes instance timelines if `user_id` is `Some`.
-    pub fn list_all_for_user(conn: &Connection, user_id: Option<i32>) -> Result<Vec<Self>> {
+    pub fn list_all_for_user(conn: &mut Connection, user_id: Option<i32>) -> Result<Vec<Self>> {
         if let Some(user_id) = user_id {
             timeline_definition::table
                 .filter(
@@ -105,7 +104,7 @@ impl Timeline {
     }
 
     pub fn new_for_user(
-        conn: &Connection,
+        conn: &mut Connection,
         user_id: i32,
         name: String,
         query_string: String,
@@ -144,7 +143,7 @@ impl Timeline {
     }
 
     pub fn new_for_instance(
-        conn: &Connection,
+        conn: &mut Connection,
         name: String,
         query_string: String,
     ) -> Result<Timeline> {
@@ -181,24 +180,24 @@ impl Timeline {
         )
     }
 
-    pub fn update(&self, conn: &Connection) -> Result<Self> {
+    pub fn update(&self, conn: &mut Connection) -> Result<Self> {
         diesel::update(self).set(self).execute(conn)?;
         let timeline = Self::get(conn, self.id)?;
         Ok(timeline)
     }
 
-    pub fn delete(&self, conn: &Connection) -> Result<()> {
+    pub fn delete(&self, conn: &mut Connection) -> Result<()> {
         diesel::delete(self)
             .execute(conn)
             .map(|_| ())
             .map_err(Error::from)
     }
 
-    pub fn get_latest(&self, conn: &Connection, count: i32) -> Result<Vec<Post>> {
+    pub fn get_latest(&self, conn: &mut Connection, count: i32) -> Result<Vec<Post>> {
         self.get_page(conn, (0, count))
     }
 
-    pub fn get_page(&self, conn: &Connection, (min, max): (i32, i32)) -> Result<Vec<Post>> {
+    pub fn get_page(&self, conn: &mut Connection, (min, max): (i32, i32)) -> Result<Vec<Post>> {
         timeline::table
             .filter(timeline::timeline_id.eq(self.id))
             .inner_join(posts::table)
@@ -210,7 +209,7 @@ impl Timeline {
             .map_err(Error::from)
     }
 
-    pub fn count_posts(&self, conn: &Connection) -> Result<i64> {
+    pub fn count_posts(&self, conn: &mut Connection) -> Result<i64> {
         timeline::table
             .filter(timeline::timeline_id.eq(self.id))
             .inner_join(posts::table)
@@ -219,20 +218,20 @@ impl Timeline {
             .map_err(Error::from)
     }
 
-    pub fn add_to_all_timelines(conn: &Connection, post: &Post, kind: Kind<'_>) -> Result<()> {
+    pub async fn add_to_all_timelines(conn: &mut Connection, post: &Post, kind: &Kind) -> Result<()> {
         let timelines = timeline_definition::table
-            .load::<Self>(conn.deref())
+            .load::<Self>(conn)
             .map_err(Error::from)?;
 
         for t in timelines {
-            if t.matches(conn, post, kind)? {
+            if t.matches(conn, post, kind).await? {
                 t.add_post(conn, post)?;
             }
         }
         Ok(())
     }
 
-    pub fn add_post(&self, conn: &Connection, post: &Post) -> Result<()> {
+    pub fn add_post(&self, conn: &mut Connection, post: &Post) -> Result<()> {
         if self.includes_post(conn, post)? {
             return Ok(());
         }
@@ -245,7 +244,7 @@ impl Timeline {
         Ok(())
     }
 
-    pub fn remove_post(&self, conn: &Connection, post: &Post) -> Result<bool> {
+    pub fn remove_post(&self, conn: &mut Connection, post: &Post) -> Result<bool> {
         if self.includes_post(conn, post)? {
             return Ok(false);
         }
@@ -258,18 +257,18 @@ impl Timeline {
         Ok(true)
     }
 
-    pub fn remove_all_posts(&self, conn: &Connection) -> Result<u64> {
+    pub fn remove_all_posts(&self, conn: &mut Connection) -> Result<u64> {
         let count = diesel::delete(timeline::table.filter(timeline::timeline_id.eq(self.id)))
             .execute(conn)?;
         Ok(count as u64)
     }
 
-    pub fn matches(&self, conn: &Connection, post: &Post, kind: Kind<'_>) -> Result<bool> {
+    pub async fn matches(&self, conn: &mut Connection, post: &Post, kind: &Kind) -> Result<bool> {
         let query = TimelineQuery::parse(&self.query)?;
-        query.matches(conn, self, post, kind)
+        query.matches(conn, self, post, kind).await
     }
 
-    fn includes_post(&self, conn: &Connection, post: &Post) -> Result<bool> {
+    fn includes_post(&self, conn: &mut Connection, post: &Post) -> Result<bool> {
         diesel::dsl::select(diesel::dsl::exists(
             timeline::table
                 .filter(timeline::timeline_id.eq(self.id))

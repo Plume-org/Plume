@@ -13,10 +13,10 @@ use array_tool::vec::Uniq;
 use futures::future::join_all;
 use reqwest::{header::HeaderValue, ClientBuilder, RequestBuilder, Url};
 use rocket::{
+    async_trait,
     http::Status,
-    request::{FromRequest, Request},
+    request::{FromRequest, Outcome, Request},
     response::{Responder, Response},
-    Outcome,
 };
 use tokio::{
     runtime,
@@ -77,51 +77,59 @@ impl<T> ActivityStream<T> {
     }
 }
 
-impl<'r, O: serde::Serialize> Responder<'r> for ActivityStream<O> {
-    fn respond_to(self, request: &Request<'_>) -> Result<Response<'r>, Status> {
+impl<'r, O: serde::Serialize> Responder<'r, 'static> for ActivityStream<O> {
+    fn respond_to(self, request: &Request<'_>) -> rocket::response::Result<'static> {
         let mut json = serde_json::to_value(&self.0).map_err(|_| Status::InternalServerError)?;
         json["@context"] = context();
-        serde_json::to_string(&json).respond_to(request).map(|r| {
-            Response::build_from(r)
-                .raw_header("Content-Type", "application/activity+json")
-                .finalize()
-        })
+        match serde_json::to_string(&json){
+            Ok(as_string) => {
+                as_string.respond_to(request).map(|r| {
+                    Response::build_from(r)
+                        .raw_header("Content-Type", "application/activity+json")
+                        .finalize()
+                })
+            },
+            Err(_) => Err(Status::InternalServerError)
+        }
+
+
     }
 }
 
 #[derive(Clone)]
 pub struct ApRequest;
-impl<'a, 'r> FromRequest<'a, 'r> for ApRequest {
+
+#[async_trait]
+impl<'r> FromRequest<'r> for ApRequest {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> Outcome<Self, (Status, Self::Error), ()> {
+    async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         request
             .headers()
             .get_one("Accept")
             .map(|header| {
                 header
                     .split(',')
-                    .map(|ct| {
+                    .filter_map(|ct| {
                         match ct.trim() {
                         // bool for Forward: true if found a valid Content-Type for Plume first (HTML), false otherwise
                         "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
                         | "application/ld+json;profile=\"https://www.w3.org/ns/activitystreams\""
                         | "application/activity+json"
-                        | "application/ld+json" => Outcome::Success(ApRequest),
-                        "text/html" => Outcome::Forward(true),
-                        _ => Outcome::Forward(false),
+                        | "application/ld+json" => Some(Outcome::Success(ApRequest)),
+                        "text/html" => Some(Outcome::Forward(Status::Ok)),
+                        _ => None,
                     }
                     })
-                    .fold(Outcome::Forward(false), |out, ct| {
-                        if out.clone().forwarded().unwrap_or_else(|| out.is_success()) {
-                            out
-                        } else {
-                            ct
+                    .reduce(|acc, elt| {
+                        match (acc, elt){
+                            (a @ Outcome::Success(_), _) => a,
+                            (_, elt) => elt,
                         }
                     })
-                    .map_forward(|_| ())
+                    .unwrap_or(Outcome::Forward(Status::BadRequest))
             })
-            .unwrap_or(Outcome::Forward(()))
+            .unwrap_or(Outcome::Forward(Status::BadRequest))
     }
 }
 
@@ -409,7 +417,8 @@ impl AsHashtag for Hashtag {
     }
 }
 
-impl Extends<HashtagType> for Hashtag {
+impl Extends for Hashtag {
+    type Kind = HashtagType;
     type Error = serde_json::Error;
 
     fn extends(base: Base<HashtagType>) -> Result<Self, Self::Error> {

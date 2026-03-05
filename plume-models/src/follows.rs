@@ -3,7 +3,7 @@ use crate::{
     Result, CONFIG,
 };
 use activitystreams::{
-    activity::{Accept, ActorAndObjectRef, Follow as FollowAct, Undo},
+    activity::{Accept, Follow as FollowAct, Undo},
     base::AnyBase,
     iri_string::types::IriString,
     prelude::*,
@@ -17,7 +17,7 @@ use plume_common::activity_pub::{
 };
 
 #[derive(Clone, Queryable, Identifiable, Associations, AsChangeset)]
-#[belongs_to(User, foreign_key = "following_id")]
+#[diesel(belongs_to(User, foreign_key = following_id))]
 pub struct Follow {
     pub id: i32,
     pub follower_id: i32,
@@ -26,7 +26,7 @@ pub struct Follow {
 }
 
 #[derive(Insertable)]
-#[table_name = "follows"]
+#[diesel(table_name = follows)]
 pub struct NewFollow {
     pub follower_id: i32,
     pub following_id: i32,
@@ -47,7 +47,7 @@ impl Follow {
     get!(follows);
     find_by!(follows, find_by_ap_url, ap_url as &str);
 
-    pub fn find(conn: &Connection, from: i32, to: i32) -> Result<Follow> {
+    pub fn find(conn: &mut Connection, from: i32, to: i32) -> Result<Follow> {
         follows::table
             .filter(follows::follower_id.eq(from))
             .filter(follows::following_id.eq(to))
@@ -55,7 +55,7 @@ impl Follow {
             .map_err(Error::from)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<FollowAct> {
+    pub fn to_activity(&self, conn: &mut Connection) -> Result<FollowAct> {
         let user = User::get(conn, self.follower_id)?;
         let target = User::get(conn, self.following_id)?;
         let target_id = target.ap_url.parse::<IriString>()?;
@@ -68,7 +68,7 @@ impl Follow {
         Ok(act)
     }
 
-    pub fn notify(&self, conn: &Connection) -> Result<()> {
+    pub fn notify(&self, conn: &mut Connection) -> Result<()> {
         if User::get(conn, self.following_id)?.is_local() {
             Notification::insert(
                 conn,
@@ -85,7 +85,7 @@ impl Follow {
     /// from -> The one sending the follow request
     /// target -> The target of the request, responding with Accept
     pub fn accept_follow<A: Signer + IntoId + Clone, B: Clone + AsActor<T> + IntoId, T>(
-        conn: &Connection,
+        conn: &mut Connection,
         from: &B,
         target: &A,
         follow: FollowAct,
@@ -98,7 +98,7 @@ impl Follow {
                 follower_id: from_id,
                 following_id: target_id,
                 ap_url: follow
-                    .object_field_ref()
+                    .object_unchecked()
                     .as_single_id()
                     .ok_or(Error::MissingApProperty)?
                     .to_string(),
@@ -133,7 +133,7 @@ impl Follow {
         Ok(accept)
     }
 
-    pub fn build_undo(&self, conn: &Connection) -> Result<Undo> {
+    pub fn build_undo(&self, conn: &mut Connection) -> Result<Undo> {
         let mut undo = Undo::new(
             User::get(conn, self.follower_id)?
                 .ap_url
@@ -150,11 +150,11 @@ impl Follow {
     }
 }
 
-impl AsObject<User, FollowAct, &Connection> for User {
+impl AsObject<User, FollowAct, &mut Connection> for User {
     type Error = Error;
     type Output = Follow;
 
-    fn activity(self, conn: &Connection, actor: User, id: &str) -> Result<Follow> {
+    async fn activity(self, conn: &mut Connection, actor: User, id: &str) -> Result<Follow> {
         // Mastodon (at least) requires the full Follow object when accepting it,
         // so we rebuilt it here
         let follow = FollowAct::new(actor.ap_url.parse::<IriString>()?, id.parse::<IriString>()?);
@@ -166,33 +166,35 @@ impl FromId<Connection> for Follow {
     type Error = Error;
     type Object = FollowAct;
 
-    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
+    fn from_db(conn: &mut Connection, id: &str) -> Result<Self> {
         Follow::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &Connection, follow: FollowAct) -> Result<Self> {
+    async fn from_activity(conn: &mut Connection, follow: FollowAct) -> Result<Self> {
         let actor = User::from_id(
             conn,
             follow
-                .actor_field_ref()
+                .actor_unchecked()
                 .as_single_id()
                 .ok_or(Error::MissingApProperty)?
                 .as_str(),
             None,
             CONFIG.proxy(),
         )
+        .await
         .map_err(|(_, e)| e)?;
 
         let target = User::from_id(
             conn,
             follow
-                .object_field_ref()
+                .object_unchecked()
                 .as_single_id()
                 .ok_or(Error::MissingApProperty)?
                 .as_str(),
             None,
             CONFIG.proxy(),
         )
+        .await
         .map_err(|(_, e)| e)?;
         Follow::accept_follow(conn, &actor, &target, follow, actor.id, target.id)
     }
@@ -202,11 +204,11 @@ impl FromId<Connection> for Follow {
     }
 }
 
-impl AsObject<User, Undo, &Connection> for Follow {
+impl AsObject<User, Undo, &mut Connection> for Follow {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
+    async fn activity(self, conn: &mut Connection, actor: User, _id: &str) -> Result<()> {
         let conn = conn;
         if self.follower_id == actor.id {
             diesel::delete(&self).execute(conn)?;

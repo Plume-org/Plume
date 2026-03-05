@@ -9,7 +9,7 @@ pub struct CommentSeers {
 }
 
 #[derive(Insertable, Default)]
-#[table_name = "comment_seers"]
+#[diesel(table_name = comment_seers)]
 pub struct NewCommentSeers {
     pub comment_id: i32,
     pub user_id: i32,
@@ -18,7 +18,7 @@ pub struct NewCommentSeers {
 impl CommentSeers {
     insert!(comment_seers, NewCommentSeers);
 
-    pub fn can_see(conn: &Connection, c: &Comment, u: &User) -> Result<bool> {
+    pub fn can_see(conn: &mut Connection, c: &Comment, u: &User) -> Result<bool> {
         comment_seers::table
             .filter(comment_seers::comment_id.eq(c.id))
             .filter(comment_seers::user_id.eq(u.id))

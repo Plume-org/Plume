@@ -1,12 +1,12 @@
 @use validator::ValidationErrors;
 @use crate::template_utils::*;
-@use crate::templates::base;
+@use crate::templates::base_html;
 @use crate::routes::session::LoginForm;
 @use crate::routes::*;
 
 @(ctx: BaseContext, message: Option<String>, form: &LoginForm, errors: ValidationErrors)
 
-@:base(ctx, i18n!(ctx.1, "Log in"), {}, {}, {
+@:base_html(ctx, i18n!(ctx.1, "Log in"), {}, {}, {
     <h1>@i18n!(ctx.1, "Log in")</h1>
     @if let Some(message) = message {
         <p>@message</p>

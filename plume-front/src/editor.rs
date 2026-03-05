@@ -168,10 +168,11 @@ fn load_autosave() {
         .get(&get_autosave_id())
     {
         let autosave_info: AutosaveInformation = serde_json::from_str(&autosave_str).ok().unwrap();
+        let date = &JsValue::from_f64(autosave_info.last_saved);
         let message = i18n!(
             CATALOG,
             "Do you want to load the local autosave last edited at {}?";
-            Date::new(&JsValue::from_f64(autosave_info.last_saved)).to_date_string().as_string().unwrap()
+            Date::new(date).to_date_string().as_string().unwrap()
         );
         if let Ok(true) = window().unwrap().confirm_with_message(&message) {
             set_value("editor-content", &autosave_info.contents);

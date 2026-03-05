@@ -3,8 +3,7 @@ use chrono::NaiveDateTime;
 use diesel::{self, ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::{
     http::Status,
-    request::{self, FromRequest, Request},
-    Outcome,
+    request::{FromRequest, Outcome, Request},
 };
 
 #[derive(Clone, Queryable)]
@@ -29,7 +28,7 @@ pub struct ApiToken {
 }
 
 #[derive(Insertable)]
-#[table_name = "api_tokens"]
+#[diesel(table_name = api_tokens)]
 pub struct NewApiToken {
     pub value: String,
     pub scopes: String,
@@ -76,38 +75,33 @@ pub enum TokenError {
     DbError,
 }
 
-impl<'a, 'r> FromRequest<'a, 'r> for ApiToken {
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for ApiToken {
     type Error = TokenError;
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<ApiToken, TokenError> {
+    async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         let headers: Vec<_> = request.headers().get("Authorization").collect();
         if headers.len() != 1 {
-            return Outcome::Failure((Status::BadRequest, TokenError::NoHeader));
+            return Outcome::Error((Status::BadRequest, TokenError::NoHeader));
         }
 
         let mut parsed_header = headers[0].split(' ');
-        let auth_type = parsed_header
-            .next()
-            .map_or_else::<rocket::Outcome<&str, _, ()>, _, _>(
-                || Outcome::Failure((Status::BadRequest, TokenError::NoType)),
-                Outcome::Success,
-            )?;
-        let val = parsed_header
-            .next()
-            .map_or_else::<rocket::Outcome<&str, _, ()>, _, _>(
-                || Outcome::Failure((Status::BadRequest, TokenError::NoValue)),
-                Outcome::Success,
-            )?;
+        match (parsed_header.next(), parsed_header.next()) {
+            (None, _) => Outcome::Error((Status::BadRequest, TokenError::NoType)),
+            (_, None) => Outcome::Error((Status::BadRequest, TokenError::NoValue)),
+            (Some("Bearer"), Some(val)) => {
+                match request.guard::<DbConn>().await {
+                    Outcome::Success(mut conn) => {
+                        match ApiToken::find_by_value(&mut conn, val) {
+                            Ok(token) => Outcome::Success(token),
+                            _ => Outcome::Forward(Status::Unauthorized),
+                        }
+                    }
+                    _ => Outcome::Error((Status::InternalServerError, TokenError::DbError))
+                }
 
-        if auth_type == "Bearer" {
-            let conn = request
-                .guard::<DbConn>()
-                .map_failure(|_| (Status::InternalServerError, TokenError::DbError))?;
-            if let Ok(token) = ApiToken::find_by_value(&conn, val) {
-                return Outcome::Success(token);
-            }
+            },
+            _ => Outcome::Forward(Status::Unauthorized)
         }
-
-        Outcome::Forward(())
     }
 }

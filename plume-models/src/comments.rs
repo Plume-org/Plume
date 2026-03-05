@@ -47,7 +47,7 @@ pub struct Comment {
 }
 
 #[derive(Insertable, Default)]
-#[table_name = "comments"]
+#[diesel(table_name = comments)]
 pub struct NewComment {
     pub content: SafeString,
     pub in_response_to_id: Option<i32>,
@@ -76,15 +76,15 @@ impl Comment {
     list_by!(comments, list_by_author, author_id as i32);
     find_by!(comments, find_by_ap_url, ap_url as &str);
 
-    pub fn get_author(&self, conn: &Connection) -> Result<User> {
+    pub fn get_author(&self, conn: &mut Connection) -> Result<User> {
         User::get(conn, self.author_id)
     }
 
-    pub fn get_post(&self, conn: &Connection) -> Result<Post> {
+    pub fn get_post(&self, conn: &mut Connection) -> Result<Post> {
         Post::get(conn, self.post_id)
     }
 
-    pub fn count_local(conn: &Connection) -> Result<i64> {
+    pub fn count_local(conn: &mut Connection) -> Result<i64> {
         use crate::schema::users;
         let local_authors = users::table
             .filter(users::instance_id.eq(Instance::get_local()?.id))
@@ -96,14 +96,14 @@ impl Comment {
             .map_err(Error::from)
     }
 
-    pub fn get_responses(&self, conn: &Connection) -> Result<Vec<Comment>> {
+    pub fn get_responses(&self, conn: &mut Connection) -> Result<Vec<Comment>> {
         comments::table
             .filter(comments::in_response_to_id.eq(self.id))
             .load::<Comment>(conn)
             .map_err(Error::from)
     }
 
-    pub fn can_see(&self, conn: &Connection, user: Option<&User>) -> bool {
+    pub fn can_see(&self, conn: &mut Connection, user: Option<&User>) -> bool {
         self.public_visibility
             || user
                 .as_ref()
@@ -111,7 +111,7 @@ impl Comment {
                 .unwrap_or(false)
     }
 
-    pub fn to_activity(&self, conn: &Connection) -> Result<Note> {
+    pub async fn to_activity(&self, conn: &mut Connection) -> Result<Note> {
         let author = User::get(conn, self.author_id)?;
         let (html, mentions, _hashtags) = utils::md_to_html(
             self.content.get().as_ref(),
@@ -131,28 +131,32 @@ impl Comment {
         );
         note.set_summary(self.spoiler_text.clone());
         note.set_content(html);
-        note.set_in_reply_to(self.in_response_to_id.map_or_else(
-            || Post::get(conn, self.post_id).map(|post| post.ap_url),
-            |id| Comment::get(conn, id).map(|comment| comment.ap_url.unwrap_or_default()),
+        note.set_in_reply_to(self.in_response_to_id
+            .map(|id| Comment::get(conn, id).map(|comment| comment.ap_url.unwrap_or_default()))
+            .unwrap_or_else(|| Post::get(conn, self.post_id).map(|post| post.ap_url)
         )?);
         note.set_published(
-            OffsetDateTime::from_unix_timestamp_nanos(self.creation_date.timestamp_nanos().into())
-                .expect("OffsetDateTime"),
+            self.creation_date.and_utc().timestamp_nanos_opt()
+                .and_then(|cd| OffsetDateTime::from_unix_timestamp_nanos(cd.into()).ok())
+                .expect("OffsetDateTime")
         );
         note.set_attributed_to(author.into_id().parse::<IriString>()?);
         note.set_many_tos(to);
-        note.set_many_tags(mentions.into_iter().filter_map(|m| {
-            Mention::build_activity(conn, &m)
-                .map(|mention| mention.into_any_base().expect("Can convert"))
-                .ok()
-        }));
+
+        let mut tags = vec![];
+        for m in mentions {
+            if let Ok(mention) = Mention::build_activity(conn, &m).await {
+                tags.push(mention.into_any_base().expect("Can convert"));
+            }
+        }
+        note.set_many_tags(tags);
         Ok(note)
     }
 
-    pub fn create_activity(&self, conn: &Connection) -> Result<Create> {
+    pub async fn create_activity(&self, conn: &mut Connection) -> Result<Create> {
         let author = User::get(conn, self.author_id)?;
 
-        let note = self.to_activity(conn)?;
+        let note = self.to_activity(conn).await?;
         let note_clone = note.clone();
 
         let mut act = Create::new(
@@ -176,7 +180,7 @@ impl Comment {
         Ok(act)
     }
 
-    pub fn notify(&self, conn: &Connection) -> Result<()> {
+    pub fn notify(&self, conn: &mut Connection) -> Result<()> {
         for author in self.get_post(conn)?.get_authors(conn)? {
             if Mention::list_for_comment(conn, self.id)?
                 .iter()
@@ -196,7 +200,7 @@ impl Comment {
         Ok(())
     }
 
-    pub fn build_delete(&self, conn: &Connection) -> Result<Delete> {
+    pub fn build_delete(&self, conn: &mut Connection) -> Result<Delete> {
         let mut tombstone = Tombstone::new();
         tombstone.set_id(
             self.ap_url
@@ -221,11 +225,11 @@ impl FromId<Connection> for Comment {
     type Error = Error;
     type Object = Note;
 
-    fn from_db(conn: &Connection, id: &str) -> Result<Self> {
+    fn from_db(conn: &mut Connection, id: &str) -> Result<Self> {
         Self::find_by_ap_url(conn, id)
     }
 
-    fn from_activity(conn: &Connection, note: Note) -> Result<Self> {
+    async fn from_activity(conn: &mut Connection, note: Note) -> Result<Self> {
         let comm = {
             let previous_url = note
                 .in_reply_to()
@@ -252,6 +256,23 @@ impl FromId<Connection> for Comment {
 
             let summary = note.summary().and_then(|summary| summary.to_as_string());
             let sensitive = summary.is_some();
+
+            let in_response_to_id = previous_comment.iter().map(|c| c.id).next();
+            let post_id = previous_comment.map(|c| c.post_id).or_else(|_| {
+                Ok(Post::find_by_ap_url(conn, previous_url.as_str())?.id) as Result<i32>
+            })?;
+
+            let author_id = User::from_id(
+                conn,
+                &note
+                    .attributed_to()
+                    .ok_or(Error::MissingApProperty)?
+                    .to_as_uri()
+                    .ok_or(Error::MissingApProperty)?,
+                None,
+                CONFIG.proxy(),
+            ).await.map_err(|(_, e)| e)?.id;
+
             let comm = Comment::insert(
                 conn,
                 NewComment {
@@ -268,22 +289,9 @@ impl FromId<Connection> for Comment {
                             .ok_or(Error::MissingApProperty)?
                             .to_string(),
                     ),
-                    in_response_to_id: previous_comment.iter().map(|c| c.id).next(),
-                    post_id: previous_comment.map(|c| c.post_id).or_else(|_| {
-                        Ok(Post::find_by_ap_url(conn, previous_url.as_str())?.id) as Result<i32>
-                    })?,
-                    author_id: User::from_id(
-                        conn,
-                        &note
-                            .attributed_to()
-                            .ok_or(Error::MissingApProperty)?
-                            .to_as_uri()
-                            .ok_or(Error::MissingApProperty)?,
-                        None,
-                        CONFIG.proxy(),
-                    )
-                    .map_err(|(_, e)| e)?
-                    .id,
+                    in_response_to_id,
+                    post_id,
+                    author_id,
                     sensitive,
                     public_visibility,
                 },
@@ -322,17 +330,14 @@ impl FromId<Connection> for Comment {
             receivers_id(note.bto());
             receivers_id(note.bcc());
 
-            let receivers_ap_url = receiver_ids
-                .into_iter()
-                .flat_map(|v| {
-                    if let Ok(user) = User::from_id(conn, v.as_ref(), None, CONFIG.proxy()) {
-                        vec![user]
-                    } else {
-                        vec![] // TODO try to fetch collection
+            let mut receivers_ap_url = HashSet::new(); //remove duplicates (prevent db error)
+            for r_id in receiver_ids {
+                if let Ok(user) = User::from_id(conn, &r_id, None, CONFIG.proxy()).await {
+                    if user.get_instance(conn).map(|i| i.local).unwrap_or(false) {
+                        receivers_ap_url.insert(user);
                     }
-                })
-                .filter(|u| u.get_instance(conn).map(|i| i.local).unwrap_or(false))
-                .collect::<HashSet<User>>(); //remove duplicates (prevent db error)
+                }
+            };
 
             for user in &receivers_ap_url {
                 CommentSeers::insert(
@@ -354,21 +359,21 @@ impl FromId<Connection> for Comment {
     }
 }
 
-impl AsObject<User, Create, &Connection> for Comment {
+impl AsObject<User, Create, &mut Connection> for Comment {
     type Error = Error;
     type Output = Self;
 
-    fn activity(self, _conn: &Connection, _actor: User, _id: &str) -> Result<Self> {
+    async fn activity(self, _conn: &mut Connection, _actor: User, _id: &str) -> Result<Self> {
         // The actual creation takes place in the FromId impl
         Ok(self)
     }
 }
 
-impl AsObject<User, Delete, &Connection> for Comment {
+impl AsObject<User, Delete, &mut Connection> for Comment {
     type Error = Error;
     type Output = ();
 
-    fn activity(self, conn: &Connection, actor: User, _id: &str) -> Result<()> {
+    async fn activity(self, conn: &mut Connection, actor: User, _id: &str) -> Result<()> {
         if self.author_id != actor.id {
             return Err(Error::Unauthorized);
         }
@@ -395,27 +400,45 @@ impl AsObject<User, Delete, &Connection> for Comment {
 
 pub struct CommentTree {
     pub comment: Comment,
+    pub comment_author: Option<User>,
+    pub author_image_url: Option<String>,
+    pub post: Option<Post>,
     pub responses: Vec<CommentTree>,
 }
 
 impl CommentTree {
-    pub fn from_post(conn: &Connection, p: &Post, user: Option<&User>) -> Result<Vec<Self>> {
+    pub fn from_post(conn: &mut Connection, p: &Post, user: Option<&User>) -> Result<Vec<Self>> {
         Ok(Comment::list_by_post(conn, p.id)?
             .into_iter()
             .filter(|c| c.in_response_to_id.is_none())
-            .filter(|c| c.can_see(conn, user))
-            .filter_map(|c| Self::from_comment(conn, c, user).ok())
+            .filter_map(|c| {
+                if c.can_see(conn, user) {
+                    Self::from_comment(conn, c, user).ok()
+                } else {
+                    None
+                }
+            })
             .collect())
     }
 
-    pub fn from_comment(conn: &Connection, comment: Comment, user: Option<&User>) -> Result<Self> {
+    pub fn from_comment(conn: &mut Connection, comment: Comment, user: Option<&User>) -> Result<Self> {
         let responses = comment
             .get_responses(conn)?
             .into_iter()
-            .filter(|c| c.can_see(conn, user))
-            .filter_map(|c| Self::from_comment(conn, c, user).ok())
+            .filter_map(|c| {
+                if c.can_see(conn, user) {
+                    Self::from_comment(conn, c, user).ok()
+                } else {
+                    None
+                }
+            })
             .collect();
-        Ok(CommentTree { comment, responses })
+
+        let comment_author = comment.get_author(conn).ok();
+        let author_image_url = comment_author.as_ref().and_then(|u| u.avatar_url(conn));
+        let post = comment.get_post(conn).ok();
+
+        Ok(CommentTree { comment, comment_author, author_image_url, post, responses })
     }
 }
 
