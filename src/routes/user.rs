@@ -18,7 +18,7 @@ use crate::routes::{
     email_signups::EmailSignupForm, errors::ErrorPage, Page, RemoteForm, RespondOrRedirect,
 };
 use crate::template_utils::{IntoContext, Ructe};
-use crate::utils::requires_login;
+use crate::utils::{is_safe_redirect_uri, requires_login};
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, CustomPerson};
 use plume_common::utils::md_to_html;
 use plume_models::{
@@ -157,6 +157,7 @@ pub fn follow_not_connected(
                     &Uri::percent_encode(&target.acct_authority(&conn).ok()?),
                 ))
             })
+            .filter(|uri| is_safe_redirect_uri(uri))
         {
             Ok(Redirect::to(uri).into())
         } else {
@@ -361,10 +362,17 @@ pub fn update(
         )
         .0,
     );
-    user.preferred_theme = form
-        .theme
-        .clone()
-        .and_then(|t| if t.is_empty() { None } else { Some(t) });
+    // Only accept themes that actually exist on this instance.
+    user.preferred_theme = form.theme.clone().and_then(|t| {
+        if Instance::list_themes()
+            .map(|themes| themes.contains(&t))
+            .unwrap_or(false)
+        {
+            Some(t)
+        } else {
+            None
+        }
+    });
     user.hide_custom_css = form.hide_custom_css;
     let _: User = user.save_changes(&*conn).map_err(Error::from)?;
 

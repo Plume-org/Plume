@@ -22,6 +22,8 @@ use std::{
 use tracing::warn;
 use validator::{Validate, ValidationError, ValidationErrors};
 
+use crate::routes::user::validate_username;
+
 #[derive(Default, FromForm, Validate)]
 #[validate(schema(
     function = "emails_match",
@@ -50,7 +52,13 @@ fn emails_match(form: &EmailSignupForm) -> Result<(), ValidationError> {
     message = "Passwords are not matching"
 ))]
 pub struct NewUserForm {
-    #[validate(length(min = 1, message = "Username should be at least 1 characters long"))]
+    #[validate(
+        length(min = 1, message = "Username should be at least 1 characters long"),
+        custom(
+            function = "validate_username",
+            message = "User name is not allowed to contain any of < > & @ ' or \""
+        )
+    )]
     pub username: String,
     #[validate(length(min = 8, message = "Password should be at least 8 characters long"))]
     pub password: String,

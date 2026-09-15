@@ -183,6 +183,7 @@ Then try to restart Plume.
                 routes::posts::details,
                 routes::posts::activity_details,
                 routes::posts::edit,
+                routes::posts::edit_auth,
                 routes::posts::update,
                 routes::posts::new,
                 routes::posts::new_auth,
@@ -260,6 +261,7 @@ Then try to restart Plume.
         .manage(Arc::new(workpool))
         .manage(searcher)
         .manage(include_i18n!())
+        .attach(crate::utils::SecurityHeaders)
         .attach(
             CsrfFairingBuilder::new()
                 .set_default_target(

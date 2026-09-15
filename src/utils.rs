@@ -1,6 +1,8 @@
 use rocket::{
+    fairing::{Fairing, Info, Kind},
     http::uri::Uri,
     response::{Flash, Redirect},
+    Request, Response,
 };
 
 /**
@@ -14,4 +16,30 @@ pub fn requires_login<T: Into<Uri<'static>>>(message: &str, url: T) -> Flash<Red
         "callback",
         url.into().to_string(),
     )
+}
+
+/**
+* Checks that a user-supplied URI (for instance a remote interaction
+* endpoint obtained via WebFinger) can safely be used as a redirect target.
+*/
+pub fn is_safe_redirect_uri(uri: &str) -> bool {
+    plume_common::activity_pub::request::is_safe_url_str(uri)
+}
+
+/// Adds a few defense-in-depth security headers to every response.
+pub struct SecurityHeaders;
+
+impl Fairing for SecurityHeaders {
+    fn info(&self) -> Info {
+        Info {
+            name: "Security headers",
+            kind: Kind::Response,
+        }
+    }
+
+    fn on_response(&self, _request: &Request<'_>, response: &mut Response<'_>) {
+        response.set_raw_header("X-Content-Type-Options", "nosniff");
+        response.set_raw_header("X-Frame-Options", "SAMEORIGIN");
+        response.set_raw_header("Referrer-Policy", "same-origin");
+    }
 }

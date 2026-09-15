@@ -133,6 +133,11 @@ pub fn create(
         })
         .ok_or(ApiError(Error::NotFound))?;
 
+    // The token owner must be an author of the blog they publish to.
+    if !author.is_author_in(&conn, &Blog::get(&conn, blog)?)? {
+        return Err(Error::Unauthorized.into());
+    }
+
     if Post::find_by_slug(&conn, slug, blog).is_ok() {
         return Err(Error::InvalidValue.into());
     }

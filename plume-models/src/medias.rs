@@ -21,6 +21,45 @@ use crate::config::S3Config;
 
 const REMOTE_MEDIA_DIRECTORY: &str = "remote";
 
+/// File extensions that are allowed for uploaded and mirrored media.
+///
+/// This is a whitelist of file types that can not be interpreted as active
+/// content by browsers (no HTML, SVG, ...): serving user controlled files
+/// with such extensions would allow stored XSS on the instance domain.
+pub const ALLOWED_MEDIA_EXTENSIONS: &[&str] = &[
+    "png", "jpg", "jpeg", "gif", "webp", "avif", "mp3", "wav", "flac", "ogg", "oga", "mp4", "webm",
+    "mov", "m4a", "m4v",
+];
+
+pub fn is_allowed_media_extension(ext: &str) -> bool {
+    ALLOWED_MEDIA_EXTENSIONS
+        .iter()
+        .any(|allowed| allowed.eq_ignore_ascii_case(ext))
+}
+
+/// Returns the extension of the last path segment of `path` if it is allowed,
+/// or `png` as a safe fallback.
+fn safe_extension(path: &str) -> &'static str {
+    let ext = path.rsplit('.').next().unwrap_or("").to_lowercase();
+    ALLOWED_MEDIA_EXTENSIONS
+        .iter()
+        .find(|allowed| **allowed == ext)
+        .copied()
+        .unwrap_or("png")
+}
+
+/// Returns the segment if it can safely be used as a single path component
+/// while mirroring a remote media.
+fn sanitize_path_segment(segment: &str) -> Option<&str> {
+    if segment.is_empty() || segment == "." || segment == ".." {
+        return None;
+    }
+    if segment.contains(['/', '\\', ':', '\0']) {
+        return None;
+    }
+    Some(segment)
+}
+
 #[derive(Clone, Identifiable, Queryable, AsChangeset)]
 pub struct Media {
     pub id: i32,
@@ -120,6 +159,7 @@ impl Media {
 
     pub fn html(&self) -> Result<SafeString> {
         let url = self.url()?;
+        let url = escape(&url);
         Ok(match self.category() {
             MediaCategory::Image => SafeString::trusted(&format!(
                 r#"<img src="{}" alt="{}" title="{}">"#,
@@ -161,9 +201,9 @@ impl Media {
         }
 
         if CONFIG.s3.is_some() {
-            #[cfg(feature="s3")]
+            #[cfg(feature = "s3")]
             unreachable!("Called Media::local_path() but media are stored on S3");
-            #[cfg(not(feature="s3"))]
+            #[cfg(not(feature = "s3"))]
             unreachable!();
         }
 
@@ -203,25 +243,34 @@ impl Media {
         } else {
             let relative_url = self.relative_url().unwrap_or_default();
 
-            #[cfg(feature="s3")]
-            if CONFIG.s3.as_ref().map(|x| x.direct_download).unwrap_or(false) {
+            #[cfg(feature = "s3")]
+            if CONFIG
+                .s3
+                .as_ref()
+                .map(|x| x.direct_download)
+                .unwrap_or(false)
+            {
                 let s3_url = match CONFIG.s3.as_ref().unwrap() {
-                    S3Config { alias: Some(alias), .. } => {
+                    S3Config {
+                        alias: Some(alias), ..
+                    } => {
                         format!("https://{}/{}", alias, relative_url)
                     }
-                    S3Config { path_style: true, hostname, bucket, .. } => {
-                        format!("https://{}/{}/{}",
-                            hostname,
-                            bucket,
-                            relative_url
-                        )
+                    S3Config {
+                        path_style: true,
+                        hostname,
+                        bucket,
+                        ..
+                    } => {
+                        format!("https://{}/{}/{}", hostname, bucket, relative_url)
                     }
-                    S3Config { path_style: false, hostname, bucket, .. } => {
-                        format!("https://{}.{}/{}",
-                            bucket,
-                            hostname,
-                            relative_url
-                        )
+                    S3Config {
+                        path_style: false,
+                        hostname,
+                        bucket,
+                        ..
+                    } => {
+                        format!("https://{}.{}/{}", bucket, hostname, relative_url)
                     }
                 };
                 return Ok(s3_url);
@@ -238,11 +287,15 @@ impl Media {
     pub fn delete(&self, conn: &Connection) -> Result<()> {
         if !self.is_remote {
             if CONFIG.s3.is_some() {
-                #[cfg(not(feature="s3"))]
+                #[cfg(not(feature = "s3"))]
                 unreachable!();
 
                 #[cfg(feature = "s3")]
-                CONFIG.s3.as_ref().unwrap().get_bucket()
+                CONFIG
+                    .s3
+                    .as_ref()
+                    .unwrap()
+                    .get_bucket()
                     .delete_object_blocking(&self.relative_url().ok_or(Error::NotFound)?)?;
             } else {
                 fs::remove_file(self.local_path().ok_or(Error::NotFound)?)?;
@@ -255,6 +308,10 @@ impl Media {
     }
 
     pub fn save_remote(conn: &Connection, url: String, user: &User) -> Result<Media> {
+        let parsed = Url::parse(&url).map_err(|_| Error::Url)?;
+        if !matches!(parsed.scheme(), "http" | "https") || !parsed.has_host() {
+            return Err(Error::Url);
+        }
         if url.contains(&['<', '>', '"'][..]) {
             Err(Error::Url)
         } else {
@@ -289,7 +346,7 @@ impl Media {
             .ok_or(Error::MissingApProperty)?;
 
         let file_path = if CONFIG.s3.is_some() {
-            #[cfg(not(feature="s3"))]
+            #[cfg(not(feature = "s3"))]
             unreachable!();
 
             #[cfg(feature = "s3")]
@@ -304,11 +361,13 @@ impl Media {
                     CONFIG.proxy().cloned(),
                 )?;
 
-                let content_type = media
-                    .headers()
-                    .get(reqwest::header::CONTENT_TYPE)
-                    .and_then(|x| x.to_str().ok())
-                    .and_then(ContentType::parse_flexible)
+                // Never trust the Content-Type announced by the remote
+                // server: derive it from the (whitelisted) file extension so
+                // that active content can not be served from the bucket.
+                let content_type = dest
+                    .rsplit('.')
+                    .next()
+                    .and_then(ContentType::from_extension)
                     .unwrap_or(ContentType::Binary);
 
                 let bytes = media.bytes()?;
@@ -317,7 +376,7 @@ impl Media {
                 bucket.put_object_with_content_type_blocking(
                     &dest,
                     &bytes,
-                    &content_type.to_string()
+                    &content_type.to_string(),
                 )?;
 
                 dest
@@ -425,13 +484,20 @@ fn determine_mirror_file_path(url: &str) -> PathBuf {
 
     match Url::parse(url) {
         Ok(url) if url.has_host() => {
-            file_path.push(url.host_str().unwrap());
-            for segment in url.path_segments().expect("FIXME") {
-                file_path.push(segment);
+            if let Some(host) = url.host_str() {
+                file_path.push(sanitize_path_segment(host).unwrap_or("unknown-host"));
             }
+            for segment in url.path_segments().expect("FIXME") {
+                if let Some(segment) = sanitize_path_segment(segment) {
+                    file_path.push(segment);
+                }
+            }
+            // Never trust the extension of a remote URL: it could be used to
+            // make us serve active content (e.g. HTML) from our own domain.
+            let ext = safe_extension(url.path());
+            file_path.set_extension(ext);
             // TODO: handle query
             // HINT: Use characters which must be percent-encoded in path as separator between path and query
-            // HINT: handle extension
         }
         other => {
             if let Err(err) = other {
@@ -439,26 +505,32 @@ fn determine_mirror_file_path(url: &str) -> PathBuf {
             } else {
                 warn!("Error without a host: {}", &url);
             }
-            let ext = url
-                .rsplit('.')
-                .next()
-                .map(ToOwned::to_owned)
-                .unwrap_or_else(|| String::from("png"));
-            file_path.push(format!("{}.{}", GUID::rand(), ext));
+            file_path.push(format!("{}.png", GUID::rand()));
         }
     }
     file_path
 }
 
-#[cfg(feature="s3")]
+#[cfg(feature = "s3")]
 fn determine_mirror_s3_path(url: &str) -> String {
     match Url::parse(url) {
         Ok(url) if url.has_host() => {
-            format!("static/media/{}/{}/{}",
+            let mut path = format!(
+                "static/media/{}/{}",
                 REMOTE_MEDIA_DIRECTORY,
-                url.host_str().unwrap(),
-                url.path().trim_start_matches('/'),
-            )
+                url.host_str()
+                    .and_then(sanitize_path_segment)
+                    .unwrap_or("unknown-host"),
+            );
+            for segment in url.path_segments().expect("FIXME") {
+                if let Some(segment) = sanitize_path_segment(segment) {
+                    path.push('/');
+                    path.push_str(segment);
+                }
+            }
+            path.push('.');
+            path.push_str(safe_extension(url.path()));
+            path
         }
         other => {
             if let Err(err) = other {
@@ -466,15 +538,10 @@ fn determine_mirror_s3_path(url: &str) -> String {
             } else {
                 warn!("Error without a host: {}", &url);
             }
-            let ext = url
-                .rsplit('.')
-                .next()
-                .map(ToOwned::to_owned)
-                .unwrap_or_else(|| String::from("png"));
-            format!("static/media/{}/{}.{}",
+            format!(
+                "static/media/{}/{}.png",
                 REMOTE_MEDIA_DIRECTORY,
                 GUID::rand(),
-                ext,
             )
         }
     }
@@ -487,7 +554,48 @@ pub(crate) mod tests {
     use diesel::Connection;
     use std::env::{current_dir, set_current_dir};
     use std::fs;
-    use std::path::Path;
+    use std::path::{Component, Path};
+
+    #[test]
+    fn test_allowed_extensions() {
+        assert!(is_allowed_media_extension("png"));
+        assert!(is_allowed_media_extension("JPG"));
+        assert!(!is_allowed_media_extension("html"));
+        assert!(!is_allowed_media_extension("svg"));
+        assert!(!is_allowed_media_extension(""));
+        assert_eq!(safe_extension("/a/b/picture.PNG"), "png");
+        assert_eq!(safe_extension("/a/b/evil.html"), "png");
+        assert_eq!(safe_extension("/a/b/no-extension"), "png");
+    }
+
+    #[test]
+    fn test_mirror_path_is_sanitized() {
+        let base = Path::new(&CONFIG.media_directory).join(REMOTE_MEDIA_DIRECTORY);
+        let path = determine_mirror_file_path("https://evil.example/../../../etc/passwd.html");
+        assert!(path.starts_with(&base));
+        assert!(!path.components().any(|c| matches!(c, Component::ParentDir)));
+        assert_eq!(path.extension().and_then(|e| e.to_str()), Some("png"));
+
+        let path = determine_mirror_file_path("https://evil.example/a/pic.jpg");
+        assert!(path.starts_with(&base));
+        assert_eq!(path.extension().and_then(|e| e.to_str()), Some("jpg"));
+    }
+
+    #[test]
+    fn test_save_remote_rejects_non_http_urls() {
+        let conn = &db();
+        conn.test_transaction::<_, (), _>(|| {
+            let users = fill_database(conn).0;
+            assert!(Media::save_remote(conn, "javascript:alert(1)".to_owned(), &users[0]).is_err());
+            assert!(Media::save_remote(conn, "file:///etc/passwd".to_owned(), &users[0]).is_err());
+            assert!(
+                Media::save_remote(conn, "https://example.com/pic.png".to_owned(), &users[0])
+                    .is_ok()
+            );
+            clean(conn);
+            Ok(())
+        });
+    }
 
     pub(crate) fn fill_database(conn: &Conn) -> (Vec<User>, Vec<Media>) {
         let mut wd = current_dir().unwrap();

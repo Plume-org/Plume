@@ -187,7 +187,8 @@ pub fn activity_pub(
     conn: DbConn,
 ) -> Option<ActivityStream<Note>> {
     Comment::get(&conn, id)
-        .and_then(|c| c.to_activity(&conn))
         .ok()
+        .filter(|c| c.public_visibility)
+        .and_then(|c| c.to_activity(&conn).ok())
         .map(ActivityStream::new)
 }

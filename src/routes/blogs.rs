@@ -90,12 +90,12 @@ fn valid_slug(title: &str) -> Result<(), ValidationError> {
 #[post("/blogs/new", data = "<form>")]
 pub fn create(
     form: LenientForm<NewBlogForm>,
+    user: User,
     conn: DbConn,
     rockets: PlumeRocket,
 ) -> RespondOrRedirect {
     let slug = Blog::slug(&form.title);
     let intl = &rockets.intl.catalog;
-    let user = rockets.user.clone().unwrap();
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
@@ -324,7 +324,12 @@ pub fn update(
             );
             blog.icon_id = form.icon;
             blog.banner_id = form.banner;
-            blog.theme = form.theme.clone();
+            // Only accept themes that actually exist on this instance.
+            blog.theme = form.theme.clone().filter(|t| {
+                Instance::list_themes()
+                    .map(|themes| themes.contains(t))
+                    .unwrap_or(false)
+            });
             blog.save_changes::<Blog>(&*conn)
                 .expect("Couldn't save blog changes");
             Ok(Flash::success(

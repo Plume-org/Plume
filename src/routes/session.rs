@@ -70,11 +70,20 @@ pub fn create(
         .into();
     };
 
-    cookies.add_private(
-        Cookie::build(AUTH_COOKIE, user_id)
-            .same_site(SameSite::Lax)
-            .finish(),
-    );
+    let mut cookie = Cookie::build(AUTH_COOKIE, user_id)
+        .same_site(SameSite::Lax)
+        .http_only(true)
+        .finish();
+    if CONFIG
+        .rocket
+        .as_ref()
+        .map(|config| config.environment.is_prod())
+        .unwrap_or(false)
+    {
+        // Only send the session cookie over HTTPS in production.
+        cookie.set_secure(true);
+    }
+    cookies.add_private(cookie);
     let destination = rockets
         .flash_msg
         .clone()

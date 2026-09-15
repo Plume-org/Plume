@@ -47,10 +47,23 @@ pub struct OAuthRequest {
     scopes: String,
 }
 
+/// Compares two secrets without leaking their content through timing.
+fn secret_eq(a: &str, b: &str) -> bool {
+    let (a, b) = (a.as_bytes(), b.as_bytes());
+    if a.len() != b.len() {
+        return false;
+    }
+    let mut diff = 0u8;
+    for (x, y) in a.iter().zip(b.iter()) {
+        diff |= x ^ y;
+    }
+    diff == 0
+}
+
 #[get("/oauth2?<query..>")]
 pub fn oauth(query: Form<OAuthRequest>, conn: DbConn) -> Result<Json<serde_json::Value>, ApiError> {
     let app = App::find_by_client_id(&conn, &query.client_id)?;
-    if app.client_secret == query.client_secret {
+    if secret_eq(&app.client_secret, &query.client_secret) {
         if let Ok(user) = User::login(&conn, &query.username, &query.password) {
             let token = ApiToken::insert(
                 &conn,

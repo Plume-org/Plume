@@ -7,6 +7,7 @@ use reqwest::{
     },
     Proxy, Url,
 };
+use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use std::ops::Deref;
 use std::time::SystemTime;
 use tracing::warn;
@@ -15,6 +16,9 @@ use crate::activity_pub::sign::Signer;
 use crate::activity_pub::{ap_accept_header, AP_CONTENT_TYPE};
 
 const PLUME_USER_AGENT: &str = concat!("Plume/", env!("CARGO_PKG_VERSION"));
+
+/// Maximum number of redirects followed when fetching a remote resource.
+pub const MAX_REDIRECTS: usize = 5;
 
 #[derive(Debug)]
 pub struct Error();
@@ -35,6 +39,111 @@ impl From<reqwest::Error> for Error {
     fn from(_err: reqwest::Error) -> Self {
         Error()
     }
+}
+
+/// Returns `true` for addresses that must never be reachable through
+/// federation: loopback, private, link-local, multicast, unspecified and
+/// other special-purpose ranges (including cloud metadata endpoints).
+fn is_forbidden_ip(ip: IpAddr) -> bool {
+    match ip {
+        IpAddr::V4(ip) => {
+            let octets = ip.octets();
+            ip.is_private()
+                || ip.is_loopback()
+                || ip.is_link_local()
+                || ip.is_unspecified()
+                || ip.is_broadcast()
+                || ip.is_documentation()
+                || ip.is_multicast()
+                // 0.0.0.0/8
+                || octets[0] == 0
+                // 100.64.0.0/10 (carrier-grade NAT)
+                || (octets[0] == 100 && (octets[1] & 0xc0) == 64)
+                // 192.0.0.0/24
+                || (octets[0] == 192 && octets[1] == 0 && octets[2] == 0)
+                // 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24 (documentation)
+                || (octets[0] == 192 && octets[1] == 0 && octets[2] == 2)
+                || (octets[0] == 198 && octets[1] == 51 && octets[2] == 100)
+                || (octets[0] == 203 && octets[1] == 0 && octets[2] == 113)
+                // 198.18.0.0/15 (benchmarking)
+                || (octets[0] == 198 && (octets[1] & 0xfe) == 18)
+        }
+        IpAddr::V6(ip) => {
+            ip.is_loopback()
+                || ip.is_unspecified()
+                || ip.is_multicast()
+                // fc00::/7 (unique local addresses)
+                || (ip.segments()[0] & 0xfe00) == 0xfc00
+                // fe80::/10 (link-local)
+                || (ip.segments()[0] & 0xffc0) == 0xfe80
+                // IPv4-mapped and IPv4-compatible addresses
+                || ip
+                    .to_ipv4()
+                    .map_or(false, |ip| is_forbidden_ip(IpAddr::V4(ip)))
+        }
+    }
+}
+
+/// Checks that `url` uses http(s) and that its host is not localhost or any
+/// private/special-purpose address. If the host is a domain name, all of its
+/// resolved addresses are checked.
+pub fn is_safe_url(url: &Url) -> bool {
+    matches!(url.scheme(), "http" | "https") && resolve_public_addr(url).is_ok()
+}
+
+/// Same as [`is_safe_url`], for a string.
+pub fn is_safe_url_str(url: &str) -> bool {
+    Url::parse(url)
+        .map(|url| is_safe_url(&url))
+        .unwrap_or(false)
+}
+
+/// Resolves the host of `url` and returns the first address it resolves to,
+/// after making sure that none of the resolved addresses is forbidden.
+///
+/// The returned address can be used to pin the connection to a checked IP
+/// address and avoid DNS rebinding attacks.
+pub(crate) fn resolve_public_addr(url: &Url) -> Result<Option<SocketAddr>, Error> {
+    let host = url.host_str().ok_or(Error())?;
+    if host.eq_ignore_ascii_case("localhost") || host.ends_with(".localhost") {
+        return Err(Error());
+    }
+
+    let port = url.port_or_known_default().ok_or(Error())?;
+
+    if let Ok(ip) = host.parse::<IpAddr>() {
+        return if is_forbidden_ip(ip) {
+            Err(Error())
+        } else {
+            Ok(Some(SocketAddr::new(ip, port)))
+        };
+    }
+
+    let addrs = (host, port).to_socket_addrs().map_err(|_| Error())?;
+    let mut first = None;
+    for addr in addrs {
+        if is_forbidden_ip(addr.ip()) {
+            return Err(Error());
+        }
+        if first.is_none() {
+            first = Some(addr);
+        }
+    }
+    Ok(first)
+}
+
+/// Builds the redirect policy used for all outbound federation requests: every
+/// redirect target is validated with [`is_safe_url`] before being followed.
+pub fn redirect_policy() -> reqwest::redirect::Policy {
+    reqwest::redirect::Policy::custom(|attempt| {
+        if attempt.previous().len() >= MAX_REDIRECTS {
+            attempt.error("too many redirects")
+        } else if is_safe_url(attempt.url()) {
+            attempt.follow()
+        } else {
+            attempt.error("refusing to follow a redirect to a local or private address")
+        }
+    })
 }
 
 pub struct Digest(String);
@@ -194,31 +303,94 @@ pub fn get(url_str: &str, sender: &dyn Signer, proxy: Option<Proxy>) -> Result<R
     if !url.has_host() {
         return Err(Error());
     }
+    if !matches!(url.scheme(), "http" | "https") {
+        return Err(Error());
+    }
+    // Resolve (and validate) the target once: the address is then pinned for
+    // the actual request to avoid DNS rebinding.
+    let addr = match resolve_public_addr(&url) {
+        Ok(addr) => addr,
+        Err(_) => {
+            warn!("Refusing to fetch {}: local or private address", url_str);
+            return Err(Error());
+        }
+    };
     let host_header_value = HeaderValue::from_str(url.host_str().expect("Unreachable"))?;
     headers.insert(HOST, host_header_value);
-    if let Some(proxy) = proxy {
+    let mut builder = if let Some(proxy) = proxy {
         ClientBuilder::new().proxy(proxy)
     } else {
         ClientBuilder::new()
+    };
+    if let (Some(host), Some(addr)) = (url.host_str(), addr) {
+        builder = builder.resolve(host, addr);
     }
-    .connect_timeout(Some(std::time::Duration::from_secs(5)))
-    .build()?
-    .get(url_str)
-    .headers(headers.clone())
-    .header(
-        "Signature",
-        signature(sender, &headers, ("get", url.path(), url.query()))?,
-    )
-    .send()
-    .map_err(|_| Error())
+    builder
+        .redirect(redirect_policy())
+        .connect_timeout(Some(std::time::Duration::from_secs(5)))
+        .build()?
+        .get(url_str)
+        .headers(headers.clone())
+        .header(
+            "Signature",
+            signature(sender, &headers, ("get", url.path(), url.query()))?,
+        )
+        .send()
+        .map_err(|_| Error())
 }
 
 #[cfg(test)]
 mod tests {
     use super::signature;
+    use super::{is_forbidden_ip, is_safe_url_str};
     use crate::activity_pub::sign::{gen_keypair, Error, Result, Signer};
     use openssl::{hash::MessageDigest, pkey::PKey, rsa::Rsa};
     use reqwest::header::HeaderMap;
+    use std::net::IpAddr;
+
+    #[test]
+    fn test_forbidden_addresses() {
+        for url in &[
+            "http://localhost/",
+            "http://localhost:8080/",
+            "http://sub.localhost/",
+            "http://127.0.0.1/",
+            "http://127.1.2.3/",
+            "http://10.0.0.1/",
+            "http://192.168.1.1/",
+            "http://172.16.0.1/",
+            "http://100.64.0.1/",
+            "http://169.254.169.254/latest/meta-data/",
+            "http://[::1]/",
+            "http://[fc00::1]/",
+            "http://[fe80::1]/",
+            "http://[::ffff:127.0.0.1]/",
+            "http://0.0.0.0/",
+            "file:///etc/passwd",
+            "ftp://example.com/",
+        ] {
+            assert!(!is_safe_url_str(url), "{} should not be safe", url);
+        }
+    }
+
+    #[test]
+    fn test_public_addresses() {
+        assert!(is_safe_url_str("http://93.184.216.34/"));
+        assert!(is_safe_url_str("https://93.184.216.34:8443/path?q=1"));
+    }
+
+    #[test]
+    fn test_forbidden_ips() {
+        assert!(is_forbidden_ip("127.0.0.1".parse::<IpAddr>().unwrap()));
+        assert!(is_forbidden_ip("10.1.2.3".parse::<IpAddr>().unwrap()));
+        assert!(is_forbidden_ip("::1".parse::<IpAddr>().unwrap()));
+        assert!(!is_forbidden_ip("93.184.216.34".parse::<IpAddr>().unwrap()));
+        assert!(!is_forbidden_ip(
+            "2606:2800:220:1:248:1893:25c8:1946"
+                .parse::<IpAddr>()
+                .unwrap()
+        ));
+    }
 
     struct MySigner {
         public_key: String,

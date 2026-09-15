@@ -14,7 +14,7 @@ use crate::routes::{
     comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm, RespondOrRedirect,
 };
 use crate::template_utils::{IntoContext, Ructe};
-use crate::utils::requires_login;
+use crate::utils::{is_safe_redirect_uri, requires_login};
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, LicensedArticle};
 use plume_common::utils::md_to_html;
 use plume_models::{
@@ -134,11 +134,11 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
 pub fn new(
     blog: String,
     cl: ContentLen,
+    user: User,
     conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let b = Blog::find_by_fqn(&conn, &blog)?;
-    let user = rockets.user.clone().unwrap();
 
     if !user.is_author_in(&conn, &b)? {
         // TODO actually return 403 error code
@@ -166,18 +166,18 @@ pub fn new(
     )))
 }
 
-#[get("/~/<blog>/<slug>/edit")]
+#[get("/~/<blog>/<slug>/edit", rank = 1)]
 pub fn edit(
     blog: String,
     slug: String,
     cl: ContentLen,
+    user: User,
     conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let intl = &rockets.intl.catalog;
     let b = Blog::find_by_fqn(&conn, &blog)?;
     let post = Post::find_by_slug(&conn, &slug, b.id)?;
-    let user = rockets.user.clone().unwrap();
 
     if !user.is_author_in(&conn, &b)? {
         return Ok(render!(errors::not_authorized(
@@ -220,11 +220,20 @@ pub fn edit(
     )))
 }
 
+#[get("/~/<blog>/<slug>/edit", rank = 2)]
+pub fn edit_auth(blog: String, slug: String, i18n: I18n) -> Flash<Redirect> {
+    requires_login(
+        &i18n!(i18n.catalog, "To edit an article, you need to be logged in"),
+        uri!(edit: blog = blog, slug = slug),
+    )
+}
+
 #[post("/~/<blog>/<slug>/edit", data = "<form>")]
 pub fn update(
     blog: String,
     slug: String,
     cl: ContentLen,
+    user: User,
     form: LenientForm<NewPostForm>,
     conn: DbConn,
     rockets: PlumeRocket,
@@ -232,7 +241,6 @@ pub fn update(
     let b = Blog::find_by_fqn(&conn, &blog).expect("post::update: blog error");
     let mut post =
         Post::find_by_slug(&conn, &slug, b.id).expect("post::update: find by slug error");
-    let user = rockets.user.clone().unwrap();
     let intl = &rockets.intl.catalog;
 
     let new_slug = if !post.published {
@@ -415,12 +423,12 @@ pub fn create(
     blog_name: String,
     form: LenientForm<NewPostForm>,
     cl: ContentLen,
+    user: User,
     conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<RespondOrRedirect, ErrorPage> {
     let blog = Blog::find_by_fqn(&conn, &blog_name).expect("post::create: blog error");
     let slug = Post::slug(&form.title);
-    let user = rockets.user.clone().unwrap();
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
@@ -579,11 +587,11 @@ pub fn create(
 pub fn delete(
     blog_name: String,
     slug: String,
+    user: User,
     conn: DbConn,
     rockets: PlumeRocket,
     intl: I18n,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    let user = rockets.user.clone().unwrap();
     let post = Blog::find_by_fqn(&conn, &blog_name)
         .and_then(|blog| Post::find_by_slug(&conn, &slug, blog.id));
 
@@ -664,6 +672,7 @@ pub fn remote_interact_post(
     if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
         .ok()
         .map(|uri| uri.replace("{uri}", &Uri::percent_encode(&target.ap_url)))
+        .filter(|uri| is_safe_redirect_uri(uri))
     {
         Ok(Redirect::to(uri).into())
     } else {

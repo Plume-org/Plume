@@ -623,6 +623,56 @@ impl FromId<Connection> for Post {
         Self::find_by_ap_url(conn, id)
     }
 
+    fn from_id_with_actor(
+        conn: &Connection,
+        id: &str,
+        object: Option<Self::Object>,
+        proxy: Option<&reqwest::Proxy>,
+        actor_id: Option<&str>,
+    ) -> std::result::Result<Self, (Option<serde_json::Value>, Self::Error)> {
+        // Posts that we already know are never modified by an incoming Create
+        // activity: return them as they are.
+        if let Ok(post) = Self::from_db(conn, id) {
+            return Ok(post);
+        }
+
+        // Resolve the object so that it can be inspected before anything is
+        // saved to the database.
+        let article = match object {
+            Some(article) => article,
+            None => Self::deref(id, proxy.cloned())?,
+        };
+
+        if let Some(actor_id) = actor_id {
+            if let Ok(actor) = User::from_db(conn, actor_id) {
+                // A post may only be created by an actor of the instance the
+                // target blog belongs to: this prevents remote actors from
+                // injecting posts into blogs (local or remote) of other
+                // instances and from attributing them to their users.
+                if let Some(blog) = article
+                    .ap_object_ref()
+                    .attributed_to()
+                    .and_then(|links| {
+                        links.iter().find_map(|link| {
+                            let url = link.id()?;
+                            if User::from_db(conn, url.as_str()).is_ok() {
+                                None
+                            } else {
+                                Blog::from_db(conn, url.as_str()).ok()
+                            }
+                        })
+                    })
+                {
+                    if blog.instance_id != actor.instance_id {
+                        return Err((None, Error::Unauthorized));
+                    }
+                }
+            }
+        }
+
+        Self::from_activity(conn, article).map_err(|e| (None, e))
+    }
+
     fn from_activity(conn: &Connection, article: LicensedArticle) -> Result<Self> {
         let license = article.ext_one.license.unwrap_or_default();
         let article = article.inner;
@@ -684,106 +734,71 @@ impl FromId<Connection> for Post {
                 })
             })
             .unwrap_or_default();
-        let post = Post::from_db(conn, &ap_url)
-            .and_then(|mut post| {
-                let mut updated = false;
+        // Never modify an already known post from an incoming Create activity:
+        // only its authors are allowed to change it, and only through an Update
+        // activity (which is checked in PostUpdate::activity).
+        if let Ok(post) = Post::from_db(conn, &ap_url) {
+            return Ok(post);
+        }
 
-                let slug = Self::slug(&title);
-                let content = SafeString::new(
+        let blog = blog.ok_or(Error::NotFound)?;
+
+        // Never attribute content coming from another instance to local users:
+        // for a post in a remote blog, the author list must not contain local
+        // accounts. (Whether the actor may create this post at all is checked
+        // in the AsObject implementation below, once the actor is known.)
+        let authors = if blog.instance_id == Instance::get_local()?.id {
+            authors
+        } else {
+            authors
+                .into_iter()
+                .filter(|a| !a.is_local())
+                .collect::<Vec<_>>()
+        };
+        if authors.is_empty() {
+            return Err(Error::Unauthorized);
+        }
+
+        let post = Post::insert(
+            conn,
+            NewPost {
+                blog_id: blog.id,
+                slug: Self::slug(&title).to_string(),
+                title,
+                content: SafeString::new(
                     &article
                         .content()
                         .and_then(|content| content.to_as_string())
                         .ok_or(Error::MissingApProperty)?,
-                );
-                let subtitle = article
+                ),
+                published: true,
+                license,
+                // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
+                ap_url,
+                creation_date: article.published().map(|published| {
+                    let timestamp_secs = published.unix_timestamp();
+                    let timestamp_nanos = published.unix_timestamp_nanos()
+                        - (timestamp_secs as i128) * 1000i128 * 1000i128 * 1000i128;
+                    NaiveDateTime::from_timestamp_opt(timestamp_secs, timestamp_nanos as u32)
+                        .unwrap()
+                }),
+                subtitle: article
                     .summary()
                     .and_then(|summary| summary.to_as_string())
-                    .ok_or(Error::MissingApProperty)?;
-
-                if post.slug != slug {
-                    post.slug = slug.to_string();
-                    updated = true;
-                }
-                if post.title != title {
-                    post.title = title.clone();
-                    updated = true;
-                }
-                if post.content != content {
-                    post.content = content;
-                    updated = true;
-                }
-                if post.license != license {
-                    post.license = license.clone();
-                    updated = true;
-                }
-                if post.subtitle != subtitle {
-                    post.subtitle = subtitle;
-                    updated = true;
-                }
-                if post.source != source {
-                    post.source = source.clone();
-                    updated = true;
-                }
-                if post.cover_id != cover {
-                    post.cover_id = cover;
-                    updated = true;
-                }
-
-                if updated {
-                    post.update(conn)?;
-                }
-
-                Ok(post)
-            })
-            .or_else(|_| {
-                Post::insert(
-                    conn,
-                    NewPost {
-                        blog_id: blog.ok_or(Error::NotFound)?.id,
-                        slug: Self::slug(&title).to_string(),
-                        title,
-                        content: SafeString::new(
-                            &article
-                                .content()
-                                .and_then(|content| content.to_as_string())
-                                .ok_or(Error::MissingApProperty)?,
-                        ),
-                        published: true,
-                        license,
-                        // FIXME: This is wrong: with this logic, we may use the display URL as the AP ID. We need two different fields
-                        ap_url,
-                        creation_date: article.published().map(|published| {
-                            let timestamp_secs = published.unix_timestamp();
-                            let timestamp_nanos = published.unix_timestamp_nanos()
-                                - (timestamp_secs as i128) * 1000i128 * 1000i128 * 1000i128;
-                            NaiveDateTime::from_timestamp_opt(
-                                timestamp_secs,
-                                timestamp_nanos as u32,
-                            )
-                            .unwrap()
-                        }),
-                        subtitle: article
-                            .summary()
-                            .and_then(|summary| summary.to_as_string())
-                            .ok_or(Error::MissingApProperty)?,
-                        source,
-                        cover_id: cover,
-                    },
-                )
-                .and_then(|post| {
-                    for author in authors {
-                        PostAuthor::insert(
-                            conn,
-                            NewPostAuthor {
-                                post_id: post.id,
-                                author_id: author.id,
-                            },
-                        )?;
-                    }
-
-                    Ok(post)
-                })
-            })?;
+                    .ok_or(Error::MissingApProperty)?,
+                source,
+                cover_id: cover,
+            },
+        )?;
+        for author in authors {
+            PostAuthor::insert(
+                conn,
+                NewPostAuthor {
+                    post_id: post.id,
+                    author_id: author.id,
+                },
+            )?;
+        }
 
         // save mentions and tags
         let mut hashtags = md_to_html(&post.source, None, false, None)
@@ -826,7 +841,8 @@ impl AsObject<User, Create, &Connection> for Post {
     type Output = Self;
 
     fn activity(self, _conn: &Connection, _actor: User, _id: &str) -> Result<Self::Output> {
-        // TODO: check that _actor is actually one of the author?
+        // The actor was checked in `from_id_with_actor`, before this post was
+        // created.
         Ok(self)
     }
 }
