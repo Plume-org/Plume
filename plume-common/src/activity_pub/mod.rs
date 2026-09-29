@@ -131,6 +131,9 @@ where
     A: Activity + serde::Serialize,
     T: inbox::AsActor<C>,
 {
+    // Validate and resolve the inboxes once: unsafe (local/private) addresses
+    // are dropped and the resolved address is pinned for the actual request to
+    // avoid DNS rebinding and SSRF.
     let boxes = to
         .into_iter()
         .filter(|u| !u.is_local())
@@ -139,7 +142,22 @@ where
                 .unwrap_or_else(|| u.get_inbox_url())
         })
         .collect::<Vec<String>>()
-        .unique();
+        .unique()
+        .into_iter()
+        .filter_map(|inbox| match Url::parse(&inbox) {
+            Ok(url) if url.has_host() => match request::resolve_public_addr(&url) {
+                Ok(addr) => Some((inbox, url, addr)),
+                Err(_) => {
+                    warn!("Ignoring inbox with a local or private address: {:?}", inbox);
+                    None
+                }
+            },
+            _ => {
+                warn!("Ignoring unsafe or invalid inbox URL: {:?}", inbox);
+                None
+            }
+        })
+        .collect::<Vec<_>>();
 
     let mut act = serde_json::to_value(act).expect("activity_pub::broadcast: serialization error");
     act["@context"] = context();
@@ -147,14 +165,26 @@ where
         .sign(sender)
         .expect("activity_pub::broadcast: signature error");
 
-    let client = if let Some(proxy) = proxy {
+    let mut pinned = Vec::new();
+    let mut builder = if let Some(proxy) = proxy {
         ClientBuilder::new().proxy(proxy)
     } else {
         ClientBuilder::new()
+    };
+    for (_, url, addr) in &boxes {
+        if let (Some(host), Some(addr)) = (url.host_str(), *addr) {
+            let host = host.to_owned();
+            if !pinned.contains(&host) {
+                builder = builder.resolve(&host, addr);
+                pinned.push(host);
+            }
+        }
     }
-    .connect_timeout(std::time::Duration::from_secs(5))
-    .build()
-    .expect("Can't build client");
+    let client = builder
+        .redirect(request::redirect_policy())
+        .connect_timeout(std::time::Duration::from_secs(5))
+        .build()
+        .expect("Can't build client");
     let rt = runtime::Builder::new_current_thread()
         .enable_all()
         .build()
@@ -189,19 +219,9 @@ where
             });
             handles.push(handle);
         }
-        for inbox in boxes {
+        for (inbox, url, _) in boxes {
             let body = signed.to_string();
             let mut headers = request::headers();
-            let url = Url::parse(&inbox);
-            if url.is_err() {
-                warn!("Inbox is invalid URL: {:?}", &inbox);
-                continue;
-            }
-            let url = url.unwrap();
-            if !url.has_host() {
-                warn!("Inbox doesn't have host: {:?}", &inbox);
-                continue;
-            };
             let host_header_value = HeaderValue::from_str(url.host_str().expect("Unreachable"));
             if host_header_value.is_err() {
                 warn!("Header value is invalid: {:?}", url.host_str());

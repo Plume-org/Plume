@@ -183,6 +183,7 @@ Then try to restart Plume.
                 routes::posts::details,
                 routes::posts::activity_details,
                 routes::posts::edit,
+                routes::posts::edit_auth,
                 routes::posts::update,
                 routes::posts::new,
                 routes::posts::new_auth,
@@ -190,6 +191,10 @@ Then try to restart Plume.
                 routes::posts::delete,
                 routes::posts::remote_interact,
                 routes::posts::remote_interact_post,
+                routes::posts::translated,
+                routes::posts::translations,
+                routes::posts::create_translation,
+                routes::posts::delete_translation,
                 routes::reshares::create,
                 routes::reshares::create_auth,
                 routes::search::search,
@@ -247,6 +252,10 @@ Then try to restart Plume.
                 api::posts::list,
                 api::posts::create,
                 api::posts::delete,
+                api::posts::translate,
+                api::posts::list_translations,
+                api::posts::delete_translation,
+                api::posts::languages,
             ],
         )
         .register(catchers![
@@ -260,6 +269,7 @@ Then try to restart Plume.
         .manage(Arc::new(workpool))
         .manage(searcher)
         .manage(include_i18n!())
+        .attach(crate::utils::SecurityHeaders)
         .attach(
             CsrfFairingBuilder::new()
                 .set_default_target(

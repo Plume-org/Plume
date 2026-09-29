@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ARCH=$(python <<EOF
+ARCH=$(python3 <<EOF
 from __future__ import print_function
 import platform
 processor = platform.machine()
@@ -21,7 +21,7 @@ EOF
 if [ $ARCH == "aarch64" -o $ARCH == "armv71" ] ; then
     export PATH=/opt/local/llvm/bin:${PATH}
     cd /app
-    RUSTFLAGS="-C linker=lld" wasm-pack build --target web --release plume-front
+    RUSTFLAGS="-C linker=lld --cfg=web_sys_unstable_apis" wasm-pack build --target web --release plume-front
 else
     wasm-pack build --target web --release plume-front
 fi

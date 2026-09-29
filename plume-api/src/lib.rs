@@ -3,3 +3,4 @@ extern crate serde_derive;
 
 pub mod apps;
 pub mod posts;
+pub mod translations;

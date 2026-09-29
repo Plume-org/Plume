@@ -12,7 +12,7 @@ dotenv = "0.15.0"
 gettext = "0.4.0"
 gettext-macros = "0.6.1"
 gettext-utils = "0.1.0"
-guid-create = "0.2"
+guid-create = "0.5.2"
 lettre_email = "0.9.2"
 num_cpus = "1.10"
 rocket = "0.4.11"
@@ -78,3 +78,11 @@ s3 = ["plume-models/s3"]
 
 [workspace]
 members = ["plume-api", "plume-cli", "plume-models", "plume-common", "plume-front", "plume-macro"]
+
+# devise_core 0.2.1 (used by Rocket 0.4) relies on the `concat_idents` feature,
+# which has been removed from recent Rust versions. The vendored copy replaces
+# it with explicit default mapper names.
+[patch.crates-io]
+devise_core = { path = "vendor/devise_core" }
+rocket_http = { path = "vendor/rocket_http" }
+traitobject = { path = "vendor/traitobject" }

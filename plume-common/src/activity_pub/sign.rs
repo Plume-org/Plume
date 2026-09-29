@@ -134,6 +134,18 @@ impl SignatureValidity {
     }
 }
 
+/// Extract the value of a `name=value` (or `name="value"`) part of a
+/// `Signature` HTTP header. Returns `None` instead of panicking on malformed
+/// input.
+fn signature_header_param<'a>(part: &'a str, name: &str) -> Option<&'a str> {
+    let value = part.trim().strip_prefix(name)?.trim();
+    if let Some(value) = value.strip_prefix('"') {
+        value.strip_suffix('"')
+    } else {
+        Some(value)
+    }
+}
+
 pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     sender: &S,
     all_headers: &HeaderMap<'_>,
@@ -150,12 +162,14 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
     let mut headers = None;
     let mut signature = None;
     for part in sig_header.split(',') {
-        match part {
-            part if part.starts_with("keyId=") => _key_id = Some(&part[7..part.len() - 1]),
-            part if part.starts_with("algorithm=") => _algorithm = Some(&part[11..part.len() - 1]),
-            part if part.starts_with("headers=") => headers = Some(&part[9..part.len() - 1]),
-            part if part.starts_with("signature=") => signature = Some(&part[11..part.len() - 1]),
-            _ => {}
+        if let Some(value) = signature_header_param(part, "keyId=") {
+            _key_id = Some(value);
+        } else if let Some(value) = signature_header_param(part, "algorithm=") {
+            _algorithm = Some(value);
+        } else if let Some(value) = signature_header_param(part, "headers=") {
+            headers = Some(value);
+        } else if let Some(value) = signature_header_param(part, "signature=") {
+            signature = Some(value);
         }
     }
 
@@ -210,5 +224,26 @@ pub fn verify_http_headers<S: Signer + ::std::fmt::Debug>(
         SignatureValidity::Valid
     } else {
         SignatureValidity::Outdated
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_signature_header_param() {
+        assert_eq!(
+            signature_header_param(r#"keyId="https://example.com/key""#, "keyId="),
+            Some("https://example.com/key")
+        );
+        assert_eq!(
+            signature_header_param("algorithm=rsa-sha256", "algorithm="),
+            Some("rsa-sha256")
+        );
+        assert_eq!(signature_header_param("signature=", "signature="), Some(""));
+        assert_eq!(signature_header_param("keyId=", "signature="), None);
+        assert_eq!(signature_header_param("headers=\"", "headers="), None);
+        assert_eq!(signature_header_param("", "keyId="), None);
     }
 }

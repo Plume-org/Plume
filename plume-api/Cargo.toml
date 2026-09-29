@@ -2,7 +2,7 @@
 name = "plume-api"
 version = "0.7.2"
 authors = ["Plume contributors"]
-edition = "2018"
+edition = "2024"
 
 [dependencies]
 serde = "1.0.137"

@@ -1,8 +1,11 @@
 @use plume_models::blogs::Blog;
 @use plume_models::comments::{Comment, CommentTree};
+@use plume_models::post_translations::PostTranslation;
 @use plume_models::posts::Post;
 @use plume_models::tags::Tag;
+@use plume_models::translate::language_name;
 @use plume_models::users::User;
+@use plume_models::CONFIG;
 @use std::path::Path;
 @use validator::ValidationErrors;
 @use crate::templates::{base, partials::comment};
@@ -10,7 +13,7 @@
 @use crate::routes::comments::NewCommentForm;
 @use crate::routes::*;
 
-@(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<CommentTree>, previous_comment: Option<Comment>, n_likes: i64, n_reshares: i64, has_liked: bool, has_reshared: bool, is_following: bool, author: User)
+@(ctx: BaseContext, article: Post, blog: Blog, comment_form: &NewCommentForm, comment_errors: ValidationErrors, tags: Vec<Tag>, comments: Vec<CommentTree>, previous_comment: Option<Comment>, n_likes: i64, n_reshares: i64, has_liked: bool, has_reshared: bool, is_following: bool, author: User, translations: Vec<PostTranslation>)
 
 @:base(ctx, article.title.clone(), {
     <meta property="og:title" content="@article.title"/>
@@ -76,6 +79,18 @@
                 }
             </p>
         </section>
+        @if !translations.is_empty() || CONFIG.libretranslate.is_some() {
+            <section class="translation-links center">
+                @if !translations.is_empty() {
+                    <div class="available-translations">
+                        @for translation in translations {
+                            <a class="button secondary" href="@uri!(posts::translated: blog = &blog.fqn, slug = &article.slug, lang = &translation.target_lang)">@language_name(&translation.target_lang)</a>
+                        }
+                    </div>
+                }
+                <a class="button secondary" href="@uri!(posts::translations: blog = &blog.fqn, slug = &article.slug)">@icon!("globe") @i18n!(ctx.1, "Translations")</a>
+            </section>
+        }
         @if ctx.2.is_some() {
             <section class="actions">
                 <form id="likes" class="likes" action="@uri!(likes::create: blog = &blog.fqn, slug = &article.slug)#likes" method="POST">

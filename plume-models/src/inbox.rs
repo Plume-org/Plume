@@ -298,6 +298,128 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn create_does_not_overwrite_existing_post() {
+        let conn = db();
+        conn.test_transaction::<_, (), _>(|| {
+            let (posts, users, blogs) = fill_database(&conn);
+            let original = posts[0].clone();
+
+            // A Create activity may use a `url` field different from the
+            // object `id`: this must not be used to overwrite an existing
+            // post that we already know about.
+            let act = json!({
+                "id": "https://plu.me/create/1",
+                "actor": users[0].ap_url,
+                "object": {
+                    "type": "Article",
+                    "id": "https://plu.me/~/BlogName/another-id",
+                    "url": original.ap_url,
+                    "attributedTo": [users[0].ap_url, blogs[0].ap_url],
+                    "content": "Overwritten!",
+                    "name": "Overwritten!",
+                    "summary": "Overwritten!",
+                    "source": {
+                        "content": "Overwritten!",
+                        "mediaType": "text/markdown"
+                    },
+                    "published": "2014-12-12T12:12:12Z",
+                    "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
+                },
+                "type": "Create",
+            });
+
+            super::inbox(&conn, act).unwrap();
+
+            let post = crate::posts::Post::get(&conn, original.id).unwrap();
+            assert_eq!(post.title, original.title);
+            assert_eq!(post.content, original.content);
+            assert_eq!(post.source, original.source);
+            assert_eq!(post.subtitle, original.subtitle);
+            Ok(())
+        });
+    }
+
+    #[test]
+    fn remote_actor_cannot_create_post_in_local_blog() {
+        use crate::instance::{Instance, NewInstance};
+        use crate::users::{NewUser, Role, User};
+        use plume_common::utils::random_hex;
+
+        let conn = db();
+        conn.test_transaction::<_, (), _>(|| {
+            let (_posts, _users, blogs) = fill_database(&conn);
+
+            let remote_instance = Instance::insert(
+                &conn,
+                NewInstance {
+                    public_domain: "remote.example".to_owned(),
+                    name: "remote.example".to_owned(),
+                    local: false,
+                    open_registrations: true,
+                    short_description: SafeString::new(""),
+                    long_description: SafeString::new(""),
+                    default_license: String::new(),
+                    short_description_html: String::new(),
+                    long_description_html: String::new(),
+                },
+            )
+            .unwrap();
+            let remote_user = User::insert(
+                &conn,
+                NewUser {
+                    username: random_hex()[..8].to_owned(),
+                    display_name: "evil".to_owned(),
+                    outbox_url: "https://remote.example/outbox".to_owned(),
+                    inbox_url: "https://remote.example/inbox".to_owned(),
+                    summary: String::new(),
+                    email: None,
+                    hashed_password: None,
+                    instance_id: remote_instance.id,
+                    ap_url: "https://remote.example/@/evil".to_owned(),
+                    private_key: None,
+                    public_key: String::new(),
+                    shared_inbox_url: None,
+                    followers_endpoint: "https://remote.example/@/evil/followers".to_owned(),
+                    avatar_id: None,
+                    summary_html: SafeString::new(""),
+                    role: Role::Normal as i32,
+                    fqn: "evil@remote.example".to_owned(),
+                },
+            )
+            .unwrap();
+
+            let act = json!({
+                "id": "https://remote.example/create/1",
+                "actor": remote_user.ap_url,
+                "object": {
+                    "type": "Article",
+                    "id": "https://local.example/~/BlogName/injected",
+                    "url": "https://local.example/~/BlogName/injected",
+                    "attributedTo": [remote_user.ap_url, blogs[0].ap_url],
+                    "content": "Injected!",
+                    "name": "Injected!",
+                    "summary": "Injected!",
+                    "source": {
+                        "content": "Injected!",
+                        "mediaType": "text/markdown"
+                    },
+                    "published": "2014-12-12T12:12:12Z",
+                    "to": [plume_common::activity_pub::PUBLIC_VISIBILITY]
+                },
+                "type": "Create",
+            });
+
+            assert!(super::inbox(&conn, act).is_err());
+            assert!(crate::posts::Post::find_by_ap_url(
+                &conn,
+                "https://local.example/~/BlogName/injected"
+            )
+            .is_err());
+            Ok(())
+        });
+    }
+
+    #[test]
     fn spoof_post() {
         let conn = db();
         conn.test_transaction::<_, (), _>(|| {

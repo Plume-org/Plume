@@ -199,6 +199,20 @@ table! {
 }
 
 table! {
+    post_translations (id) {
+        id -> Int4,
+        post_id -> Int4,
+        source_lang -> Varchar,
+        target_lang -> Varchar,
+        title -> Text,
+        subtitle -> Text,
+        content -> Text,
+        source -> Text,
+        creation_date -> Timestamp,
+    }
+}
+
+table! {
     posts (id) {
         id -> Int4,
         blog_id -> Int4,
@@ -299,6 +313,7 @@ joinable!(mentions -> users (mentioned_id));
 joinable!(notifications -> users (user_id));
 joinable!(post_authors -> posts (post_id));
 joinable!(post_authors -> users (author_id));
+joinable!(post_translations -> posts (post_id));
 joinable!(posts -> blogs (blog_id));
 joinable!(posts -> medias (cover_id));
 joinable!(reshares -> posts (post_id));
@@ -328,6 +343,7 @@ allow_tables_to_appear_in_same_query!(
     notifications,
     password_reset_requests,
     post_authors,
+    post_translations,
     posts,
     reshares,
     tags,

@@ -10,6 +10,7 @@ extern crate lazy_static;
 extern crate plume_macro;
 #[macro_use]
 extern crate rocket;
+#[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
@@ -432,6 +433,7 @@ pub mod notifications;
 pub mod password_reset_requests;
 pub mod plume_rocket;
 pub mod post_authors;
+pub mod post_translations;
 pub mod posts;
 pub mod remote_fetch_actor;
 pub mod reshares;
@@ -442,5 +444,6 @@ pub mod search;
 pub mod signups;
 pub mod tags;
 pub mod timeline;
+pub mod translate;
 pub mod users;
 pub use plume_rocket::PlumeRocket;

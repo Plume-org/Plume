@@ -14,7 +14,7 @@ use crate::routes::{
     comments::NewCommentForm, errors::ErrorPage, ContentLen, RemoteForm, RespondOrRedirect,
 };
 use crate::template_utils::{IntoContext, Ructe};
-use crate::utils::requires_login;
+use crate::utils::{is_safe_redirect_uri, requires_login};
 use plume_common::activity_pub::{broadcast, ActivityStream, ApRequest, LicensedArticle};
 use plume_common::utils::md_to_html;
 use plume_models::{
@@ -26,10 +26,12 @@ use plume_models::{
     medias::Media,
     mentions::Mention,
     post_authors::*,
+    post_translations::*,
     posts::*,
     safe_string::SafeString,
     tags::*,
     timeline::*,
+    translate,
     users::User,
     Error, PlumeRocket, CONFIG,
 };
@@ -96,7 +98,8 @@ pub fn details(
             user.clone().and_then(|u| u.has_liked(&conn, &post).ok()).unwrap_or(false),
             user.clone().and_then(|u| u.has_reshared(&conn, &post).ok()).unwrap_or(false),
             user.and_then(|u| u.is_following(&conn, post.get_authors(&conn).ok()?[0].id).ok()).unwrap_or(false),
-            post.get_authors(&conn)?[0].clone()
+            post.get_authors(&conn)?[0].clone(),
+            PostTranslation::for_post(&conn, post.id)?
         )))
 }
 
@@ -134,11 +137,11 @@ pub fn new_auth(blog: String, i18n: I18n) -> Flash<Redirect> {
 pub fn new(
     blog: String,
     cl: ContentLen,
+    user: User,
     conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let b = Blog::find_by_fqn(&conn, &blog)?;
-    let user = rockets.user.clone().unwrap();
 
     if !user.is_author_in(&conn, &b)? {
         // TODO actually return 403 error code
@@ -166,18 +169,18 @@ pub fn new(
     )))
 }
 
-#[get("/~/<blog>/<slug>/edit")]
+#[get("/~/<blog>/<slug>/edit", rank = 1)]
 pub fn edit(
     blog: String,
     slug: String,
     cl: ContentLen,
+    user: User,
     conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<Ructe, ErrorPage> {
     let intl = &rockets.intl.catalog;
     let b = Blog::find_by_fqn(&conn, &blog)?;
     let post = Post::find_by_slug(&conn, &slug, b.id)?;
-    let user = rockets.user.clone().unwrap();
 
     if !user.is_author_in(&conn, &b)? {
         return Ok(render!(errors::not_authorized(
@@ -220,11 +223,20 @@ pub fn edit(
     )))
 }
 
+#[get("/~/<blog>/<slug>/edit", rank = 2)]
+pub fn edit_auth(blog: String, slug: String, i18n: I18n) -> Flash<Redirect> {
+    requires_login(
+        &i18n!(i18n.catalog, "To edit an article, you need to be logged in"),
+        uri!(edit: blog = blog, slug = slug),
+    )
+}
+
 #[post("/~/<blog>/<slug>/edit", data = "<form>")]
 pub fn update(
     blog: String,
     slug: String,
     cl: ContentLen,
+    user: User,
     form: LenientForm<NewPostForm>,
     conn: DbConn,
     rockets: PlumeRocket,
@@ -232,7 +244,6 @@ pub fn update(
     let b = Blog::find_by_fqn(&conn, &blog).expect("post::update: blog error");
     let mut post =
         Post::find_by_slug(&conn, &slug, b.id).expect("post::update: find by slug error");
-    let user = rockets.user.clone().unwrap();
     let intl = &rockets.intl.catalog;
 
     let new_slug = if !post.published {
@@ -415,12 +426,12 @@ pub fn create(
     blog_name: String,
     form: LenientForm<NewPostForm>,
     cl: ContentLen,
+    user: User,
     conn: DbConn,
     rockets: PlumeRocket,
 ) -> Result<RespondOrRedirect, ErrorPage> {
     let blog = Blog::find_by_fqn(&conn, &blog_name).expect("post::create: blog error");
     let slug = Post::slug(&form.title);
-    let user = rockets.user.clone().unwrap();
 
     let mut errors = match form.validate() {
         Ok(_) => ValidationErrors::new(),
@@ -579,11 +590,11 @@ pub fn create(
 pub fn delete(
     blog_name: String,
     slug: String,
+    user: User,
     conn: DbConn,
     rockets: PlumeRocket,
     intl: I18n,
 ) -> Result<Flash<Redirect>, ErrorPage> {
-    let user = rockets.user.clone().unwrap();
     let post = Blog::find_by_fqn(&conn, &blog_name)
         .and_then(|blog| Post::find_by_slug(&conn, &slug, blog.id));
 
@@ -664,6 +675,7 @@ pub fn remote_interact_post(
     if let Some(uri) = User::fetch_remote_interact_uri(&remote.remote)
         .ok()
         .map(|uri| uri.replace("{uri}", &Uri::percent_encode(&target.ap_url)))
+        .filter(|uri| is_safe_redirect_uri(uri))
     {
         Ok(Redirect::to(uri).into())
     } else {
@@ -684,4 +696,204 @@ pub fn remote_interact_post(
         ))
         .into())
     }
+}
+
+#[get("/~/<blog>/<slug>/translated/<lang>", rank = 2)]
+pub fn translated(
+    blog: String,
+    slug: String,
+    lang: String,
+    conn: DbConn,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
+    let user = rockets.user.clone();
+    let blog = Blog::find_by_fqn(&conn, &blog)?;
+    let post = Post::find_by_slug(&conn, &slug, blog.id)?;
+
+    if !(post.published
+        || post
+            .get_authors(&conn)?
+            .into_iter()
+            .any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)))
+    {
+        return Ok(render!(errors::not_authorized(
+            &(&conn, &rockets).to_context(),
+            i18n!(rockets.intl.catalog, "This post isn't published yet.")
+        )));
+    }
+
+    let translation = PostTranslation::find_by_post_and_lang(&conn, post.id, &lang)
+        .map_err(|_| Error::NotFound)?;
+
+    let author = post.get_authors(&conn)?.into_iter().next().ok_or(Error::NotFound)?;
+    let tags = Tag::for_post(&conn, post.id)?;
+
+    Ok(render!(posts::translated(
+        &(&conn, &rockets).to_context(),
+        post,
+        blog,
+        translation,
+        tags,
+        author
+    )))
+}
+
+#[derive(Default, FromForm)]
+pub struct TranslationForm {
+    pub target_lang: String,
+}
+
+#[get("/~/<blog>/<slug>/translations", rank = 1)]
+pub fn translations(
+    blog: String,
+    slug: String,
+    conn: DbConn,
+    rockets: PlumeRocket,
+) -> Result<Ructe, ErrorPage> {
+    let user = rockets.user.clone();
+    let blog = Blog::find_by_fqn(&conn, &blog)?;
+    let post = Post::find_by_slug(&conn, &slug, blog.id)?;
+
+    if !(post.published
+        || post
+            .get_authors(&conn)?
+            .into_iter()
+            .any(|a| a.id == user.clone().map(|u| u.id).unwrap_or(0)))
+    {
+        return Ok(render!(errors::not_authorized(
+            &(&conn, &rockets).to_context(),
+            i18n!(rockets.intl.catalog, "This post isn't published yet.")
+        )));
+    }
+
+    let author = post
+        .get_authors(&conn)?
+        .into_iter()
+        .next()
+        .ok_or(Error::NotFound)?;
+    let post_translations = PostTranslation::for_post(&conn, post.id)?;
+    let translation_enabled = CONFIG.libretranslate.is_some();
+    let languages = if translation_enabled {
+        translate::supported_languages().unwrap_or_default()
+    } else {
+        Vec::new()
+    };
+
+    Ok(render!(posts::translations(
+        &(&conn, &rockets).to_context(),
+        post,
+        blog,
+        author,
+        post_translations,
+        languages,
+        translation_enabled
+    )))
+}
+
+#[post("/~/<blog>/<slug>/translations", data = "<form>")]
+pub fn create_translation(
+    blog: String,
+    slug: String,
+    user: User,
+    form: LenientForm<TranslationForm>,
+    conn: DbConn,
+    rockets: PlumeRocket,
+) -> Result<Flash<Redirect>, ErrorPage> {
+    let blog = Blog::find_by_fqn(&conn, &blog)?;
+    let post = Post::find_by_slug(&conn, &slug, blog.id)?;
+
+    let target_lang = form.target_lang.trim().to_string();
+    if CONFIG.libretranslate.is_none() || target_lang.is_empty() {
+        return Ok(Flash::error(
+            Redirect::to(uri!(translations: blog = &blog.fqn, slug = &post.slug)),
+            i18n!(rockets.intl.catalog, "Translation is not available."),
+        ));
+    }
+
+    if !post.published && !post.is_author(&conn, user.id)? {
+        return Ok(Flash::error(
+            Redirect::to(uri!(translations: blog = &blog.fqn, slug = &post.slug)),
+            i18n!(rockets.intl.catalog, "You are not an author of this blog."),
+        ));
+    }
+
+    // Only ask the translation instance for a language we don't have yet.
+    if PostTranslation::find_by_post_and_lang(&conn, post.id, &target_lang).is_err() {
+        let result = translate::translate_post_fields(
+            &post.title,
+            &post.subtitle,
+            post.content.get(),
+            &post.source,
+            "auto",
+            &target_lang,
+        )?;
+
+        // Translating an article to the language it is already written in is a
+        // no-op: don't store a useless translation.
+        if result.detected_language.as_deref() == Some(target_lang.as_str()) {
+            return Ok(Flash::error(
+                Redirect::to(uri!(translations: blog = &blog.fqn, slug = &post.slug)),
+                i18n!(
+                    rockets.intl.catalog,
+                    "This article is already in the selected language."
+                ),
+            ));
+        }
+
+        let source_lang = result
+            .detected_language
+            .clone()
+            .unwrap_or_else(|| "auto".to_string());
+
+        PostTranslation::insert(
+            &conn,
+            NewPostTranslation {
+                post_id: post.id,
+                source_lang,
+                target_lang: target_lang.clone(),
+                title: result.title,
+                subtitle: result.subtitle,
+                content: result.content,
+                source: result.source,
+            },
+        )?;
+    }
+
+    Ok(Flash::success(
+        Redirect::to(uri!(
+            translated: blog = &blog.fqn,
+            slug = &post.slug,
+            lang = &target_lang
+        )),
+        i18n!(rockets.intl.catalog, "The article was translated."),
+    ))
+}
+
+#[post("/~/<blog>/<slug>/translations/<lang>/delete")]
+pub fn delete_translation(
+    blog: String,
+    slug: String,
+    lang: String,
+    user: User,
+    conn: DbConn,
+    rockets: PlumeRocket,
+) -> Result<Flash<Redirect>, ErrorPage> {
+    let blog = Blog::find_by_fqn(&conn, &blog)?;
+    let post = Post::find_by_slug(&conn, &slug, blog.id)?;
+
+    if !user.is_author_in(&conn, &blog)? {
+        return Ok(Flash::error(
+            Redirect::to(uri!(translations: blog = &blog.fqn, slug = &post.slug)),
+            i18n!(rockets.intl.catalog, "You are not an author of this blog."),
+        ));
+    }
+
+    if let Ok(translation) = PostTranslation::find_by_post_and_lang(&conn, post.id, &lang) {
+        translation.delete(&conn)?;
+    }
+
+    Ok(Flash::success(
+        Redirect::to(uri!(translations: blog = &blog.fqn, slug = &post.slug)),
+        i18n!(rockets.intl.catalog, "The translation was deleted."),
+    ))
 }

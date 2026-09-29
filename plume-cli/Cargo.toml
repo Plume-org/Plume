@@ -2,7 +2,7 @@
 name = "plume-cli"
 version = "0.7.2"
 authors = ["Plume contributors"]
-edition = "2018"
+edition = "2024"
 
 [[bin]]
 name = "plm"

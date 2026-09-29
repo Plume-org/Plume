@@ -31,6 +31,7 @@ pub struct Config {
     pub ldap: Option<LdapConfig>,
     pub proxy: Option<ProxyConfig>,
     pub s3: Option<S3Config>,
+    pub libretranslate: Option<LibretranslateConfig>,
 }
 
 impl Config {
@@ -456,6 +457,17 @@ fn get_s3_config() -> Option<S3Config> {
     }
 }
 
+pub struct LibretranslateConfig {
+    pub endpoint: String,
+    pub api_key: Option<String>,
+}
+
+fn get_libretranslate_config() -> Option<LibretranslateConfig> {
+    let endpoint = var("LIBRETRANSLATE_ENDPOINT").ok()?;
+    let api_key = var("LIBRETRANSLATE_API_KEY").ok();
+    Some(LibretranslateConfig { endpoint, api_key })
+}
+
 lazy_static! {
     pub static ref CONFIG: Config = Config {
         base_url: var("BASE_URL").unwrap_or_else(|_| format!(
@@ -488,5 +500,6 @@ lazy_static! {
         ldap: get_ldap_config(),
         proxy: get_proxy_config(),
         s3: get_s3_config(),
+        libretranslate: get_libretranslate_config(),
     };
 }

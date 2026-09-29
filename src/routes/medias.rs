@@ -2,7 +2,7 @@ use crate::routes::{errors::ErrorPage, Page};
 use crate::template_utils::{IntoContext, Ructe};
 use guid_create::GUID;
 use multipart::server::{
-    save::{SaveResult, SavedField, SavedData},
+    save::{SaveResult, SavedData, SavedField},
     Multipart,
 };
 use plume_models::{db_conn::DbConn, medias::*, users::User, Error, PlumeRocket, CONFIG};
@@ -93,29 +93,25 @@ pub fn upload(
 }
 
 fn save_uploaded_file(file: &SavedField) -> Result<Option<String>, plume_models::Error> {
-    // Remove extension if it contains something else than just letters and numbers
-    let ext = file
+    // Only allow a whitelist of media extensions: serving user-uploaded files
+    // such as HTML or SVG from the instance domain would allow stored XSS.
+    let ext = match file
         .headers
         .filename
         .as_ref()
-        .and_then(|f| {
-            f.rsplit('.')
-                .next()
-                .and_then(|ext| {
-                    if ext.chars().any(|c| !c.is_alphanumeric()) {
-                        None
-                    } else {
-                        Some(ext.to_lowercase())
-                    }
-                })
-        })
-        .unwrap_or_default();
+        .and_then(|f| f.rsplit('.').next())
+        .map(|ext| ext.to_lowercase())
+        .filter(|ext| is_allowed_media_extension(ext))
+    {
+        Some(ext) => ext,
+        None => return Ok(None),
+    };
 
     if CONFIG.s3.is_some() {
-        #[cfg(not(feature="s3"))]
+        #[cfg(not(feature = "s3"))]
         unreachable!();
 
-        #[cfg(feature="s3")]
+        #[cfg(feature = "s3")]
         {
             use std::borrow::Cow;
 
@@ -130,12 +126,11 @@ fn save_uploaded_file(file: &SavedField) -> Result<Option<String>, plume_models:
             };
 
             let bucket = CONFIG.s3.as_ref().unwrap().get_bucket();
-            let content_type = match &file.headers.content_type {
-                Some(ct) => ct.to_string(),
-                None => ContentType::from_extension(&ext)
-                    .unwrap_or(ContentType::Binary)
-                    .to_string(),
-            };
+            // Never trust the Content-Type announced by the client: derive it
+            // from the (whitelisted) extension of the uploaded file.
+            let content_type = ContentType::from_extension(&ext)
+                .unwrap_or(ContentType::Binary)
+                .to_string();
 
             bucket.put_object_with_content_type_blocking(&dest, &bytes, &content_type)?;
 

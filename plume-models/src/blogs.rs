@@ -387,7 +387,7 @@ impl FromId<Connection> for Blog {
                 .preferred_username()
                 .ok_or(Error::MissingApProperty)?
                 .to_string();
-            if name.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+            if name.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t', '\n', '\r'][..]) {
                 tracing::error!("preferredUsername includes invalid character(s): {}", &name);
                 return Err(Error::InvalidValue);
             }
@@ -482,6 +482,12 @@ impl FromId<Connection> for Blog {
                 },
             )
         })?;
+        if instance.local {
+            // Blogs of this instance are always created locally and already
+            // exist in the database: accepting to create one from a remote
+            // activity would allow anyone to impersonate a local blog.
+            return Err(Error::Unauthorized);
+        }
         new_blog.instance_id = instance.id;
 
         Blog::insert(conn, new_blog)
@@ -966,22 +972,29 @@ pub(crate) mod tests {
                 .id,
             );
             let _: Blog = blogs[0].save_changes(&**conn).unwrap();
-            let ap_repr = blogs[0].to_activity(conn).unwrap();
-            blogs[0].delete(conn).unwrap();
+            let mut repr = serde_json::to_value(blogs[0].to_activity(conn).unwrap()).unwrap();
+
+            // Remote activities must not be able to create local blogs.
+            let ap_repr: CustomGroup = serde_json::from_value(repr.clone()).unwrap();
+            assert!(matches!(
+                Blog::from_activity(conn, ap_repr),
+                Err(Error::Unauthorized)
+            ));
+
+            // Federating the same blog from another instance works.
+            repr["id"] = serde_json::json!("https://remote.example/~/BlogName/");
+            repr["inbox"] = serde_json::json!("https://remote.example/~/BlogName/inbox");
+            repr["outbox"] = serde_json::json!("https://remote.example/~/BlogName/outbox");
+            let ap_repr: CustomGroup = serde_json::from_value(repr).unwrap();
             let blog = Blog::from_activity(conn, ap_repr).unwrap();
 
             assert_eq!(blog.actor_id, blogs[0].actor_id);
             assert_eq!(blog.title, blogs[0].title);
             assert_eq!(blog.summary, blogs[0].summary);
-            assert_eq!(blog.outbox_url, blogs[0].outbox_url);
-            assert_eq!(blog.inbox_url, blogs[0].inbox_url);
-            assert_eq!(blog.instance_id, blogs[0].instance_id);
-            assert_eq!(blog.ap_url, blogs[0].ap_url);
             assert_eq!(blog.public_key, blogs[0].public_key);
-            assert_eq!(blog.fqn, blogs[0].fqn);
             assert_eq!(blog.summary_html, blogs[0].summary_html);
-            assert_eq!(blog.icon_url(conn), blogs[0].icon_url(conn));
-            assert_eq!(blog.banner_url(conn), blogs[0].banner_url(conn));
+            assert_eq!(blog.ap_url, "https://remote.example/~/BlogName/");
+            assert_eq!(blog.fqn, "BlogName@remote.example");
 
             Ok(())
         })

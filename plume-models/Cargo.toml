@@ -2,12 +2,12 @@
 name = "plume-models"
 version = "0.7.2"
 authors = ["Plume contributors"]
-edition = "2018"
+edition = "2024"
 
 [dependencies]
 ammonia = "3.2.0"
 bcrypt = "0.12.1"
-guid-create = "0.2"
+guid-create = "0.5.2"
 itertools = "0.10.3"
 lazy_static = "1.0"
 ldap3 = "0.11.1"
@@ -15,7 +15,7 @@ migrations_internals= "1.4.0"
 openssl = "0.10.40"
 rocket = "0.4.11"
 rocket_i18n = "0.4.1"
-reqwest = "0.11.11"
+reqwest = { version = "0.11.11", features = ["blocking", "json"] }
 scheduled-thread-pool = "0.2.6"
 serde = "1.0.137"
 rust-s3 = { version = "0.33.0", optional = true, features = ["blocking"] }

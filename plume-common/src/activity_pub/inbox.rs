@@ -244,11 +244,12 @@ where
                     Some(x) => x,
                     None => return Self::NotHandled(ctx, act, InboxError::InvalidObject(None)),
                 };
-                let obj = match M::from_id(
+                let obj = match M::from_id_with_actor(
                     ctx,
                     &obj_id,
                     serde_json::from_value(act["object"].clone()).ok(),
                     proxy,
+                    Some(&actor_id),
                 ) {
                     Ok(o) => o,
                     Err((json, e)) => {
@@ -357,6 +358,23 @@ pub trait FromId<C>: Sized {
                     .map_err(|e| (None, e)),
             },
         }
+    }
+
+    /// Same as [`FromId::from_id`], but also receives the ID of the actor of
+    /// the enclosing activity, when there is one.
+    ///
+    /// Implementations that need to authorize the actor before creating or
+    /// updating an object (for instance to prevent an actor from writing in
+    /// another instance's data) should override this method instead of
+    /// `from_id`.
+    fn from_id_with_actor(
+        ctx: &C,
+        id: &str,
+        object: Option<Self::Object>,
+        proxy: Option<&reqwest::Proxy>,
+        _actor_id: Option<&str>,
+    ) -> Result<Self, (Option<serde_json::Value>, Self::Error)> {
+        Self::from_id(ctx, id, object, proxy)
     }
 
     /// Dereferences an ID

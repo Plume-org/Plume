@@ -16,8 +16,8 @@ use plume_common::{
 };
 use plume_models::{
     blogs::Blog, comments::*, db_conn::DbConn, inbox::inbox, instance::Instance, medias::Media,
-    mentions::Mention, posts::Post, safe_string::SafeString, tags::Tag, users::User, Error,
-    PlumeRocket, CONFIG,
+    mentions::Mention, post_translations::PostTranslation, posts::Post, safe_string::SafeString,
+    tags::Tag, users::User, Error, PlumeRocket, CONFIG,
 };
 
 #[derive(Default, FromForm, Debug, Validate)]
@@ -133,7 +133,8 @@ pub fn create(
                 .expect("comments::create: following error"),
                 post.get_authors(&conn)
                     .expect("comments::create: authors error")[0]
-                    .clone()
+                    .clone(),
+                PostTranslation::for_post(&conn, post.id).unwrap_or_default()
             ))
         })
 }
@@ -187,7 +188,8 @@ pub fn activity_pub(
     conn: DbConn,
 ) -> Option<ActivityStream<Note>> {
     Comment::get(&conn, id)
-        .and_then(|c| c.to_activity(&conn))
         .ok()
+        .filter(|c| c.public_visibility)
+        .and_then(|c| c.to_activity(&conn).ok())
         .map(ActivityStream::new)
 }

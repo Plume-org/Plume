@@ -342,6 +342,31 @@ impl User {
         bcrypt::hash(pass, 10).map_err(Error::from)
     }
 
+    /// Escapes a value before inserting it in a LDAP distinguished name, as
+    /// described in RFC 4514, to avoid DN injection.
+    fn escape_ldap_dn_value(value: &str) -> String {
+        let chars = value.chars().collect::<Vec<_>>();
+        let mut out = String::with_capacity(value.len());
+        for (i, c) in chars.iter().enumerate() {
+            match c {
+                ',' | '+' | '"' | '\\' | '<' | '>' | ';' | '=' => {
+                    out.push('\\');
+                    out.push(*c);
+                }
+                '#' if i == 0 => {
+                    out.push('\\');
+                    out.push('#');
+                }
+                ' ' if i == 0 || i == chars.len() - 1 => {
+                    out.push('\\');
+                    out.push(' ');
+                }
+                _ => out.push(*c),
+            }
+        }
+        out
+    }
+
     fn ldap_register(conn: &Connection, name: &str, password: &str) -> Result<User> {
         if CONFIG.ldap.is_none() {
             return Err(Error::NotFound);
@@ -349,7 +374,12 @@ impl User {
         let ldap = CONFIG.ldap.as_ref().unwrap();
 
         let mut ldap_conn = LdapConn::new(&ldap.addr).map_err(|_| Error::NotFound)?;
-        let ldap_name = format!("{}={},{}", ldap.user_name_attr, name, ldap.base_dn);
+        let ldap_name = format!(
+            "{}={},{}",
+            ldap.user_name_attr,
+            User::escape_ldap_dn_value(name),
+            ldap.base_dn
+        );
         let bind = ldap_conn
             .simple_bind(&ldap_name, password)
             .map_err(|_| Error::NotFound)?;
@@ -397,7 +427,9 @@ impl User {
             };
             let name = format!(
                 "{}={},{}",
-                ldap.user_name_attr, &self.username, ldap.base_dn
+                ldap.user_name_attr,
+                User::escape_ldap_dn_value(&self.username),
+                ldap.base_dn
             );
             if let Ok(bind) = conn.simple_bind(&name, password) {
                 bind.success().is_ok()
@@ -538,7 +570,10 @@ impl User {
             .filter_map(|j| serde_json::from_value(j.clone()).ok())
             .collect::<Vec<T>>();
 
-        let next = json.get("next").map(|x| x.as_str().unwrap().to_owned());
+        let next = json
+            .get("next")
+            .and_then(|x| x.as_str())
+            .map(ToOwned::to_owned);
         Ok((items, next))
     }
 
@@ -550,9 +585,9 @@ impl User {
         )?;
         let text = &res.text()?;
         let json: serde_json::Value = serde_json::from_str(text)?;
-        if let Some(first) = json.get("first") {
+        if let Some(first) = json.get("first").and_then(|f| f.as_str()) {
             let mut items: Vec<T> = Vec::new();
-            let mut next = first.as_str().unwrap().to_owned();
+            let mut next = first.to_owned();
             while let Ok((mut page, nxt)) = self.fetch_outbox_page(&next) {
                 if page.is_empty() {
                     break;
@@ -970,7 +1005,7 @@ impl FromId<Connection> for User {
             .ok_or(Error::MissingApProperty)?
             .to_string();
 
-        if username.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t'][..]) {
+        if username.contains(&['<', '>', '&', '@', '\'', '"', ' ', '\t', '\n', '\r'][..]) {
             tracing::error!(
                 "preferredUsername includes invalid character(s): {}",
                 &username
@@ -1038,12 +1073,14 @@ impl FromId<Connection> for User {
                 },
             )
         })?;
+        if instance.local {
+            // Users of this instance are always created locally and already
+            // exist in the database: accepting to create one from a remote
+            // activity would allow anyone to impersonate a local account.
+            return Err(Error::Unauthorized);
+        }
         new_user.instance_id = instance.id;
-        new_user.fqn = if instance.local {
-            username
-        } else {
-            format!("{}@{}", username, instance.public_domain)
-        };
+        new_user.fqn = format!("{}@{}", username, instance.public_domain);
 
         let user = User::insert(conn, new_user)?;
         if let Some(avatar_id) = avatar_id {
@@ -1436,27 +1473,49 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn test_escape_ldap_dn_value() {
+        assert_eq!(User::escape_ldap_dn_value("john"), "john");
+        assert_eq!(
+            User::escape_ldap_dn_value("john,ou=admins"),
+            "john\\,ou\\=admins"
+        );
+        assert_eq!(User::escape_ldap_dn_value(" a "), "\\ a\\ ");
+        assert_eq!(User::escape_ldap_dn_value("#a"), "\\#a");
+        assert_eq!(User::escape_ldap_dn_value("a\\b"), "a\\\\b");
+    }
+
+    #[test]
     fn self_federation() {
         let conn = db();
         conn.test_transaction::<_, (), _>(|| {
             let users = fill_database(&conn);
 
-            let ap_repr = users[0].to_activity(&conn).unwrap();
-            users[0].delete(&conn).unwrap();
+            let mut repr = serde_json::to_value(users[0].to_activity(&conn).unwrap()).unwrap();
+
+            // Remote activities must not be able to create users of this
+            // instance (this would allow impersonating local accounts).
+            let ap_repr: CustomPerson = serde_json::from_value(repr.clone()).unwrap();
+            assert!(matches!(
+                User::from_activity(&conn, ap_repr),
+                Err(Error::Unauthorized)
+            ));
+
+            // Federating the same actor from another instance works.
+            repr["id"] = serde_json::json!("https://remote.example/@/admin/");
+            repr["inbox"] = serde_json::json!("https://remote.example/@/admin/inbox");
+            repr["outbox"] = serde_json::json!("https://remote.example/@/admin/outbox");
+            repr["followers"] = serde_json::json!("https://remote.example/@/admin/followers");
+            repr["endpoints"]["sharedInbox"] = serde_json::json!("https://remote.example/inbox");
+            repr["url"] = serde_json::json!("https://remote.example/@/admin/");
+            let ap_repr: CustomPerson = serde_json::from_value(repr).unwrap();
             let user = User::from_activity(&conn, ap_repr).unwrap();
 
             assert_eq!(user.username, users[0].username);
             assert_eq!(user.display_name, users[0].display_name);
-            assert_eq!(user.outbox_url, users[0].outbox_url);
-            assert_eq!(user.inbox_url, users[0].inbox_url);
-            assert_eq!(user.instance_id, users[0].instance_id);
-            assert_eq!(user.ap_url, users[0].ap_url);
             assert_eq!(user.public_key, users[0].public_key);
-            assert_eq!(user.shared_inbox_url, users[0].shared_inbox_url);
-            assert_eq!(user.followers_endpoint, users[0].followers_endpoint);
-            assert_eq!(user.avatar_url(&conn), users[0].avatar_url(&conn));
-            assert_eq!(user.fqn, users[0].fqn);
             assert_eq!(user.summary_html, users[0].summary_html);
+            assert_eq!(user.ap_url, "https://remote.example/@/admin/");
+            assert_eq!(user.fqn, "admin@remote.example");
             Ok(())
         });
     }

@@ -3,11 +3,12 @@ use rocket_contrib::json::Json;
 
 use crate::api::{authorization::*, Api, ApiError};
 use plume_api::posts::*;
+use plume_api::translations::*;
 use plume_common::{activity_pub::broadcast, utils::md_to_html};
 use plume_models::{
     blogs::Blog, db_conn::DbConn, instance::Instance, medias::Media, mentions::*, post_authors::*,
-    posts::*, safe_string::SafeString, tags::*, timeline::*, users::User, Error, PlumeRocket,
-    CONFIG,
+    post_translations::*, posts::*, safe_string::SafeString, tags::*, timeline::*, translate,
+    users::User, Error, PlumeRocket, CONFIG,
 };
 
 #[get("/posts/<id>")]
@@ -133,6 +134,11 @@ pub fn create(
         })
         .ok_or(ApiError(Error::NotFound))?;
 
+    // The token owner must be an author of the blog they publish to.
+    if !author.is_author_in(&conn, &Blog::get(&conn, blog)?)? {
+        return Err(Error::Unauthorized.into());
+    }
+
     if Post::find_by_slug(&conn, slug, blog).is_ok() {
         return Err(Error::InvalidValue.into());
     }
@@ -239,5 +245,181 @@ pub fn delete(auth: Authorization<Write, Post>, conn: DbConn, id: i32) -> Api<()
             post.delete(&conn)?;
         }
     }
+    Ok(Json(()))
+}
+
+#[post("/posts/<id>/translate", data = "<payload>")]
+pub fn translate(
+    id: i32,
+    auth: Authorization<Write, Post>,
+    payload: Json<TranslationRequest>,
+    conn: DbConn,
+) -> Api<TranslationData> {
+    let user = User::get(&conn, auth.0.user_id)?;
+    let post = Post::get(&conn, id)?;
+
+    if !post.published && !post.is_author(&conn, user.id)? {
+        return Err(Error::Unauthorized.into());
+    }
+
+    if CONFIG.libretranslate.is_none() {
+        return Err(ApiError(Error::InvalidValue));
+    }
+
+    let source_lang = payload
+        .source_lang
+        .as_deref()
+        .unwrap_or("auto");
+    let target_lang = &payload.target_lang;
+
+    if target_lang.is_empty() {
+        return Err(ApiError(Error::InvalidValue));
+    }
+
+    if source_lang != "auto" && source_lang == target_lang.as_str() {
+        return Err(ApiError(Error::InvalidValue));
+    }
+
+    // Check if a translation already exists
+    if let Ok(existing) =
+        PostTranslation::find_by_post_and_lang(&conn, post.id, target_lang)
+    {
+        return Ok(Json(TranslationData {
+            id: existing.id,
+            post_id: existing.post_id,
+            source_lang: existing.source_lang,
+            target_lang: existing.target_lang,
+            title: existing.title,
+            subtitle: existing.subtitle,
+            content: existing.content,
+            source: existing.source,
+            creation_date: existing
+                .creation_date
+                .format("%Y-%m-%dT%H:%M:%SZ")
+                .to_string(),
+        }));
+    }
+
+    let result = translate::translate_post_fields(
+        &post.title,
+        &post.subtitle,
+        post.content.get(),
+        &post.source,
+        source_lang,
+        target_lang,
+    )
+    .map_err(|_| Error::Request)?;
+
+    // Translating an article to the language it is already written in is a
+    // no-op: don't store a useless translation.
+    if result.detected_language.as_deref() == Some(target_lang.as_str()) {
+        return Err(ApiError(Error::InvalidValue));
+    }
+
+    // When the source language was auto-detected, store the language reported
+    // by the translation instance instead of the literal "auto".
+    let stored_source_lang = if source_lang == "auto" {
+        result
+            .detected_language
+            .clone()
+            .unwrap_or_else(|| source_lang.to_string())
+    } else {
+        source_lang.to_string()
+    };
+
+    let translation = PostTranslation::insert(
+        &conn,
+        NewPostTranslation {
+            post_id: post.id,
+            source_lang: stored_source_lang,
+            target_lang: target_lang.clone(),
+            title: result.title.clone(),
+            subtitle: result.subtitle.clone(),
+            content: result.content.clone(),
+            source: result.source.clone(),
+        },
+    )?;
+
+    Ok(Json(TranslationData {
+        id: translation.id,
+        post_id: translation.post_id,
+        source_lang: translation.source_lang,
+        target_lang: translation.target_lang,
+        title: result.title,
+        subtitle: result.subtitle,
+        content: result.content,
+        source: result.source,
+        creation_date: translation
+            .creation_date
+            .format("%Y-%m-%dT%H:%M:%SZ")
+            .to_string(),
+    }))
+}
+
+#[get("/translations/languages")]
+pub fn languages() -> Api<Vec<translate::Language>> {
+    if CONFIG.libretranslate.is_none() {
+        return Err(ApiError(Error::InvalidValue));
+    }
+    Ok(Json(translate::supported_languages()?))
+}
+
+#[get("/posts/<id>/translations")]
+pub fn list_translations(
+    id: i32,
+    auth: Option<Authorization<Read, Post>>,
+    conn: DbConn,
+) -> Api<Vec<TranslationData>> {
+    let user = auth.and_then(|a| User::get(&conn, a.0.user_id).ok());
+    let post = Post::get(&conn, id)?;
+
+    if !post.published
+        && !user
+            .and_then(|u| post.is_author(&conn, u.id).ok())
+            .unwrap_or(false)
+    {
+        return Err(Error::Unauthorized.into());
+    }
+
+    let translations = PostTranslation::for_post(&conn, post.id)?;
+    Ok(Json(
+        translations
+            .into_iter()
+            .map(|t| TranslationData {
+                id: t.id,
+                post_id: t.post_id,
+                source_lang: t.source_lang,
+                target_lang: t.target_lang,
+                title: t.title,
+                subtitle: t.subtitle,
+                content: t.content,
+                source: t.source,
+                creation_date: t
+                    .creation_date
+                    .format("%Y-%m-%dT%H:%M:%SZ")
+                    .to_string(),
+            })
+            .collect(),
+    ))
+}
+
+#[delete("/posts/<id>/translations/<lang>")]
+pub fn delete_translation(
+    id: i32,
+    lang: String,
+    auth: Authorization<Write, Post>,
+    conn: DbConn,
+) -> Api<()> {
+    let author = User::get(&conn, auth.0.user_id)?;
+    let post = Post::get(&conn, id)?;
+
+    if !post.is_author(&conn, author.id).unwrap_or(false) {
+        return Err(Error::Unauthorized.into());
+    }
+
+    if let Ok(translation) = PostTranslation::find_by_post_and_lang(&conn, post.id, &lang) {
+        translation.delete(&conn)?;
+    }
+
     Ok(Json(()))
 }

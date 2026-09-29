@@ -11,7 +11,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     make \
     openssl \
     libssl-dev \
-    clang
+    clang \
+    lld \
+    python3
+
+ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 
 WORKDIR /scratch
 COPY script/wasm-deps.sh .
@@ -31,7 +35,7 @@ FROM debian:stable-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libpq5 \
-    libssl1.1
+    libssl3t64
 
 WORKDIR /app
 

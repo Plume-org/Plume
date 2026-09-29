@@ -1,0 +1,100 @@
+@use plume_models::blogs::Blog;
+@use plume_models::post_translations::PostTranslation;
+@use plume_models::posts::Post;
+@use plume_models::translate::{language_name, Language};
+@use plume_models::users::User;
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::*;
+
+@(ctx: BaseContext, article: Post, blog: Blog, author: User, translations: Vec<PostTranslation>, languages: Vec<Language>, translation_enabled: bool)
+
+@:base(ctx, i18n!(ctx.1, "Translations of {0}"; &article.title), {
+    <meta property="og:title" content="@article.title"/>
+    <meta property="og:type" content="article"/>
+    @if article.cover_id.is_some() {
+        <meta property="og:image" content="@Html(article.cover_url(ctx.0).unwrap_or_default())"/>
+    }
+    <link rel="canonical" href="@article.ap_url"/>
+}, {
+    <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
+    &rsaquo;
+    <a href="@uri!(posts::details: blog = &blog.fqn, slug = &article.slug, responding_to = _)">@article.title</a>
+}, {
+<div class="h-entry">
+    <header
+        class="article @if article.cover_id.is_some() { illustrated }"
+        @if article.cover_id.is_some() { style="background-image: url('@article.cover_url(ctx.0).unwrap_or_default()'" }
+    >
+        <div>
+            <h1 class="article p-name" dir="auto">
+                <a href="@uri!(posts::details: blog = &blog.fqn, slug = &article.slug, responding_to = _)">@article.title</a>
+            </h1>
+            <div class="article-info" dir="auto">
+                <span class="author">@i18n!(ctx.1, "Translations")</span>
+            </div>
+        </div>
+        @if article.cover_id.is_some() {
+            <div class="shadow"></div>
+            <img class="u-photo hidden" src="@article.cover_url(ctx.0).unwrap_or_default()"/>
+        }
+    </header>
+
+    <article class="e-content translations-page" dir="auto">
+        @if translations.is_empty() {
+            <p class="center">@i18n!(ctx.1, "No translation is available yet.")</p>
+        } else {
+            <ul class="translations">
+                @for t in translations {
+                    <li>
+                        <a href="@uri!(posts::translated: blog = &blog.fqn, slug = &article.slug, lang = &t.target_lang)">@language_name(&t.target_lang)</a>
+                        @if t.source_lang != "auto" {
+                            <span class="translation-info">&mdash; @i18n!(ctx.1, "Translated from {0}"; language_name(&t.source_lang))</span>
+                        }
+                        @if ctx.2.clone().and_then(|u| article.is_author(ctx.0, u.id).ok()).unwrap_or(false) {
+                            <form class="inline" method="post" action="@uri!(posts::delete_translation: blog = &blog.fqn, slug = &article.slug, lang = &t.target_lang)">
+                                <input class="button destructive" onclick="return confirm('@i18n!(ctx.1, "Are you sure?")')" type="submit" value="@i18n!(ctx.1, "Delete")">
+                            </form>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </article>
+
+    @if translation_enabled {
+        @if ctx.2.is_some() {
+            <section class="actions">
+                <form class="translation-form" method="POST" action="@uri!(posts::create_translation: blog = &blog.fqn, slug = &article.slug)">
+                    <label for="target_lang">@i18n!(ctx.1, "Translate this article")</label>
+                    <select id="target_lang" name="target_lang">
+                        @for lang in languages {
+                            <option value="@lang.code">@lang.name</option>
+                        }
+                    </select>
+                    <input type="submit" class="button" value="@i18n!(ctx.1, "Translate")"/>
+                </form>
+            </section>
+        } else {
+            <p class="center">@Html(i18n!(ctx.1, "{0}Log in{1} to translate this article";
+                format!("<a href='{}'>", escape(&uri!(session::new: m = _).to_string())), "</a>"
+                ))
+            </p>
+        }
+    }
+
+    <div class="article-meta">
+        <section class="banner">
+            <div class="flex p-author h-card user" dir="auto">
+                @avatar(ctx.0, &author, Size::Medium, true, ctx.1)
+                <div class="grow">
+                    <h2 class="p-name">
+                        <a href="@uri!(user::details: name = &author.fqn)">@author.name()</a>
+                        <a rel="author" class="u-url" href="@author.ap_url"></a>
+                    </h2>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+})

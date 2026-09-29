@@ -1,0 +1,93 @@
+@use plume_models::blogs::Blog;
+@use plume_models::posts::Post;
+@use plume_models::post_translations::PostTranslation;
+@use plume_models::tags::Tag;
+@use plume_models::translate::language_name;
+@use plume_models::users::User;
+@use crate::templates::base;
+@use crate::template_utils::*;
+@use crate::routes::*;
+
+@(ctx: BaseContext, article: Post, blog: Blog, translation: PostTranslation, tags: Vec<Tag>, author: User)
+
+@:base(ctx, i18n!(ctx.1, "{0} [{1}]"; &article.title, &translation.target_lang), {
+    <meta property="og:title" content="@translation.title"/>
+    <meta property="og:type" content="article"/>
+    @if article.cover_id.is_some() {
+        <meta property="og:image" content="@Html(article.cover_url(ctx.0).unwrap_or_default())"/>
+    }
+    <link rel="canonical" href="@article.ap_url"/>
+}, {
+    <a href="@uri!(blogs::details: name = &blog.fqn, page = _)">@blog.title</a>
+    &rsaquo;
+    <a href="@uri!(posts::details: blog = &blog.fqn, slug = &article.slug, responding_to = _)">@article.title</a>
+}, {
+<div class="h-entry">
+    <header
+        class="article @if article.cover_id.is_some() { illustrated }"
+        @if article.cover_id.is_some() { style="background-image: url('@article.cover_url(ctx.0).unwrap_or_default()'" }
+    >
+        <div>
+            <h1 class="article p-name" dir="auto">@translation.title</h1>
+            <div class="article-info" dir="auto">
+                <span class="author">
+                    @Html(i18n!(ctx.1, "Written by {0}"; format!("<a href=\"{}\">{}</a>",
+                                        escape(&uri!(user::details: name = &author.fqn).to_string()),
+                                        escape(&author.name()))))
+                </span>
+                &mdash;
+                <span class="date dt-published" datetime="@article.creation_date.format("%F %T")">@article.creation_date.format("%B %e, %Y")</span><a class="u-url" href="@article.ap_url"></a>
+                &mdash;
+                <span class="translation-info">
+                    @if translation.source_lang == "auto" {
+                        @i18n!(ctx.1, "Translated to {0}"; language_name(&translation.target_lang))
+                    } else {
+                        @i18n!(ctx.1, "Translated from {0} to {1}"; language_name(&translation.source_lang), language_name(&translation.target_lang))
+                    }
+                </span>
+            </div>
+            <h2 class="article p-summary" dir="auto">@translation.subtitle</h2>
+        </div>
+        @if article.cover_id.is_some() {
+            <div class="shadow"></div>
+            <img class="u-photo hidden" src="@article.cover_url(ctx.0).unwrap_or_default()"/>
+        }
+    </header>
+
+    <article class="e-content" dir="auto">
+        @Html(&translation.content)
+    </article>
+    <div class="article-meta">
+        <section class="split">
+            <ul class="tags" dir="auto">
+                @for tag in tags {
+                    @if !tag.is_hashtag {
+                        <li><a class="p-category" href="@uri!(tags::tag: name = &tag.tag, page = _)">@tag.tag</a></li>
+                    } else {
+                        <span class="hidden p-category">@tag.tag</span>
+                    }
+                }
+            </ul>
+            <p class="right" dir="auto">
+                @if article.license.is_empty() {
+                    @i18n!(ctx.1, "All rights reserved."; &article.license)
+                } else {
+                    @i18n!(ctx.1, "This article is under the {0} license."; &article.license)
+                }
+            </p>
+        </section>
+        <section class="banner">
+            <div class="flex p-author h-card user" dir="auto">
+                @avatar(ctx.0, &author, Size::Medium, true, ctx.1)
+                <div class="grow">
+                    <h2 class="p-name">
+                        <a href="@uri!(user::details: name = &author.fqn)">@author.name()</a>
+                        <a rel="author" class="u-url" href="@author.ap_url"></a>
+                    </h2>
+                    <p>@Html(&author.summary_html)</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+})
